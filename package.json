@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
     "mocha": "^4.0.1",
+    "nodemon": "^1.12.1",
     "supertest": "^3.0.0"
   }
 }
