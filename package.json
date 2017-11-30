@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "mocha $(find test -name '*.spec.js')"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
