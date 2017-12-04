@@ -1,3 +1,17 @@
 = Citizen
 
-An Private [Terraform Module Registry](https://registry.terraform.io/)
+An Private link:https://registry.terraform.io/[Terraform Module Registry]
+
+== Requirements
+* Node.js 8+
+* Support HTTPS - Terraform module registry only support HTTPS.
+
+== Installation
+set environment variables
+
+[source, sh]
+...
+$ export HOSTNAME=YOUR_HOSTNAME
+...
+
+replace `YOUR_HOSTNAME` like `www.example.com:3000`.
