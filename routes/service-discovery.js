@@ -2,7 +2,7 @@ const { Router } = require('express');
 
 const router = Router();
 
-const HOSTNAME = process.env.HOSTNAME;
+const { HOSTNAME } = process.env;
 
 if (!HOSTNAME) { throw new Error('HOSTNAME required.'); }
 
