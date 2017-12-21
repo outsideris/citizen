@@ -16,6 +16,7 @@
     "commander": "^2.12.2",
     "debug": "^3.1.0",
     "express": "^4.16.2",
+    "glob-gitignore": "^1.0.6",
     "jten": "^0.1.0",
     "listr": "^0.13.0",
     "morgan": "^1.9.0",
