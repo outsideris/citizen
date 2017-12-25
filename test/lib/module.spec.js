@@ -6,9 +6,67 @@ const tar = require('tar');
 const recursive = require('recursive-readdir');
 const rimraf = require('rimraf');
 
-const { makeFileList, makeTarball } = require('../../lib/module');
+const {
+  isValidNamespace, isValidName, isValidVersion, makeFileList, makeTarball,
+} = require('../../lib/module');
 
 describe('module\'s', () => {
+  describe('isValidNamespace()', () => {
+    it('should check namespace consists of alphanumeric characters ', () => {
+      const result = isValidNamespace('1a2b3c');
+      expect(result).to.be.true;
+    });
+
+    it('should check namespace consists of alphanumeric characters or single hyphens', () => {
+      const result = isValidNamespace('abc-123');
+      expect(result).to.be.true;
+    });
+
+    it('should check namespace which begins with a hyphen', () => {
+      const result = isValidNamespace('-abc123');
+      expect(result).to.be.false;
+    });
+
+    it('should check namespace which ends with a hyphen', () => {
+      const result = isValidNamespace('abc123-');
+      expect(result).to.be.false;
+    });
+  });
+
+  describe('isValidName()', () => {
+    it('should check module name which formatted in terraform-PROVIDER-NAME', () => {
+      const result = isValidName('terraform-aws-consul');
+      expect(result).to.be.true;
+    });
+
+    it('should check module name which doesn\'t formatted in terraform-PROVIDER-NAME', () => {
+      const result = isValidName('terraform-aws-');
+      expect(result).to.be.false;
+    });
+
+    it('should check module name which contain special characters', () => {
+      const result = isValidName('terraform-aws-cons$ul');
+      expect(result).to.be.false;
+    });
+  });
+
+  describe('isValidVersion()', () => {
+    it('should check semver format', () => {
+      const result = isValidVersion('0.1.0');
+      expect(result).to.be.equal('0.1.0');
+    });
+
+    it('should check semver format with v prefix', () => {
+      const result = isValidVersion('v0.1.0');
+      expect(result).to.be.equal('0.1.0');
+    });
+
+    it('should check no semver format', () => {
+      const result = isValidVersion('0.1');
+      expect(result).to.be.null;
+    });
+  });
+
   describe('makeFileList()', () => {
     it('should make file list', async () => {
       const target = path.join(__dirname, '../fixture/module1');

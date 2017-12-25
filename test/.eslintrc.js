@@ -7,5 +7,6 @@ module.exports = {
   ],
   rules: {
     'mocha/no-exclusive-tests': 'error',
+    'no-unused-expressions': ['off'],
   },
 };
