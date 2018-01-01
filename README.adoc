@@ -5,6 +5,11 @@ An Private link:https://registry.terraform.io/[Terraform Module Registry]
 == Requirements
 * Node.js 8+
 * Support HTTPS - Terraform module registry only support HTTPS.
+* AWS S3 Bucket
+    - currently only supported
+    - set s3 bucket name as `AWS_S3_BUCKET`
+* AWS Credential
+    - set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
 
 == Installation
 set environment variables
