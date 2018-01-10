@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { expect } = require('chai');
-const { Writable } = require('stream');
+const { Duplex } = require('stream');
 const tar = require('tar');
 const recursive = require('recursive-readdir');
 const rimraf = require('rimraf');
@@ -82,19 +82,11 @@ describe('module\'s', () => {
   });
 
   describe('makeTarball()', () => {
-    it('should compress module files to an writable stream', (done) => {
-      const writer = new Writable({
-        write(chunk, encoding, callback) {
-          callback();
-        },
-      });
-      writer.on('finish', done);
-
+    it('should return compressed module file as Buffer', async () => {
       const target = path.join(__dirname, '../fixture/module1');
       const files = ['a.js', 'b.js', 'c', 'c/d.js', 'c/e.js', 'README.md'];
-      const result = makeTarball(target, files, writer);
-
-      expect(result).to.be.an.instanceof(Writable);
+      const result = await makeTarball(target, files);
+      expect(result).to.be.an.instanceof(Buffer);
     });
 
     it('should make module filses as tarball', (done) => {
@@ -103,22 +95,27 @@ describe('module\'s', () => {
 
       const target = path.join(__dirname, '../fixture/module1');
       const files = ['a.js', 'b.js', 'c', 'c/d.js', 'c/e.js', 'README.md'];
-      const result = makeTarball(target, files, tar.x({
-        cwd: UNTAR_DIR,
-      }));
 
-      result.on('finish', () => {
-        recursive(UNTAR_DIR, (err, list) => {
-          expect(list).to.have.members([
-            `${UNTAR_DIR}/a.js`,
-            `${UNTAR_DIR}/b.js`,
-            `${UNTAR_DIR}/c/d.js`,
-            `${UNTAR_DIR}/c/e.js`,
-            `${UNTAR_DIR}/README.md`,
-          ]);
-          rimraf(UNTAR_DIR, done);
+      makeTarball(target, files)
+        .then((compressed) => {
+          const tarball = new Duplex();
+          tarball.push(compressed);
+          tarball.push(null);
+
+          tarball.pipe(tar.x({ cwd: UNTAR_DIR }))
+            .on('finish', () => {
+              recursive(UNTAR_DIR, (err, list) => {
+                expect(list).to.have.members([
+                  `${UNTAR_DIR}/a.js`,
+                  `${UNTAR_DIR}/b.js`,
+                  `${UNTAR_DIR}/c/d.js`,
+                  `${UNTAR_DIR}/c/e.js`,
+                  `${UNTAR_DIR}/README.md`,
+                ]);
+                rimraf(UNTAR_DIR, done);
+              });
+            });
         });
-      });
     });
 
     it('should make module filses with .gitignore as tarball', (done) => {
@@ -127,19 +124,24 @@ describe('module\'s', () => {
 
       const target = path.join(__dirname, '../fixture/module2');
       const files = ['a.js', 'b.js'];
-      const result = makeTarball(target, files, tar.x({
-        cwd: UNTAR_DIR,
-      }));
 
-      result.on('finish', () => {
-        recursive(UNTAR_DIR, (err, list) => {
-          expect(list).to.have.members([
-            `${UNTAR_DIR}/a.js`,
-            `${UNTAR_DIR}/b.js`,
-          ]);
-          rimraf(UNTAR_DIR, done);
+      makeTarball(target, files)
+        .then((compressed) => {
+          const tarball = new Duplex();
+          tarball.push(compressed);
+          tarball.push(null);
+
+          tarball.pipe(tar.x({ cwd: UNTAR_DIR }))
+            .on('finish', () => {
+              recursive(UNTAR_DIR, (err, list) => {
+                expect(list).to.have.members([
+                  `${UNTAR_DIR}/a.js`,
+                  `${UNTAR_DIR}/b.js`,
+                ]);
+                rimraf(UNTAR_DIR, done);
+              });
+            });
         });
-      });
     });
   });
 });
