@@ -5,9 +5,16 @@ const { Duplex } = require('stream');
 const tar = require('tar');
 const recursive = require('recursive-readdir');
 const rimraf = require('rimraf');
+const http = require('http');
 
+const app = require('../../app');
 const {
-  isValidNamespace, isValidName, isValidVersion, makeFileList, makeTarball,
+  isValidNamespace,
+  isValidName,
+  isValidVersion,
+  makeFileList,
+  makeTarball,
+  publish,
 } = require('../../lib/module');
 
 describe('module\'s', () => {
@@ -142,6 +149,30 @@ describe('module\'s', () => {
               });
             });
         });
+    });
+  });
+
+  describe('publish()', async () => {
+    let server;
+    const port = 20000;
+    const registry = `http://127.0.0.1:${port}`;
+
+    before((done) => {
+      server = http.createServer(app);
+      server.listen(port);
+      server.on('listening', done);
+    });
+
+    after(() => {
+      server.close();
+    });
+
+    it('should upload the tarball into registry', async () => {
+      const target = path.join(__dirname, '../fixture/module1');
+      const modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
+      const res = await publish(target, modulePath, registry);
+      const body = JSON.parse(res.body);
+      expect(body.modules[0].id).to.equal(modulePath);
     });
   });
 });
