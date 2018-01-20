@@ -2,6 +2,8 @@
 
 An Private link:https://registry.terraform.io/[Terraform Module Registry]
 
+image:https://travis-ci.org/outsideris/citizen.svg?branch=master["Build Status", link="https://travis-ci.org/outsideris/citizen"]
+
 == Requirements
 * Node.js 8+
 * Support HTTPS - Terraform module registry only support HTTPS.

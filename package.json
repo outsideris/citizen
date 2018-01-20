@@ -9,7 +9,7 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "lint": "eslint .",
-    "test": "mocha $(find test -name '*.spec.js')"
+    "test": "mocha --exit --recursive -t 20000 test"
   },
   "dependencies": {
     "aws-sdk": "^2.176.0",
