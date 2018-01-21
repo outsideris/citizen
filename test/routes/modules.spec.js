@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const { promisify } = require('util');
 
 const app = require('../../app');
+const { enableMock, clearMock } = require('../helper');
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 s3.delete = promisify(s3.deleteObject);
@@ -11,7 +12,16 @@ s3.delete = promisify(s3.deleteObject);
 describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   const modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
 
+  before(() => {
+    enableMock({ modulePath: `${modulePath}/module.tar.gz` });
+    enableMock({ modulePath: `${modulePath}/test.tar.gz` });
+  });
+
   after(async () => {
+    if (process.env.MOCK) {
+      return clearMock();
+    }
+
     const params = {
       Bucket: process.env.AWS_S3_BUCKET,
       Key: modulePath,
@@ -23,7 +33,7 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   it('should register new module', () =>
     request(app)
       .post(`/v1/modules/${modulePath}`)
-      .attach('module', 'test/fixture/test.tar.gz')
+      .attach('module', 'test/fixture/module.tar.gz')
       .expect('Content-Type', /application\/json/)
       .expect(201)
       .then((res) => {

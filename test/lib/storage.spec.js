@@ -5,6 +5,7 @@ const { promisify } = require('util');
 const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+const { enableMock, clearMock } = require('../helper');
 const { saveModule, hasModule } = require('../../lib/storage');
 
 const readFile = promisify(fs.readFile);
@@ -17,7 +18,12 @@ describe('storage\'s', async () => {
   let moduleBuf;
 
   before(async () => {
+    enableMock({ modulePath });
     moduleBuf = await readFile(tarballPath);
+  });
+
+  after(() => {
+    clearMock();
   });
 
   describe('saveModule()', () => {

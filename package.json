@@ -35,6 +35,7 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-mocha": "^4.11.0",
     "mocha": "^4.0.1",
+    "nock": "^9.1.6",
     "nodemon": "^1.12.1",
     "recursive-readdir": "^2.2.1",
     "rimraf": "^2.6.2",
