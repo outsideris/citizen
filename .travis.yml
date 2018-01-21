@@ -4,6 +4,14 @@ node_js:
 cache:
   directories:
     - "node_modules"
+env:
+  global:
+    - HOSTNAME=localhost
+    - AWS_S3_BUCKET=kr.ne.outsider.test
+    - AWS_ACCESS_KEY_ID=oooooo
+    - AWS_SECRET_ACCESS_KEY=xxxxx
+    - CITIZEN_ADDR=http://127.0.0.1:3000
+    - MOCK=true
 
 install:
   - npm install
