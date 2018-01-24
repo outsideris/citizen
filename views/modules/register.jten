@@ -2,7 +2,7 @@ module.exports = (data) => ({
   modules: [
     {
       id: data.id,
-      owner: "gruntwork-team",
+      owner: data.owner,
       namespace: data.namespace,
       name: data.name,
       version: data.version,
