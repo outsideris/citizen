@@ -50,6 +50,18 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
       .then((res) => {
         expect(res.body).to.have.property('errors').to.be.an('array');
       }));
+
+  it('should register new module with owner infomation', () =>
+    request(app)
+      .post(`/v1/modules/${modulePath}`)
+      .field('owner', 'outsideris')
+      .attach('module', 'test/fixture/module.tar.gz')
+      .expect('Content-Type', /application\/json/)
+      .expect(201)
+      .then((res) => {
+        expect(res.body).to.have.property('modules').to.be.an('array');
+        expect(res.body.modules[0]).to.have.property('id').to.equal(modulePath);
+      }));
 });
 
 describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {

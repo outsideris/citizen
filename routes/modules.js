@@ -3,6 +3,7 @@ const multiparty = require('multiparty');
 
 const logger = require('../lib/logger');
 const { saveModule, hasModule } = require('../lib/storage');
+const { save } = require('../lib/store');
 
 const router = Router();
 
@@ -17,6 +18,7 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
   const destPath = `${namespace}/${name}/${provider}/${version}`;
   let tarball;
   let filename;
+  let owner = '';
 
   const form = new multiparty.Form();
 
@@ -31,11 +33,24 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
       next(err);
     });
 
-    const buffers = [];
-    part.on('data', buffer => buffers.push(buffer));
+    const ownerBuf = [];
+    const file = [];
+    part.on('data', (buffer) => {
+      if (!part.filename && part.name === 'owner') {
+        ownerBuf.push(buffer);
+      }
+      if (part.filename) {
+        file.push(buffer);
+      }
+    });
     part.on('end', async () => {
-      ({ filename } = part);
-      tarball = Buffer.concat(buffers);
+      if (!part.filename && part.name === 'owner') {
+        owner = Buffer.concat(ownerBuf).toString();
+      }
+      if (part.filename) {
+        ({ filename } = part);
+        tarball = Buffer.concat(file);
+      }
     });
   });
 
@@ -49,10 +64,15 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
         return next(error);
       }
 
-      const result = await saveModule(`${destPath}/${filename}`, tarball);
-      if (result.ETag) {
+      const fileResult = await saveModule(`${destPath}/${filename}`, tarball);
+      const metaResult = await save({
+        namespace, name, provider, version, owner,
+      });
+
+      if (fileResult.ETag && metaResult.ok) {
         return res.status(201).render('modules/register', {
           id: destPath,
+          owner,
           namespace,
           name,
           provider,
