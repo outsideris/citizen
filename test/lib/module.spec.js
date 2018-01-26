@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { expect } = require('chai');
 const { Duplex } = require('stream');
+const { promisify } = require('util');
 const tar = require('tar');
 const recursive = require('recursive-readdir');
 const rimraf = require('rimraf');
@@ -17,6 +18,8 @@ const {
   makeTarball,
   publish,
 } = require('../../lib/module');
+
+const readFile = promisify(fs.readFile);
 
 describe('module\'s', () => {
   describe('isValidNamespace()', () => {
@@ -172,8 +175,9 @@ describe('module\'s', () => {
     });
 
     it('should upload the tarball into registry', async () => {
-      const target = path.join(__dirname, '../fixture/module1');
-      const res = await publish(target, modulePath, registry);
+      const tarballPath = path.join(__dirname, '..', 'fixture/module.tar.gz');
+      const moduleBuf = await readFile(tarballPath);
+      const res = await publish(registry, modulePath, moduleBuf);
       const body = JSON.parse(res.body);
       expect(body.modules[0].id).to.equal(modulePath);
     });
