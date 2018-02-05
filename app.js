@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
-const logger = require('morgan');
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const logger = require('./lib/logger');
 
 const app = express();
 
@@ -10,7 +11,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jten');
 
 // uncomment after placing your favicon in /public
-app.use(logger('dev'));
+app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -31,6 +32,10 @@ app.use((req, res, next) => {
 // will print stacktrace
 if (app.get('env') === 'development') {
   app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+    if (!err.status || err.status >= 500) {
+      logger.error(err.stack);
+    }
+
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -42,6 +47,10 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+  if (!err.status || err.status >= 500) {
+    logger.error(err.stack);
+  }
+
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
