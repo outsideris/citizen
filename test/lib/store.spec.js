@@ -5,11 +5,15 @@ const { deleteDbAll } = require('../helper');
 
 describe('store\'s', async () => {
   describe('save()', () => {
+    after(async () => {
+      await deleteDbAll(db);
+    });
+
     it('should store module meta', async () => {
       const result = await save({
-        namespace: 'hashicorp',
-        name: 'consul',
-        provider: 'aws',
+        namespace: 'store-hashicorp',
+        name: 'store-consul',
+        provider: 'store-aws',
         version: '0.1.0',
         owner: 'outsideris',
       });
@@ -21,16 +25,16 @@ describe('store\'s', async () => {
   describe('findAll()', () => {
     before(async () => {
       await save({
-        namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
+        namespace: 'store-GCP', name: 'store-lb-http', provider: 'store-google', version: '1.0.4', owner: '',
       });
       await save({
-        namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '',
+        namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.2.1', owner: '',
       });
       await save({
-        namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+        namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.5.0', owner: '',
       });
       await save({
-        namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+        namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.5.1', owner: '',
       });
     });
 
@@ -40,22 +44,23 @@ describe('store\'s', async () => {
 
     it('should return all modules', async () => {
       const result = await findAll();
+
       expect(result).to.have.property('modules').to.have.lengthOf(4);
-      expect(result.modules[0]).to.have.property('namespace').to.equal('GCP');
+      expect(result.modules[0]).to.have.property('namespace').to.equal('store-GCP');
     });
 
     it('should filter modules by namespace', async () => {
       const result = await findAll({
-        namespace: 'aws-modules',
+        namespace: 'store-aws-modules',
       });
       expect(result).to.have.property('modules').to.have.lengthOf(3);
-      expect(result.modules[0]).to.have.property('namespace').to.equal('aws-modules');
+      expect(result.modules[0]).to.have.property('namespace').to.equal('store-aws-modules');
     });
 
     it('should support pagination', async () => {
       const result = await findAll({ skip: 2, limit: 2 });
       expect(result).to.have.property('modules').to.have.lengthOf(2);
-      expect(result.modules[0]).to.have.property('namespace').to.equal('aws-modules');
+      expect(result.modules[0]).to.have.property('namespace').to.equal('store-aws-modules');
       expect(result.modules[0]).to.have.property('version').to.equal('1.5.0');
     });
 
