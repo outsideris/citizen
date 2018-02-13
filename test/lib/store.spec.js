@@ -58,14 +58,14 @@ describe('store\'s', async () => {
     });
 
     it('should support pagination', async () => {
-      const result = await findAll({ skip: 2, limit: 2 });
+      const result = await findAll({ offset: 2, limit: 2 });
       expect(result).to.have.property('modules').to.have.lengthOf(2);
       expect(result.modules[0]).to.have.property('namespace').to.equal('store-aws-modules');
       expect(result.modules[0]).to.have.property('version').to.equal('1.5.0');
     });
 
     it('should return pagination information', async () => {
-      const result = await findAll({ skip: 2, limit: 1 });
+      const result = await findAll({ offset: 2, limit: 1 });
 
       expect(result).to.have.property('meta');
       expect(result.meta).to.have.property('limit').to.equal(1);
@@ -75,7 +75,7 @@ describe('store\'s', async () => {
     });
 
     it('should prevOffset pagination information', async () => {
-      const result = await findAll({ skip: 0, limit: 2 });
+      const result = await findAll({ offset: 0, limit: 2 });
 
       expect(result.meta).to.have.property('limit').to.equal(2);
       expect(result.meta).to.have.property('currentOffset').to.equal(0);
@@ -84,7 +84,7 @@ describe('store\'s', async () => {
     });
 
     it('should return pagination information', async () => {
-      const result = await findAll({ skip: 2, limit: 2 });
+      const result = await findAll({ offset: 2, limit: 2 });
 
       expect(result.meta).to.have.property('limit').to.equal(2);
       expect(result.meta).to.have.property('currentOffset').to.equal(2);
