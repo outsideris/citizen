@@ -6,7 +6,9 @@ const router = Router();
 
 // https://www.terraform.io/docs/registry/api.html#list-modules
 router.get(['/', '/:namespace'], async (req, res) => {
-  const options = {};
+  const options = {
+    ...req.query,
+  };
   if (req.params.namespace) {
     options.namespace = req.params.namespace;
   }

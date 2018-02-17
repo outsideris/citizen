@@ -35,6 +35,39 @@ describe('GET /v1/modules', () => {
           .to.have.property('current_offset').to.equal(0);
         expect(res.body).to.have.property('modules').to.have.lengthOf(4);
       }));
+
+  it('should support pagination', () =>
+    request(app)
+      .get('/v1/modules?offset=0&limit=2')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('modules').to.have.lengthOf(2);
+      }));
+
+  it('should return meta of pagination', () =>
+    request(app)
+      .get('/v1/modules?offset=1&limit=2')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('meta');
+        expect(res.body.meta).to.have.property('limit').to.equal(2);
+        expect(res.body.meta).to.have.property('current_offset').to.equal(1);
+        expect(res.body.meta).to.have.property('next_offset').to.equal(3);
+      }));
+
+  it('should not be next_offset when there is no more modules', () =>
+    request(app)
+      .get('/v1/modules?offset=2&limit=2')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('meta');
+        expect(res.body.meta).to.have.property('limit');
+        expect(res.body.meta).to.have.property('current_offset');
+        expect(res.body.meta).to.not.have.property('next_offset');
+      }));
 });
 
 describe('GET /v1/modules/:namespace', () => {
