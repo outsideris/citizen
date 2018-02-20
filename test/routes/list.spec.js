@@ -76,10 +76,10 @@ describe('GET /v1/modules/:namespace', () => {
       namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
     });
     await save({
-      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '',
+      namespace: 'aws-modules', name: 'vpc', provider: 'microsoft', version: '1.2.1', owner: '',
     });
     await save({
-      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+      namespace: 'aws-modules', name: 'vpc', provider: 'microsoft', version: '1.5.0', owner: '',
     });
     await save({
       namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
@@ -99,5 +99,16 @@ describe('GET /v1/modules/:namespace', () => {
         expect(res.body).to.have.property('meta')
           .to.have.property('current_offset').to.equal(0);
         expect(res.body).to.have.property('modules').to.have.lengthOf(3);
+      }));
+
+  it('should filter modules by provider', () =>
+    request(app)
+      .get('/v1/modules/aws-modules?provider=microsoft')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('meta')
+          .to.have.property('current_offset').to.equal(0);
+        expect(res.body).to.have.property('modules').to.have.lengthOf(2);
       }));
 });

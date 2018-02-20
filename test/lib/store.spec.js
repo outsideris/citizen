@@ -91,5 +91,13 @@ describe('store\'s', async () => {
       expect(result.meta).to.have.property('nextOffset').to.be.null;
       expect(result.meta).to.have.property('prevOffset').to.equal(0);
     });
+
+    it('should filter modules by provider', async () => {
+      const result = await findAll({
+        provider: 'store-aws',
+      });
+      expect(result).to.have.property('modules').to.have.lengthOf(3);
+      expect(result.modules[0]).to.have.property('namespace').to.equal('store-aws-modules');
+    });
   });
 });
