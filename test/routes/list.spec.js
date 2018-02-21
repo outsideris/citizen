@@ -112,3 +112,55 @@ describe('GET /v1/modules/:namespace', () => {
         expect(res.body).to.have.property('modules').to.have.lengthOf(2);
       }));
 });
+
+describe('GET /v1/modules/search', () => {
+  before(async () => {
+    await save({
+      namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
+    });
+    await save({
+      namespace: 'aws-modules', name: 'vpc', provider: 'microsoft', version: '1.2.1', owner: '',
+    });
+    await save({
+      namespace: 'aws-modules', name: 'vpc', provider: 'microsoft', version: '1.5.0', owner: '',
+    });
+    await save({
+      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+    });
+  });
+
+  after(async () => {
+    await deleteDbAll(db);
+  });
+
+  it('should return all modules which matched by q', () =>
+    request(app)
+      .get('/v1/modules/search?q=vpc')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('meta')
+          .to.have.property('current_offset').to.equal(0);
+        expect(res.body).to.have.property('modules').to.have.lengthOf(3);
+      }));
+
+  it('should return all modules which contain q', () =>
+    request(app)
+      .get('/v1/modules/search?q=pc')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('meta')
+          .to.have.property('current_offset').to.equal(0);
+        expect(res.body).to.have.property('modules').to.have.lengthOf(3);
+      }));
+
+  it('should reject the request which does not have q parameter', () =>
+    request(app)
+      .get('/v1/modules/search')
+      .expect('Content-Type', /application\/json/)
+      .expect(400)
+      .then((res) => {
+        expect(res.body).to.have.property('errors');
+      }));
+});
