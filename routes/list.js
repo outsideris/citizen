@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const { findAll } = require('../lib/store');
+const { findAll, getVersions } = require('../lib/store');
 
 const router = Router();
 
@@ -43,6 +43,23 @@ router.get(['/', '/:namespace'], async (req, res) => {
 
   const modules = await findAll(options);
   res.render('modules/list', modules);
+});
+
+// https://www.terraform.io/docs/registry/api.html#list-available-versions-for-a-specific-module
+router.get('/:namespace/:name/:provider/versions', async (req, res, next) => {
+  const options = {
+    ...req.params,
+  };
+
+  try {
+    const versions = await getVersions(options);
+    res.render('modules/versions', {
+      source: `${req.params.namespace}/${req.params.name}/${req.params.provider}`,
+      versions,
+    });
+  } catch (e) {
+    next(e);
+  }
 });
 
 module.exports = router;

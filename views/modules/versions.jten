@@ -1,5 +1,8 @@
 module.exports = (data) => ({
   modules: [
-    {},
+    {
+      source: data.source,
+      versions: data.versions,
+    },
   ],
 });

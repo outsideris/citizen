@@ -164,3 +164,35 @@ describe('GET /v1/modules/search', () => {
         expect(res.body).to.have.property('errors');
       }));
 });
+
+describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
+  before(async () => {
+    await save({
+      namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
+    });
+    await save({
+      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '',
+    });
+    await save({
+      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+    });
+    await save({
+      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+    });
+  });
+
+  after(async () => {
+    await deleteDbAll(db);
+  });
+
+  it('should return available versions for a specific module', () =>
+    request(app)
+      .get('/v1/modules/aws-modules/vpc/aws/versions')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('modules').to.have.lengthOf(1);
+        expect(res.body.modules[0].versions).to.have.lengthOf(3);
+        expect(res.body.modules[0]).to.have.property('versions').to.have.lengthOf(3);
+      }));
+});
