@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const _ = require('lodash');
 
 const { findAll, getVersions } = require('../lib/store');
 
@@ -60,6 +61,32 @@ router.get('/:namespace/:name/:provider/versions', async (req, res, next) => {
   } catch (e) {
     next(e);
   }
+});
+
+// https://www.terraform.io/docs/registry/api.html#list-latest-version-of-module-for-all-providers
+router.get('/:namespace/:name', async (req, res) => {
+  const options = {
+    offset: 0,
+    // FIXME: to support for too many modules
+    limt: 100,
+    selector: {
+      namespace: { $eq: req.params.namespace },
+      name: { $eq: req.params.name },
+    },
+  };
+
+  const result = await findAll(options);
+  const grouped = _.groupBy(result.modules, m => `${m.namespace}/${m.name}/${m.provider}`);
+
+  const modules = Object.keys(grouped).map((key) => {
+    const sorted = _.orderBy(grouped[key], ['versions']);
+    return sorted[sorted.length - 1];
+  });
+
+  res.render('modules/list', {
+    meta: {},
+    modules,
+  });
 });
 
 module.exports = router;

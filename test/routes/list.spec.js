@@ -196,3 +196,37 @@ describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
         expect(res.body.modules[0]).to.have.property('versions').to.have.lengthOf(3);
       }));
 });
+
+describe('GET /v1/modules/:namespace/:name', () => {
+  before(async () => {
+    await save({
+      namespace: 'hashicorp', name: 'consul', provider: 'azurerm', version: '0.1.0', owner: '',
+    });
+    await save({
+      namespace: 'hashicorp', name: 'consul', provider: 'azurerm', version: '0.2.0', owner: '',
+    });
+    await save({
+      namespace: 'hashicorp', name: 'consul', provider: 'aws', version: '1.1.1', owner: '',
+    });
+    await save({
+      namespace: 'hashicorp', name: 'consul', provider: 'aws', version: '1.1.2', owner: '',
+    });
+  });
+
+  after(async () => {
+    await deleteDbAll(db);
+  });
+
+  it('should return all latest version of module for all providers', () =>
+    request(app)
+      .get('/v1/modules/hashicorp/consul')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('modules').to.have.lengthOf(2);
+        expect(res.body.modules[0].provider).to.equal('azurerm');
+        expect(res.body.modules[0].version).to.equal('0.2.0');
+        expect(res.body.modules[1].provider).to.equal('aws');
+        expect(res.body.modules[1].version).to.equal('1.1.2');
+      }));
+});
