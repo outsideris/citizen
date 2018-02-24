@@ -68,7 +68,7 @@ router.get('/:namespace/:name', async (req, res) => {
   const options = {
     offset: 0,
     // FIXME: to support for too many modules
-    limt: 100,
+    limit: 100,
     selector: {
       namespace: { $eq: req.params.namespace },
       name: { $eq: req.params.name },
@@ -83,9 +83,21 @@ router.get('/:namespace/:name', async (req, res) => {
     return sorted[sorted.length - 1];
   });
 
+  const totalCount = modules.length;
+
+  const offset = +req.query.offset || 0;
+  const limit = +req.query.limit || 15;
+  const nextOffset = (offset + 1) * limit;
+
+  const pagedModules = _.slice(modules, offset, nextOffset);
+
   res.render('modules/list', {
-    meta: {},
-    modules,
+    meta: {
+      limit,
+      currentOffset: offset,
+      nextOffset: totalCount > nextOffset ? nextOffset : null,
+    },
+    modules: pagedModules,
   });
 });
 

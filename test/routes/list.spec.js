@@ -211,6 +211,9 @@ describe('GET /v1/modules/:namespace/:name', () => {
     await save({
       namespace: 'hashicorp', name: 'consul', provider: 'aws', version: '1.1.2', owner: '',
     });
+    await save({
+      namespace: 'hashicorp', name: 'consul', provider: 'google', version: '1.1.2', owner: '',
+    });
   });
 
   after(async () => {
@@ -223,10 +226,25 @@ describe('GET /v1/modules/:namespace/:name', () => {
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
-        expect(res.body).to.have.property('modules').to.have.lengthOf(2);
+        expect(res.body).to.have.property('modules').to.have.lengthOf(3);
         expect(res.body.modules[0].provider).to.equal('azurerm');
         expect(res.body.modules[0].version).to.equal('0.2.0');
         expect(res.body.modules[1].provider).to.equal('aws');
         expect(res.body.modules[1].version).to.equal('1.1.2');
+        expect(res.body.modules[2].provider).to.equal('google');
+        expect(res.body.modules[2].version).to.equal('1.1.2');
+      }));
+
+  it('should support pagination', () =>
+    request(app)
+      .get('/v1/modules/hashicorp/consul?offset=1&limit=1')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('meta');
+        expect(res.body.meta).to.have.property('limit').to.equal(1);
+        expect(res.body.meta).to.have.property('current_offset').to.equal(1);
+        expect(res.body.meta).to.have.property('next_offset').to.equal(2);
+        expect(res.body).to.have.property('modules').to.have.lengthOf(1);
       }));
 });
