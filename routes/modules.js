@@ -3,7 +3,7 @@ const multiparty = require('multiparty');
 
 const logger = require('../lib/logger');
 const { saveModule, hasModule } = require('../lib/storage');
-const { save } = require('../lib/store');
+const { save, getLatestVersion } = require('../lib/store');
 
 const router = Router();
 
@@ -89,6 +89,21 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
   });
 
   form.parse(req);
+});
+
+// https://www.terraform.io/docs/registry/api.html#latest-version-for-a-specific-module-provider
+router.get('/:namespace/:name/:provider', async (req, res, next) => {
+  const options = {
+    ...req.params,
+  };
+
+  const module = await getLatestVersion(options);
+
+  if (!module) {
+    return next();
+  }
+
+  return res.render('modules/latest-version', module);
 });
 
 module.exports = router;

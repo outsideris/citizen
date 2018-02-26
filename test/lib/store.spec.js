@@ -5,6 +5,7 @@ const {
   save,
   findAll,
   getVersions,
+  getLatestVersion,
 } = require('../../lib/store');
 const { deleteDbAll } = require('../helper');
 
@@ -131,6 +132,41 @@ describe('store\'s', async () => {
       });
 
       expect(result).to.have.lengthOf(3);
+    });
+  });
+
+  describe('getLatestVersion()', () => {
+    before(async () => {
+      await save({
+        namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+      });
+      await save({
+        namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+      });
+    });
+
+    after(async () => {
+      await deleteDbAll(db);
+    });
+
+    it('should return latest versions for a specific module', async () => {
+      const result = await getLatestVersion({
+        namespace: 'aws-modules',
+        name: 'vpc',
+        provider: 'aws',
+      });
+
+      expect(result).to.have.property('version').to.equal('1.5.1');
+    });
+
+    it('should return null when given module does not exist', async () => {
+      const result = await getLatestVersion({
+        namespace: 'aws-modules',
+        name: 'vpc',
+        provider: 'wrong-provider',
+      });
+
+      expect(result).to.be.null;
     });
   });
 });

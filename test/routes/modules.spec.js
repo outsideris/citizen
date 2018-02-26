@@ -4,7 +4,8 @@ const AWS = require('aws-sdk');
 const { promisify } = require('util');
 
 const app = require('../../app');
-const { enableMock, clearMock } = require('../helper');
+const { enableMock, clearMock, deleteDbAll } = require('../helper');
+const { db, save } = require('../../lib/store');
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 s3.delete = promisify(s3.deleteObject);
@@ -61,5 +62,38 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
       .then((res) => {
         expect(res.body).to.have.property('modules').to.be.an('array');
         expect(res.body.modules[0]).to.have.property('id').to.equal(modulePath);
+      }));
+});
+
+describe('GET /v1/modules/:namespace/:name/:provider', () => {
+  before(async () => {
+    await save({
+      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.1', owner: '',
+    });
+    await save({
+      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.2', owner: '',
+    });
+  });
+
+  after(async () => {
+    await deleteDbAll(db);
+  });
+
+  it('should return latest version for a specific module provider', () =>
+    request(app)
+      .get('/v1/modules/router/latest/aws')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('version').to.equal('1.1.2');
+      }));
+
+  it('should return 404 if given module does not exist', () =>
+    request(app)
+      .get('/v1/modules/router/latest/nomodule')
+      .expect('Content-Type', /application\/json/)
+      .expect(404)
+      .then((res) => {
+        expect(res.body).to.have.property('errors').to.be.an('array');
       }));
 });
