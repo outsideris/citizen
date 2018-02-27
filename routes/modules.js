@@ -66,7 +66,7 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
 
       const fileResult = await saveModule(`${destPath}/${filename}`, tarball);
       const metaResult = await save({
-        namespace, name, provider, version, owner,
+        namespace, name, provider, version, owner, location: `${destPath}/${filename}`,
       });
 
       if (fileResult.ETag && metaResult.ok) {

@@ -22,6 +22,7 @@ describe('store\'s', async () => {
         provider: 'store-aws',
         version: '0.1.0',
         owner: 'outsideris',
+        location: 'store-hashicorp/store-consul/store-aws/0.1.0/module.tar.gz',
       });
 
       expect(result).to.have.property('ok').to.be.true;
