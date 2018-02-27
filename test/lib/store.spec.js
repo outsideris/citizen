@@ -3,6 +3,7 @@ const { expect } = require('chai');
 const {
   db,
   save,
+  findOne,
   findAll,
   getVersions,
   getLatestVersion,
@@ -165,6 +166,40 @@ describe('store\'s', async () => {
         namespace: 'aws-modules',
         name: 'vpc',
         provider: 'wrong-provider',
+      });
+
+      expect(result).to.be.null;
+    });
+  });
+
+  describe('findOne()', () => {
+    before(async () => {
+      await save({
+        namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
+      });
+    });
+
+    after(async () => {
+      await deleteDbAll(db);
+    });
+
+    it('should return the specific module', async () => {
+      const result = await findOne({
+        namespace: 'aws-modules',
+        name: 'vpc',
+        provider: 'aws',
+        version: '1.5.1',
+      });
+
+      expect(result).to.have.property('version').to.equal('1.5.1');
+    });
+
+    it('should return null when given module does not exist', async () => {
+      const result = await findOne({
+        namespace: 'aws-modules',
+        name: 'vpc',
+        provider: 'aws',
+        version: '2.5.0',
       });
 
       expect(result).to.be.null;

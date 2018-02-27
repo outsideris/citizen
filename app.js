@@ -19,6 +19,7 @@ app.use('/', require('./routes/index'));
 app.use('/', require('./routes/service-discovery'));
 app.use('/v1/modules', require('./routes/modules'));
 app.use('/v1/modules', require('./routes/list'));
+app.use('/v1/modules', require('./routes/download'));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
