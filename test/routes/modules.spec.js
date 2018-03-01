@@ -65,6 +65,34 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
       }));
 });
 
+describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
+  before(async () => {
+    await save({
+      namespace: 'router', name: 'specific', provider: 'aws', version: '1.1.2', owner: '',
+    });
+  });
+
+  after(async () => {
+    await deleteDbAll(db);
+  });
+
+  it('should return latest version for a specific module provider', () =>
+    request(app)
+      .get('/v1/modules/router/specific/aws/1.1.2')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('id').to.equal('router/specific/aws/1.1.2');
+        expect(res.body).to.have.property('version').to.equal('1.1.2');
+      }));
+
+  it('should return 404 if given module does not exist', () =>
+    request(app)
+      .get('/v1/modules/router/specific/aws/2.1.2')
+      .expect('Content-Type', /application\/json/)
+      .expect(404));
+});
+
 describe('GET /v1/modules/:namespace/:name/:provider', () => {
   before(async () => {
     await save({
