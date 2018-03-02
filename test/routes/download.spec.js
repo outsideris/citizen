@@ -39,3 +39,27 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
         expect(res.body).to.have.property('errors').to.be.an('array');
       }));
 });
+
+describe('GET /v1/modules/:namespace/:name/:provider/download', () => {
+  before(async () => {
+    await save({
+      namespace: 'download', name: 'source', provider: 'aws', version: '1.2.0', location: 'download/source/aws/1.2.0/module.tar.gz',
+    });
+    await save({
+      namespace: 'download', name: 'source', provider: 'aws', version: '1.3.0', location: 'download/source/aws/1.3.0/module.tar.gz',
+    });
+  });
+
+  after(async () => {
+    await deleteDbAll(db);
+  });
+
+  it('should redirect to the latest version of a module', () =>
+    request(app)
+      .get('/v1/modules/download/source/aws/download')
+      .expect(302)
+      .then((res) => {
+        expect(res.headers).to.have.property('location')
+          .to.equal('/v1/modules/download/source/aws/1.3.0/download');
+      }));
+});

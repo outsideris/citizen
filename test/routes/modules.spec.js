@@ -76,7 +76,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
     await deleteDbAll(db);
   });
 
-  it('should return latest version for a specific module provider', () =>
+  it('should return a specific module', () =>
     request(app)
       .get('/v1/modules/router/specific/aws/1.1.2')
       .expect('Content-Type', /application\/json/)
