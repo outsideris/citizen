@@ -55,6 +55,7 @@ describe('GET /v1/modules', () => {
         expect(res.body.meta).to.have.property('limit').to.equal(2);
         expect(res.body.meta).to.have.property('current_offset').to.equal(1);
         expect(res.body.meta).to.have.property('next_offset').to.equal(3);
+        expect(res.body.meta).to.have.property('next_url').to.equal('/v1/modules/?limit=2&offset=3');
       }));
 
   it('should not be next_offset when there is no more modules', () =>
@@ -67,6 +68,7 @@ describe('GET /v1/modules', () => {
         expect(res.body.meta).to.have.property('limit');
         expect(res.body.meta).to.have.property('current_offset');
         expect(res.body.meta).to.not.have.property('next_offset');
+        expect(res.body.meta).to.not.have.property('next_url');
       }));
 });
 
@@ -245,6 +247,7 @@ describe('GET /v1/modules/:namespace/:name', () => {
         expect(res.body.meta).to.have.property('limit').to.equal(1);
         expect(res.body.meta).to.have.property('current_offset').to.equal(1);
         expect(res.body.meta).to.have.property('next_offset').to.equal(2);
+        expect(res.body.meta).to.have.property('next_url').to.equal('/v1/modules/hashicorp/consul?limit=1&offset=2');
         expect(res.body).to.have.property('modules').to.have.lengthOf(1);
       }));
 });

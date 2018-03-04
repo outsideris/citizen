@@ -2,6 +2,7 @@ const { Router } = require('express');
 const _ = require('lodash');
 
 const { findAll, getVersions } = require('../lib/store');
+const { makeUrl } = require('../lib/util');
 
 const router = Router();
 
@@ -29,8 +30,14 @@ router.get('/search', async (req, res) => {
     options.namespace = req.params.namespace;
   }
 
-  const modules = await findAll(options);
-  return res.render('modules/list', modules);
+  const data = await findAll(options);
+  if (data.meta.nextOffset) {
+    data.meta.nextUrl = makeUrl(req, {
+      limit: data.meta.limit,
+      offset: data.meta.nextOffset,
+    });
+  }
+  return res.render('modules/list', data);
 });
 
 // https://www.terraform.io/docs/registry/api.html#list-modules
@@ -42,8 +49,14 @@ router.get(['/', '/:namespace'], async (req, res) => {
     options.namespace = req.params.namespace;
   }
 
-  const modules = await findAll(options);
-  res.render('modules/list', modules);
+  const data = await findAll(options);
+  if (data.meta.nextOffset) {
+    data.meta.nextUrl = makeUrl(req, {
+      limit: data.meta.limit,
+      offset: data.meta.nextOffset,
+    });
+  }
+  res.render('modules/list', data);
 });
 
 // https://www.terraform.io/docs/registry/api.html#list-available-versions-for-a-specific-module
@@ -88,6 +101,7 @@ router.get('/:namespace/:name', async (req, res) => {
   const offset = +req.query.offset || 0;
   const limit = +req.query.limit || 15;
   const nextOffset = (offset + 1) * limit;
+  const hasNext = totalCount > nextOffset;
 
   const pagedModules = _.slice(modules, offset, nextOffset);
 
@@ -95,7 +109,8 @@ router.get('/:namespace/:name', async (req, res) => {
     meta: {
       limit,
       currentOffset: offset,
-      nextOffset: totalCount > nextOffset ? nextOffset : null,
+      nextOffset: hasNext ? nextOffset : null,
+      nextUrl: hasNext ? makeUrl(req, { limit, offset: nextOffset }) : null,
     },
     modules: pagedModules,
   });

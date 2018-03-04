@@ -3,7 +3,7 @@ module.exports = (data) => ({
     limit: data.meta.limit,
     current_offset: data.meta.currentOffset,
     next_offset: data.meta.nextOffset,
-    next_url: '',
+    next_url: data.meta.nextUrl,
   },
   modules: data.modules.map(m =>
     ({
