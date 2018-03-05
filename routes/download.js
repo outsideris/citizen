@@ -1,6 +1,7 @@
 const { Router } = require('express');
 
 const { findOne, getLatestVersion } = require('../lib/store');
+const { getModule } = require('../lib/storage');
 
 const router = Router();
 
@@ -34,6 +35,22 @@ router.get('/:namespace/:name/:provider/download', async (req, res, next) => {
 
   const target = `/v1/modules/${module.namespace}/${module.name}/${module.provider}/${module.version}/download`;
   return res.redirect(target);
+});
+
+// download a module
+router.get('/tarball/:namespace/:name/:provider/:version/*.tar.gz', async (req, res, next) => {
+  const options = {
+    ...req.params,
+  };
+
+  const module = await findOne(options);
+
+  if (!module) {
+    return next();
+  }
+
+  const file = await getModule(module.location);
+  return res.attachment('module.tar.gz').type('gz').send(file);
 });
 
 module.exports = router;

@@ -2,10 +2,13 @@ const request = require('supertest');
 const { expect } = require('chai');
 const AWS = require('aws-sdk');
 const { promisify } = require('util');
+const fs = require('fs');
+const path = require('path');
 
 const app = require('../../app');
 const { deleteDbAll } = require('../helper');
 const { db, save } = require('../../lib/store');
+const { enableMock, clearMock } = require('../helper');
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 s3.delete = promisify(s3.deleteObject);
@@ -62,4 +65,36 @@ describe('GET /v1/modules/:namespace/:name/:provider/download', () => {
         expect(res.headers).to.have.property('location')
           .to.equal('/v1/modules/download/source/aws/1.3.0/download');
       }));
+});
+
+describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
+  const version = (new Date()).getTime();
+  const modulePath = `download/tar/aws/${version}`;
+
+  before(async () => {
+    enableMock({ modulePath: `${modulePath}/module.tar.gz` });
+    await request(app)
+      .post(`/v1/modules/${modulePath}`)
+      .attach('module', 'test/fixture/module.tar.gz')
+      .expect(201);
+  });
+
+  after(async () => {
+    clearMock();
+    await deleteDbAll(db);
+  });
+
+  it('should download a tarball for a specific module', () => {
+    const targetFile = fs.readFileSync(path.join(__dirname, '..', 'fixture/test.tar.gz'));
+    const contentLength = `${targetFile.length}`;
+
+    return request(app)
+      .get(`/v1/modules/tarball/download/tar/aws/${version}/module.tar.gz`)
+      .expect(200)
+      .then((res) => {
+        expect(res.headers).to.have.property('content-disposition');
+        expect(res.headers).to.have.property('content-length')
+          .to.equal(contentLength);
+      });
+  });
 });
