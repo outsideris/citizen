@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const { promisify } = require('util');
 const fs = require('fs');
 const path = require('path');
+const nock = require('nock');
 
 const app = require('../../app');
 const { deleteDbAll } = require('../helper');
@@ -77,10 +78,32 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
       .post(`/v1/modules/${modulePath}`)
       .attach('module', 'test/fixture/module.tar.gz')
       .expect(201);
+    clearMock();
+
+    if (process.env.MOCK) {
+      nock('https://s3.ap-northeast-1.amazonaws.com')
+        .persist()
+        .get(`/${process.env.AWS_S3_BUCKET}/${modulePath}/module.tar.gz`)
+        .once()
+        .reply(() =>
+          [200, new Array(137).join('a'),
+            ['x-amz-id-2', 'UTXd/Ac9Lpf5htlqmY7jIa//st0VNw3HiV0H2tFpjQrabzdF0a1A0RXwaXXEDJsSMC0z9ieqSJg=',
+              'x-amz-request-id', '51DCE049BC4189E5',
+              'Date', 'Sun, 21 Jan 2018 16:47:35 GMT',
+              'Last-Modified', 'Sun, 21 Jan 2018 16:47:35 GMT',
+              'ETag', '"ed168b6114db5f54d38bb1bd9ba45106"',
+              'Accept-Ranges', 'bytes',
+              'Content-Type', 'application/octet-stream',
+              'Content-Length', '136',
+              'Server', 'AmazonS3'],
+          ]);
+    }
   });
 
   after(async () => {
-    clearMock();
+    if (process.env.MOCK) {
+      nock.cleanAll();
+    }
     await deleteDbAll(db);
   });
 
