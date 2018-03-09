@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const { findOne, getLatestVersion } = require('../lib/store');
+const { findOne, getLatestVersion, increaseDownload } = require('../lib/store');
 const { getModule } = require('../lib/storage');
 
 const router = Router();
@@ -50,6 +50,7 @@ router.get('/tarball/:namespace/:name/:provider/:version/*.tar.gz', async (req, 
   }
 
   const file = await getModule(module.location);
+  await increaseDownload(options);
   return res.attachment('module.tar.gz').type('gz').send(file);
 });
 

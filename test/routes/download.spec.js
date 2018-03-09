@@ -72,7 +72,7 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
   const version = (new Date()).getTime();
   const modulePath = `download/tar/aws/${version}`;
 
-  before(async () => {
+  beforeEach(async () => {
     enableMock({ modulePath: `${modulePath}/module.tar.gz` });
     await request(app)
       .post(`/v1/modules/${modulePath}`)
@@ -100,7 +100,7 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
     }
   });
 
-  after(async () => {
+  afterEach(async () => {
     if (process.env.MOCK) {
       nock.cleanAll();
     }
@@ -120,4 +120,21 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
           .to.equal(contentLength);
       });
   });
+
+  it('should increase download count for a specific module', () =>
+    request(app)
+      .get(`/v1/modules/tarball/download/tar/aws/${version}/module.tar.gz`)
+      .expect(200)
+      .then(() =>
+        db.find({
+          selector: {
+            namespace: { $eq: 'download' },
+            name: { $eq: 'tar' },
+            provider: { $eq: 'aws' },
+            version: { $eq: `${version}` },
+          },
+        }))
+      .then((doc) => {
+        expect(doc.docs[0]).to.have.property('downloads').to.equal(1);
+      }));
 });

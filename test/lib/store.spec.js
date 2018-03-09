@@ -7,6 +7,7 @@ const {
   findAll,
   getVersions,
   getLatestVersion,
+  increaseDownload,
 } = require('../../lib/store');
 const { deleteDbAll } = require('../helper');
 
@@ -203,6 +204,29 @@ describe('store\'s', async () => {
       });
 
       expect(result).to.be.null;
+    });
+  });
+
+  describe('increaseDownload()', () => {
+    before(async () => {
+      await save({
+        namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
+      });
+    });
+
+    after(async () => {
+      await deleteDbAll(db);
+    });
+
+    it('should increase download count of the module', async () => {
+      const result = await increaseDownload({
+        namespace: 'aws-modules',
+        name: 'vpc',
+        provider: 'aws',
+        version: '1.5.1',
+      });
+
+      expect(result).to.have.property('downloads').to.equal(1);
     });
   });
 });
