@@ -1,9 +1,9 @@
 const request = require('supertest');
 const { expect } = require('chai');
 
-const app = require('../../app');
-const { db, save } = require('../../lib/store');
-const { deleteDbAll } = require('../helper');
+const app = require('../app');
+const { db, save } = require('../lib/store');
+const { deleteDbAll } = require('../test/helper');
 
 describe('GET /v1/modules', () => {
   before(async () => {

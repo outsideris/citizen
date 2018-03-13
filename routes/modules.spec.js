@@ -3,9 +3,9 @@ const { expect } = require('chai');
 const AWS = require('aws-sdk');
 const { promisify } = require('util');
 
-const app = require('../../app');
-const { enableMock, clearMock, deleteDbAll } = require('../helper');
-const { db, save } = require('../../lib/store');
+const app = require('../app');
+const { enableMock, clearMock, deleteDbAll } = require('../test/helper');
+const { db, save } = require('../lib/store');
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 s3.delete = promisify(s3.deleteObject);

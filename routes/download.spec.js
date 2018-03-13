@@ -6,10 +6,10 @@ const fs = require('fs');
 const path = require('path');
 const nock = require('nock');
 
-const app = require('../../app');
-const { deleteDbAll } = require('../helper');
-const { db, save } = require('../../lib/store');
-const { enableMock, clearMock } = require('../helper');
+const app = require('../app');
+const { deleteDbAll } = require('../test/helper');
+const { db, save } = require('../lib/store');
+const { enableMock, clearMock } = require('../test/helper');
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 s3.delete = promisify(s3.deleteObject);
@@ -108,7 +108,7 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
   });
 
   it('should download a tarball for a specific module', () => {
-    const targetFile = fs.readFileSync(path.join(__dirname, '..', 'fixture/test.tar.gz'));
+    const targetFile = fs.readFileSync(path.join(__dirname, '../test', 'fixture/test.tar.gz'));
     const contentLength = `${targetFile.length}`;
 
     return request(app)
