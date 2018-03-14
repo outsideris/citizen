@@ -19,6 +19,7 @@
     "express": "^4.16.2",
     "glob-gitignore": "^1.0.6",
     "globby": "^8.0.1",
+    "gopher-hcl": "^0.1.0",
     "jten": "^0.2.0",
     "listr": "^0.13.0",
     "lodash": "^4.17.5",
