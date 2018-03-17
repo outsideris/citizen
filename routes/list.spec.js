@@ -170,16 +170,16 @@ describe('GET /v1/modules/search', () => {
 describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
   before(async () => {
     await save({
-      namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
+      namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '', definition: { root: { name: 'lb-http' }, submodules: [{ name: 'example' }] },
     });
     await save({
-      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '',
+      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '', definition: { root: { name: 'vpc' }, submodules: [{ name: 'example' }] },
     });
     await save({
-      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '', definition: { root: { name: 'vpc' }, submodules: [{ name: 'example' }] },
     });
     await save({
-      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+      namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', definition: { root: { name: 'vpc' }, submodules: [{ name: 'example' }] },
     });
   });
 
@@ -196,6 +196,22 @@ describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
         expect(res.body).to.have.property('modules').to.have.lengthOf(1);
         expect(res.body.modules[0].versions).to.have.lengthOf(3);
         expect(res.body.modules[0]).to.have.property('versions').to.have.lengthOf(3);
+      }));
+
+  it('should return root and submodules', () =>
+    request(app)
+      .get('/v1/modules/aws-modules/vpc/aws/versions')
+      .expect('Content-Type', /application\/json/)
+      .expect(200)
+      .then((res) => {
+        const specificModule = res.body.modules[0].versions[0];
+        expect(specificModule)
+          .to.have.property('root')
+          .to.have.property('name').to.equal('vpc');
+        expect(specificModule)
+          .to.have.property('submodules').to.have.lengthOf(1);
+        expect(specificModule.submodules[0])
+          .to.have.property('name').to.equal('example');
       }));
 });
 

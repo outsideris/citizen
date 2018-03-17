@@ -10,6 +10,6 @@ module.exports = (data) => ({
   published_at: data.published_at,
   downloads: 0,
   verified: false,
-  root: {},
-  submodules: [],
+  root: data.root,
+  submodules: data.submodules,
 });

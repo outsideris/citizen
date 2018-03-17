@@ -119,10 +119,10 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
 describe('GET /v1/modules/:namespace/:name/:provider', () => {
   before(async () => {
     await save({
-      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.1', owner: '',
+      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.1', owner: '', definition: { root: { name: 'latest' }, submodules: [{ name: 'example' }] },
     });
     await save({
-      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.2', owner: '',
+      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.2', owner: '', definition: { root: { name: 'latest' }, submodules: [{ name: 'example' }] },
     });
   });
 
@@ -137,6 +137,8 @@ describe('GET /v1/modules/:namespace/:name/:provider', () => {
       .expect(200)
       .then((res) => {
         expect(res.body).to.have.property('version').to.equal('1.1.2');
+        expect(res.body).to.have.property('root').to.have.property('name').to.equal('latest');
+        expect(res.body.submodules[0]).to.have.property('name').to.equal('example');
       }));
 
   it('should return 404 if given module does not exist', () =>
