@@ -2,6 +2,7 @@ const { Router } = require('express');
 const multiparty = require('multiparty');
 
 const logger = require('../lib/logger');
+const { parseHcl } = require('../lib/util');
 const { saveModule, hasModule } = require('../lib/storage');
 const { save, getLatestVersion, findOne } = require('../lib/store');
 
@@ -65,8 +66,15 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
       }
 
       const fileResult = await saveModule(`${destPath}/${filename}`, tarball);
+      const definition = await parseHcl(name, tarball);
       const metaResult = await save({
-        namespace, name, provider, version, owner, location: `${destPath}/${filename}`,
+        namespace,
+        name,
+        provider,
+        version,
+        owner,
+        location: `${destPath}/${filename}`,
+        definition,
       });
 
       if (fileResult.ETag && metaResult.ok) {

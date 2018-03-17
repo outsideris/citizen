@@ -13,12 +13,14 @@ s3.delete = promisify(s3.deleteObject);
 describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   const modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
 
-  before(() => {
+  beforeEach(() => {
     enableMock({ modulePath: `${modulePath}/module.tar.gz` });
     enableMock({ modulePath: `${modulePath}/test.tar.gz` });
+    enableMock({ modulePath: `${modulePath}/complex.tar.gz` });
   });
 
-  after(async () => {
+  afterEach(async () => {
+    await deleteDbAll(db);
     if (process.env.MOCK) {
       return clearMock();
     }
@@ -62,6 +64,27 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
       .then((res) => {
         expect(res.body).to.have.property('modules').to.be.an('array');
         expect(res.body.modules[0]).to.have.property('id').to.equal(modulePath);
+      }));
+
+  it('should register module information', () =>
+    request(app)
+      .post(`/v1/modules/${modulePath}`)
+      .attach('module', 'test/fixture/complex.tar.gz')
+      .expect('Content-Type', /application\/json/)
+      .expect(201)
+      .then(res => db.find({
+        selector: {
+          namespace: { $eq: res.body.namespace },
+          name: { $eq: res.body.name },
+          provider: { $eq: res.body.provider },
+          version: { $eq: res.body.version },
+        },
+      }))
+      .then((data) => {
+        expect(data.docs[0]).to.have.property('root');
+        expect(data.docs[0].root).to.have.property('name').to.equal('consul');
+        expect(data.docs[0]).to.have.property('submodules').to.be.an.instanceof(Array);
+        expect(data.docs[0].submodules).to.have.lengthOf(3);
       }));
 });
 

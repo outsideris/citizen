@@ -46,7 +46,7 @@ module.exports = {
         )
         .get(`/${process.env.AWS_S3_BUCKET}/${modulePath}`)
         .reply((uri) => {
-          if (uri.indexOf('module.tar.gz') !== -1) { // when publishing module
+          if (uri.indexOf('module.tar.gz') !== -1 || uri.indexOf('complex.tar.gz') !== -1) { // when publishing module
             return [404, '<?xml version="1.0" encoding="UTF-8"?>\n<Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>citizen/1516553253143/test.tar.gz/wrong</Key><RequestId>CA3688C9219019B8</RequestId><HostId>HoNack5lolKkIbPaGJADKOA1jLDxlP/G1gJMdi9Xc3j5WSaeHJphz/uqVLqDrMjA24W/8+kvJXM=</HostId></Error>',
               ['x-amz-request-id', 'CA3688C9219019B8',
                 'x-amz-id-2', 'HoNack5lolKkIbPaGJADKOA1jLDxlP/G1gJMdi9Xc3j5WSaeHJphz/uqVLqDrMjA24W/8+kvJXM=',
