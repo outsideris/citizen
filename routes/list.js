@@ -17,13 +17,16 @@ router.get('/search', async (req, res) => {
   // `q` search in `name` field.
   // It could be extended to other fields. Specification said it depends on registry implementation.
   const options = {
-    ...req.query,
+    offset: req.query.offset,
+    limit: req.query.limit,
+    provider: req.query.provider,
+    namespace: req.query.namespace,
+    verified: req.query.verified,
     selector: {
       name: {
         $regex: new RegExp(req.query.q),
       },
     },
-    q: null,
   };
 
   if (req.params.namespace) {
@@ -43,7 +46,10 @@ router.get('/search', async (req, res) => {
 // https://www.terraform.io/docs/registry/api.html#list-modules
 router.get(['/', '/:namespace'], async (req, res) => {
   const options = {
-    ...req.query,
+    offset: req.query.offset,
+    limit: req.query.limit,
+    provider: req.query.provider,
+    verified: req.query.verified,
   };
   if (req.params.namespace) {
     options.namespace = req.params.namespace;
@@ -62,7 +68,9 @@ router.get(['/', '/:namespace'], async (req, res) => {
 // https://www.terraform.io/docs/registry/api.html#list-available-versions-for-a-specific-module
 router.get('/:namespace/:name/:provider/versions', async (req, res, next) => {
   const options = {
-    ...req.params,
+    namespace: req.params.namespace,
+    name: req.params.name,
+    provider: req.params.provider,
   };
 
   try {

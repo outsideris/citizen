@@ -102,7 +102,10 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
 // https://www.terraform.io/docs/registry/api.html#get-a-specific-module
 router.get('/:namespace/:name/:provider/:version', async (req, res, next) => {
   const options = {
-    ...req.params,
+    namespace: req.params.namespace,
+    name: req.params.name,
+    provider: req.params.provider,
+    version: req.params.version,
   };
 
   const module = await findOne(options);
@@ -117,7 +120,9 @@ router.get('/:namespace/:name/:provider/:version', async (req, res, next) => {
 // https://www.terraform.io/docs/registry/api.html#latest-version-for-a-specific-module-provider
 router.get('/:namespace/:name/:provider', async (req, res, next) => {
   const options = {
-    ...req.params,
+    namespace: req.params.namespace,
+    name: req.params.name,
+    provider: req.params.provider,
   };
 
   const module = await getLatestVersion(options);
