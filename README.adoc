@@ -22,3 +22,13 @@ $ export HOSTNAME=YOUR_HOSTNAME
 ....
 
 replace `YOUR_HOSTNAME` like `www.example.com:3000`.
+
+== Build binaries
+
+[source, sh]
+....
+$ npm run build
+....
+
+Under ``dist/``,
+citizen binaries for linux, darwin and windows made.
