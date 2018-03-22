@@ -4,3 +4,4 @@ node_modules/
 .envrc
 citizen-db/
 dist/
+citizen-db-mrview-*/
