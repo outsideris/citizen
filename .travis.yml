@@ -25,5 +25,7 @@ deploy:
     secure: mUU9a65fvVZaMb8vuNZ2a7d8VDtrdtXPv7suoZTEAIdG3M/koINOoDJU49ulWv8yxQXA/yMzXImOfj1RuryoLp+1kmxqgmeZCHG00ncS0EyNAo8On+Wgw3VB8qevYXJfSWvuG5BDL8P//0h4PSUjZmd0YpB7CHEmt+1FHIPC2HIiU5pmEsaRthGzQy3wB8NnFvp8n+t2MIlXSg1ZEaeVhLKHnte6ddt6Hc9rPbXtPOHODEl/FOdO2GSFNtkr90P0U/VZM+6Wqsh0b9kuQDcgHC2Vgoy5SzUOGjxGDOVSzDp+vI54cznzq+vh4/6S+nF2uXiBFONtYOHwTWwZpPnaLSdCKevYUWgkJKCIrf98v3rb9ds8ocXZutM+GhDeO3o/Eh94ydua/aHzF9aeroc3gpeYcV9NZOqh+yMH6jo3/u4b1hmGRdu0V6aQe0HVmRWjPcTHcV+laAC7Mt/MeAX9FX+TwnPZhflwTIWER0r2mb8Bhnqsg5TkMDAWoE6t8p1zk25nC0lCxWbVdtO8W0Q9KGgvkskoNxdoVy0v4JnwiljebXnImei/FDCgHKuJP+sSZCrDiMsRCuFyxX7kCCOBzopIeMBjNEDZ3QIHta/AsWH/MjgOGLOxWQ17NKshGcvXwv97SFdlax6Ut0q/+S6L+N9W8tJ8uWwKY7JFByI6p2Y=
   file_glob: true
   file: dist/*
+  skip_cleanup: true
   on:
     repo: outsideris/citizen
+    tags: true
