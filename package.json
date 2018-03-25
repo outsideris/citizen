@@ -48,6 +48,7 @@
     "nock": "^9.1.6",
     "nodemon": "^1.12.1",
     "pkg": "^4.3.0",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "unzipper": "^0.8.11"
   }
 }

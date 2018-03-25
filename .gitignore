@@ -5,3 +5,4 @@ node_modules/
 citizen-db/
 dist/
 citizen-db-mrview-*/
+test/integration/temp/

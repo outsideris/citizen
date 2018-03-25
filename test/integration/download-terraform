@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+const request = require('request');
+const { join } = require('path');
+const fs = require('fs');
+const unzipper = require('unzipper');
+const debug = require('debug')('test:integration');
+
+const chmod = require('util').promisify(fs.chmod);
+
+const TERRAFORM_VERSION = '0.11.5';
+const PLATFORM = process.platform;
+const DOWNLOAD_URL = `https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${PLATFORM}_amd64.zip`;
+
+const TARGET_DIR = join(__dirname, './temp');
+fs.mkdir(TARGET_DIR, (err) => {
+  debug(`Start to download terraform v${TERRAFORM_VERSION}`);
+
+  request(DOWNLOAD_URL)
+    .pipe(unzipper.Parse())
+    .on('entry', (entry) => {
+      debug('download completed');
+
+      const fileName = entry.path;
+      if (fileName === 'terraform') {
+        debug('Write it as a file');
+        entry.on('finish', async () => {
+          await chmod(`${TARGET_DIR}/${fileName}`, 0o765);
+          debug('All done.');
+        });
+        entry.pipe(fs.createWriteStream(`${TARGET_DIR}/${fileName}`));
+      } else {
+        entry.autodrain();
+      }
+    });
+});
