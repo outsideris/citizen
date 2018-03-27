@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen?ref=badge_shield)
+
 = Citizen
 
 An Private link:https://registry.terraform.io/[Terraform Module Registry]
@@ -32,3 +34,7 @@ $ npm run build
 
 Under ``dist/``,
 citizen binaries for linux, darwin and windows made.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen?ref=badge_large)
