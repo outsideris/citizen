@@ -6,8 +6,8 @@
     "citizen": "./bin/citizen.js"
   },
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www",
+    "start": "node ./bin/citizen.js server",
+    "dev": "nodemon ./bin/citizen.js server",
     "lint": "eslint .",
     "test": "mocha --exit --recursive -t 20000 $(find . -name '*.spec.js' -not -path './node_modules/*')",
     "clean": "rimraf dist",
@@ -45,6 +45,7 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-mocha": "^4.11.0",
     "mocha": "^5.0.4",
+    "ngrok": "^3.0.1",
     "nock": "^9.1.6",
     "nodemon": "^1.12.1",
     "pkg": "^4.3.0",

@@ -1,22 +1,13 @@
 const app = require('../../app');
-const https = require('https');
-const { readFileSync } = require('fs');
-const { join } = require('path');
+const http = require('http');
 const debug = require('debug')('test:integration');
 
-const httpsOptions = {
-  key: readFileSync(join(__dirname, './key.pem')),
-  cert: readFileSync(join(__dirname, './cert.pem')),
-};
-
-const runServer = () => {
-  const port = 443;
+const run = (port = 3000) => {
   app.set('port', port);
 
-  const server = https.createServer(httpsOptions, app);
+  const server = http.createServer(app);
   server.listen(port);
   server.on('error', (error) => {
-    console.log(error);
     if (error.syscall !== 'listen') {
       throw error;
     }
@@ -44,6 +35,6 @@ const runServer = () => {
   });
 };
 
-module.exports = runServer;
-
-runServer();
+module.exports = {
+  run,
+};
