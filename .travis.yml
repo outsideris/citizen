@@ -13,7 +13,7 @@ env:
     - CITIZEN_ADDR=http://127.0.0.1:3000
     - MOCK=true
 install:
-  - npm install -g npm @latest
+  - npm install -g npm@latest
   - npm ci
   - npm run lint
 script:
