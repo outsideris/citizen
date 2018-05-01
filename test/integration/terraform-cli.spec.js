@@ -38,8 +38,8 @@ describe('terraform CLI integration', () => {
   });
 
   it('should conntet the registry server with terraform-cli', (done) => {
-    const terraform = join(__dirname, 'temp', 'terraform')
-    const cwd = join(__dirname, 'fixture', 'simple')
+    const terraform = join(__dirname, 'temp', 'terraform');
+    const cwd = join(__dirname, 'fixture', 'simple');
 
     execFile(terraform, ['get'], { cwd }, (err, stdout, stderr) => {
       expect(stdout).to.include('Getting source');
