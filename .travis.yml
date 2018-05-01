@@ -13,8 +13,8 @@ env:
     - CITIZEN_ADDR=http://127.0.0.1:3000
     - MOCK=true
 install:
-  - npm run lint
   - npm ci
+  - npm run lint
 script:
   - npm test -- --forbid-only
 before_deploy:
