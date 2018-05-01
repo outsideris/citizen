@@ -14,9 +14,9 @@ env:
     - MOCK=true
 install:
   - npm run lint
-  - npm install
+  - npm ci
 script:
-  - npm test
+  - npm test -- --forbid-only
 before_deploy:
   - npm run build
 deploy:
