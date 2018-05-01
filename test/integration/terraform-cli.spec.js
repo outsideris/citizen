@@ -9,11 +9,18 @@ const registry = require('./registry');
 
 describe('terraform CLI integration', () => {
   let url;
-  before(async () => {
-    const port = await getPort();
-    url = await connect(port);
-    process.env.HOSTNAME = url.host;
-    registry.run(port);
+  before((done) => {
+    const download = join(__dirname, 'download-terraform');
+
+    execFile(download, async (err) => {
+      if (err) { return done(err); }
+
+      const port = await getPort();
+      url = await connect(port);
+      process.env.HOSTNAME = url.host;
+      registry.run(port);
+      return done();
+    });
   });
 
   after(async () => {
