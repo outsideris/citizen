@@ -1,4 +1,6 @@
 const https = require('https');
+const fs = require('fs');
+const { promisify } = require('util');
 const { expect } = require('chai');
 const getPort = require('get-port');
 const { execFile } = require('child_process');
@@ -7,23 +9,40 @@ const { join } = require('path');
 const { connect, disconnect } = require('./ngrok');
 const registry = require('./registry');
 
+const writeFile = promisify(fs.writeFile);
+const unlink = promisify(fs.unlink);
+
+const terraformDefinition = `module "vpc" {
+  source = "__MODULE_ADDRESS__"
+}`;
+
 describe('terraform CLI integration', () => {
   let url;
+  const definitonFile = join(__dirname, 'fixture', 'tf-test.tf');
+
   before((done) => {
     const download = join(__dirname, 'download-terraform');
 
     execFile(download, async (err) => {
       if (err) { return done(err); }
 
-      const port = await getPort();
-      url = await connect(port);
-      process.env.HOSTNAME = url.host;
-      registry.run(port);
-      return done();
+      try {
+        const port = await getPort();
+        url = await connect(port);
+        process.env.HOSTNAME = url.host;
+        registry.run(port);
+
+        const definition = terraformDefinition.replace(/__MODULE_ADDRESS__/, `${url.href}vpc/aws`);
+        await writeFile(definitonFile, definition, 'utf8');
+        return done();
+      } catch (e) {
+        return done(e);
+      }
     });
   });
 
   after(async () => {
+    await unlink(definitonFile);
     await disconnect();
     // TODO: terminate the rigistry server
   });
@@ -46,7 +65,7 @@ describe('terraform CLI integration', () => {
 
   it('should conntet the registry server with terraform-cli', (done) => {
     const terraform = join(__dirname, 'temp', 'terraform');
-    const cwd = join(__dirname, 'fixture', 'simple');
+    const cwd = join(__dirname, 'fixture');
 
     execFile(terraform, ['get'], { cwd }, (err, stdout, stderr) => {
       expect(stdout).to.include('Getting source');
