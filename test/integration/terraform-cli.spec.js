@@ -11,6 +11,7 @@ const registry = require('./registry');
 
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
+const mkdir = promisify(fs.mkdir);
 
 const terraformDefinition = `module "vpc" {
   source = "__MODULE_ADDRESS__"
@@ -19,7 +20,8 @@ const terraformDefinition = `module "vpc" {
 describe('terraform CLI integration', () => {
   let url;
   let server;
-  const definitonFile = join(__dirname, 'fixture', 'tf-test.tf');
+  const targetDir = join(__dirname, 'fixture');
+  const definitonFile = join(targetDir, 'tf-test.tf');
 
   before((done) => {
     const download = join(__dirname, 'download-terraform');
@@ -32,6 +34,12 @@ describe('terraform CLI integration', () => {
         url = await connect(port);
         process.env.HOSTNAME = url.host;
         server = registry.run(port);
+
+        try {
+          await mkdir(targetDir);
+        } catch (ignore) {
+          // ignored when targetDir already exist
+        }
 
         const definition = terraformDefinition.replace(/__MODULE_ADDRESS__/, `${url.href}vpc/aws`);
         await writeFile(definitonFile, definition, 'utf8');
