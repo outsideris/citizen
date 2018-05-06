@@ -14,7 +14,7 @@ const TERRAFORM_VERSION = '0.11.7';
 const PLATFORM = process.platform;
 const DOWNLOAD_URL = `https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${PLATFORM}_amd64.zip`;
 
-const TARGET_DIR = join(__dirname, 'temp2');
+const TARGET_DIR = join(__dirname, 'temp');
 
 const download = async() => {
   try {
