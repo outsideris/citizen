@@ -13,6 +13,7 @@ env:
     - AWS_SECRET_ACCESS_KEY=xxxxx
     - CITIZEN_ADDR=http://127.0.0.1:3000
     - MOCK=true
+    - DEBUG=*,-mocha:*,-express:*,-nock.*,-pouchdb:*
 install:
   - npm install -g npm@latest
   - npm ci
