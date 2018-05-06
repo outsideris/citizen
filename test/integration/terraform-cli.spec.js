@@ -17,7 +17,8 @@ const terraformDefinition = `module "vpc" {
 }`;
 
 describe('terraform CLI integration', () => {
-  let url, server;
+  let url;
+  let server;
   const definitonFile = join(__dirname, 'fixture', 'tf-test.tf');
 
   before((done) => {
