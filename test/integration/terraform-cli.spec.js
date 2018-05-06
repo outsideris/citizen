@@ -17,7 +17,7 @@ const terraformDefinition = `module "vpc" {
 }`;
 
 describe('terraform CLI integration', () => {
-  let url;
+  let url, server;
   const definitonFile = join(__dirname, 'fixture', 'tf-test.tf');
 
   before((done) => {
@@ -30,7 +30,7 @@ describe('terraform CLI integration', () => {
         const port = await getPort();
         url = await connect(port);
         process.env.HOSTNAME = url.host;
-        registry.run(port);
+        server = registry.run(port);
 
         const definition = terraformDefinition.replace(/__MODULE_ADDRESS__/, `${url.href}vpc/aws`);
         await writeFile(definitonFile, definition, 'utf8');
@@ -44,7 +44,7 @@ describe('terraform CLI integration', () => {
   after(async () => {
     await unlink(definitonFile);
     await disconnect();
-    // TODO: terminate the rigistry server
+    await registry.terminate(server);
   });
 
   it('should connect the registry server', (done) => {

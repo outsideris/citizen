@@ -33,8 +33,22 @@ const run = (port = 3000) => {
     const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
     debug(`Listening on ${bind}`);
   });
+
+  return server;
+};
+
+const terminate = (server) => {
+  return new Promise((resolve, reject) => {
+    server.close((err) => {
+      if (err) {
+        reject(err);
+      }
+      resolve();
+    });
+  });
 };
 
 module.exports = {
   run,
+  terminate,
 };
