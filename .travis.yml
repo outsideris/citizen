@@ -17,6 +17,7 @@ install:
   - npm install -g npm@latest
   - npm ci
   - npm run lint
+  - ./test/integration/download-terraform
 script:
   - npm test -- --forbid-only
 before_deploy:
