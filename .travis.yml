@@ -4,6 +4,7 @@ node_js:
 cache:
   directories:
     - node_modules
+    - test/integration/temp/terraform
 env:
   global:
     - HOSTNAME=localhost
@@ -12,7 +13,7 @@ env:
     - AWS_SECRET_ACCESS_KEY=xxxxx
     - CITIZEN_ADDR=http://127.0.0.1:3000
     - MOCK=true
-    - DEBUG=*,-mocha:*,-express:*,-nock.*,-pouchdb:*,-eslint:*,-eslint*,-snapdragon:*,-body-parser:*,-morgan
+    - DEBUG=*,-mocha:*,-express:*,-nock.*,-pouchdb:*,-eslint:*,-eslint*,-snapdragon:*,-body-parser:*,-morgan,-superagent
 install:
   - npm install -g npm@latest
   - npm ci
