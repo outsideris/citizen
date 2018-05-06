@@ -4,6 +4,7 @@ node_js:
 cache:
   directories:
     - node_modules
+    - test/integration/temp/terraform
 env:
   global:
     - HOSTNAME=localhost
