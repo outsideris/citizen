@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "private": true,
   "bin": {
-    "citizen": "./bin/citizen.js"
+    "citizen": "./bin/citizen"
   },
   "scripts": {
     "start": "node ./bin/citizen.js server",
