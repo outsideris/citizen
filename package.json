@@ -12,7 +12,7 @@
     "test": "mocha --exit --recursive -t 20000 $(find . -name '*.spec.js' -not -path './node_modules/*')",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "build": "pkg . --out-path dist"
+    "build": "pkg . --out-path dist --targets node8-linux-x64,node8-macos-x64,node8-win-x64"
   },
   "dependencies": {
     "aws-sdk": "^2.176.0",
