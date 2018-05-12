@@ -56,7 +56,7 @@ describe('terraform CLI', () => {
         // ignored when targetDir already exist
       }
 
-      const definition = terraformDefinition.replace(/__MODULE_ADDRESS__/, `${url.href}vpc/aws`);
+      const definition = terraformDefinition.replace(/__MODULE_ADDRESS__/, `${url.host}/citizen-test/no-vpc/aws`);
       await writeFile(definitonFile, definition, 'utf8');
     });
 
@@ -84,8 +84,8 @@ describe('terraform CLI', () => {
       const cwd = join(__dirname, 'fixture');
 
       execFile(terraform, ['get'], { cwd }, (err, stdout, stderr) => {
-        expect(stdout).to.include('Getting source');
-        expect(stderr).to.include('bad response code: 404');
+        expect(stdout).to.include('- module.vpc');
+        expect(stderr).to.include('no versions found');
         done();
       });
     });
