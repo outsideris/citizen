@@ -5,7 +5,7 @@ const app = require('../app');
 const { db, save } = require('../lib/store');
 const { deleteDbAll } = require('../test/helper');
 
-describe('GET /v1/modules', () => {
+describe('GET /v1', () => {
   before(async () => {
     await save({
       namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
@@ -27,7 +27,7 @@ describe('GET /v1/modules', () => {
 
   it('should return all modules', () =>
     request(app)
-      .get('/v1/modules')
+      .get('/v1')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -38,7 +38,7 @@ describe('GET /v1/modules', () => {
 
   it('should support pagination', () =>
     request(app)
-      .get('/v1/modules?offset=0&limit=2')
+      .get('/v1?offset=0&limit=2')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -47,7 +47,7 @@ describe('GET /v1/modules', () => {
 
   it('should return meta of pagination', () =>
     request(app)
-      .get('/v1/modules?offset=1&limit=2')
+      .get('/v1?offset=1&limit=2')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -55,12 +55,12 @@ describe('GET /v1/modules', () => {
         expect(res.body.meta).to.have.property('limit').to.equal(2);
         expect(res.body.meta).to.have.property('current_offset').to.equal(1);
         expect(res.body.meta).to.have.property('next_offset').to.equal(3);
-        expect(res.body.meta).to.have.property('next_url').to.equal('/v1/modules/?limit=2&offset=3');
+        expect(res.body.meta).to.have.property('next_url').to.equal('/v1/?limit=2&offset=3');
       }));
 
   it('should not be next_offset when there is no more modules', () =>
     request(app)
-      .get('/v1/modules?offset=2&limit=2')
+      .get('/v1?offset=2&limit=2')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -72,7 +72,7 @@ describe('GET /v1/modules', () => {
       }));
 });
 
-describe('GET /v1/modules/:namespace', () => {
+describe('GET /v1/:namespace', () => {
   before(async () => {
     await save({
       namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
@@ -94,7 +94,7 @@ describe('GET /v1/modules/:namespace', () => {
 
   it('should return all modules of namespace', () =>
     request(app)
-      .get('/v1/modules/aws-modules')
+      .get('/v1/aws-modules')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -105,7 +105,7 @@ describe('GET /v1/modules/:namespace', () => {
 
   it('should filter modules by provider', () =>
     request(app)
-      .get('/v1/modules/aws-modules?provider=microsoft')
+      .get('/v1/aws-modules?provider=microsoft')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -115,7 +115,7 @@ describe('GET /v1/modules/:namespace', () => {
       }));
 });
 
-describe('GET /v1/modules/search', () => {
+describe('GET /v1/search', () => {
   before(async () => {
     await save({
       namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
@@ -137,7 +137,7 @@ describe('GET /v1/modules/search', () => {
 
   it('should return all modules which matched by q', () =>
     request(app)
-      .get('/v1/modules/search?q=vpc')
+      .get('/v1/search?q=vpc')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -148,7 +148,7 @@ describe('GET /v1/modules/search', () => {
 
   it('should return all modules which contain q', () =>
     request(app)
-      .get('/v1/modules/search?q=pc')
+      .get('/v1/search?q=pc')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -159,7 +159,7 @@ describe('GET /v1/modules/search', () => {
 
   it('should reject the request which does not have q parameter', () =>
     request(app)
-      .get('/v1/modules/search')
+      .get('/v1/search')
       .expect('Content-Type', /application\/json/)
       .expect(400)
       .then((res) => {
@@ -167,7 +167,7 @@ describe('GET /v1/modules/search', () => {
       }));
 });
 
-describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
+describe('GET /v1/:namespace/:name/:provider/versions', () => {
   before(async () => {
     await save({
       namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '', definition: { root: { name: 'lb-http' }, submodules: [{ name: 'example' }] },
@@ -189,7 +189,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
 
   it('should return available versions for a specific module', () =>
     request(app)
-      .get('/v1/modules/aws-modules/vpc/aws/versions')
+      .get('/v1/aws-modules/vpc/aws/versions')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -200,7 +200,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
 
   it('should return root and submodules', () =>
     request(app)
-      .get('/v1/modules/aws-modules/vpc/aws/versions')
+      .get('/v1/aws-modules/vpc/aws/versions')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -215,7 +215,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
       }));
 });
 
-describe('GET /v1/modules/:namespace/:name', () => {
+describe('GET /v1/:namespace/:name', () => {
   before(async () => {
     await save({
       namespace: 'hashicorp', name: 'consul', provider: 'azurerm', version: '0.1.0', owner: '',
@@ -240,7 +240,7 @@ describe('GET /v1/modules/:namespace/:name', () => {
 
   it('should return all latest version of module for all providers', () =>
     request(app)
-      .get('/v1/modules/hashicorp/consul')
+      .get('/v1/hashicorp/consul')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -255,7 +255,7 @@ describe('GET /v1/modules/:namespace/:name', () => {
 
   it('should support pagination', () =>
     request(app)
-      .get('/v1/modules/hashicorp/consul?offset=1&limit=1')
+      .get('/v1/hashicorp/consul?offset=1&limit=1')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -263,7 +263,7 @@ describe('GET /v1/modules/:namespace/:name', () => {
         expect(res.body.meta).to.have.property('limit').to.equal(1);
         expect(res.body.meta).to.have.property('current_offset').to.equal(1);
         expect(res.body.meta).to.have.property('next_offset').to.equal(2);
-        expect(res.body.meta).to.have.property('next_url').to.equal('/v1/modules/hashicorp/consul?limit=1&offset=2');
+        expect(res.body.meta).to.have.property('next_url').to.equal('/v1/hashicorp/consul?limit=1&offset=2');
         expect(res.body).to.have.property('modules').to.have.lengthOf(1);
       }));
 });
