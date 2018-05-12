@@ -20,6 +20,9 @@ const terraformDefinition = `module "vpc" {
 describe('terraform CLI', () => {
   let url;
   let server;
+  const targetDir = join(__dirname, 'fixture');
+  const definitonFile = join(targetDir, 'tf-test.tf');
+  const terraform = join(__dirname, 'temp', 'terraform');
 
   before((done) => {
     const download = join(__dirname, 'download-terraform');
@@ -46,9 +49,6 @@ describe('terraform CLI', () => {
   });
 
   describe('basic setup', () => {
-    const targetDir = join(__dirname, 'fixture');
-    const definitonFile = join(targetDir, 'tf-test.tf');
-
     before(async () => {
       try {
         await mkdir(targetDir);
@@ -81,7 +81,6 @@ describe('terraform CLI', () => {
     });
 
     it('cli should connect the registry server with terraform-cli', (done) => {
-      const terraform = join(__dirname, 'temp', 'terraform');
       const cwd = join(__dirname, 'fixture');
 
       execFile(terraform, ['get'], { cwd }, (err, stdout, stderr) => {
