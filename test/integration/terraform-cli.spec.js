@@ -32,7 +32,20 @@ describe('terraform CLI', () => {
 
       try {
         const port = await getPort();
-        url = await connect(port);
+        let exit = true;
+        while (exit) {
+          url = await connect(port); // eslint-disable-line
+          // terraform handle URL which started with a numeric character
+          // as local path, not registry server
+          // see: https://github.com/hashicorp/terraform/pull/18039
+          const startedWithNumeric = /^[0-9]/.test(url.host);
+          if (!startedWithNumeric) {
+            exit = false;
+          } else {
+            await disconnect(); // eslint-disable-line
+          }
+        }
+
         process.env.HOSTNAME = url.host;
         server = registry.run(port);
 
