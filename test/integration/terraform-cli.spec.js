@@ -8,10 +8,14 @@ const { join } = require('path');
 
 const { connect, disconnect } = require('./ngrok');
 const registry = require('./registry');
+const { db } = require('../../lib/store');
+const { deleteDbAll } = require('../helper');
 
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
+const access = promisify(fs.access);
+const rimraf = promisify(require('rimraf'));
 
 const terraformDefinition = `module "vpc" {
   source = "__MODULE_ADDRESS__"
@@ -48,6 +52,7 @@ describe('terraform CLI', () => {
 
         process.env.HOSTNAME = url.host;
         server = registry.run(port);
+        process.env.CITIZEN_ADDR = `http://127.0.0.1:${port}`;
 
         return done();
       } catch (e) {
@@ -59,6 +64,7 @@ describe('terraform CLI', () => {
   after(async () => {
     await disconnect();
     await registry.terminate(server);
+    await deleteDbAll(db);
   });
 
   describe('basic setup', () => {
@@ -100,6 +106,52 @@ describe('terraform CLI', () => {
         expect(stdout).to.include('- module.vpc');
         expect(stderr).to.include('no versions found');
         done();
+      });
+    });
+  });
+
+  describe('with private the registry', () => {
+    before((done) => {
+      const client = join(__dirname, '../', '../', 'bin', 'citizen');
+      const moduleDir = join(__dirname, 'fixture', 'alb');
+
+      const definition = `module "vpc" {
+        source = "__MODULE_ADDRESS__"
+        version = "__MODULE_VERSION__"
+      }`;
+
+      execFile(
+        client,
+        ['publish', 'citizen-test', 'alb', 'aws', '0.1.0'],
+        { cwd: moduleDir },
+        async (err) => {
+          if (err) { return done(err); }
+
+          const content = definition
+            .replace(/__MODULE_ADDRESS__/, `${url.host}/citizen-test/alb/aws`)
+            .replace(/__MODULE_VERSION__/, '0.1.0');
+          await writeFile(definitonFile, content, 'utf8');
+          return done();
+        },
+      );
+    });
+
+    after(async () => {
+      await unlink(definitonFile);
+      await rimraf(join(__dirname, 'fixture', '.terraform'));
+      await deleteDbAll(db);
+    });
+
+    it('should download module from registry', (done) => {
+      const cwd = join(__dirname, 'fixture');
+
+      execFile(terraform, ['get'], { cwd }, async (err, stdout) => {
+        if (err) { return done(err); }
+
+        expect(stdout).to.include('Found version 0.1.0 of citizen-test/alb/aws on');
+        expect(stdout).to.include('Getting source');
+        await access(join(cwd, '.terraform'));
+        return done();
       });
     });
   });
