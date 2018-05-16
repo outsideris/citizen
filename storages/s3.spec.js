@@ -7,13 +7,13 @@ const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const { enableMock, clearMock } = require('../test/helper');
-const { saveModule, hasModule } = require('./storage');
+const { saveModule, hasModule } = require('./s3');
 
 const readFile = promisify(fs.readFile);
 s3.save = promisify(s3.putObject);
 s3.delete = promisify(s3.deleteObject);
 
-describe('storage\'s', async () => {
+describe('s3\'s', async () => {
   const modulePath = `citizen/${(new Date()).getTime()}/test.tar.gz`;
   const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
   let moduleBuf;
