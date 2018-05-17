@@ -8,11 +8,16 @@ image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.
 == Requirements
 * Node.js 8+
 * Support HTTPS - Terraform module registry only support HTTPS.
-* AWS S3 Bucket
-    - currently only supported
-    - set s3 bucket name as `AWS_S3_BUCKET`
-* AWS Credential
-    - set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+
+== Storage
+Storage required to store modules files
+There are multiple types of storage supported:
+
+* S3
+** Environment variables needed to be set
+*** `STORAGE=s3`
+*** `AWS_S3_BUCKET=YOUR_BUCKET_NAME`
+*** `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
 
 == Installation
 set environment variables
