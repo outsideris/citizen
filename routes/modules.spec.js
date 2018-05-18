@@ -26,7 +26,7 @@ describe('POST /v1/:namespace/:name/:provider/:version', () => {
     }
 
     const params = {
-      Bucket: process.env.AWS_S3_BUCKET,
+      Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
       Key: modulePath,
     };
     const result = await s3.delete(params);

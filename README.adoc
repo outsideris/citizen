@@ -15,8 +15,8 @@ There are multiple types of storage supported:
 
 * S3
 ** Environment variables needed to be set
-*** `STORAGE=s3`
-*** `AWS_S3_BUCKET=YOUR_BUCKET_NAME`
+*** `CITIZEN_STORAGE=s3`
+*** `CITIZEN_AWS_S3_BUCKET=YOUR_BUCKET_NAME`
 *** `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
 
 == Installation

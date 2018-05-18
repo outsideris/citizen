@@ -30,7 +30,7 @@ describe('s3\'s', async () => {
   describe('saveModule()', () => {
     after(async () => {
       const params = {
-        Bucket: process.env.AWS_S3_BUCKET,
+        Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
         Key: modulePath,
       };
       await s3.delete(params);
@@ -45,7 +45,7 @@ describe('s3\'s', async () => {
   describe('hasModule()', () => {
     before(async () => {
       const params = {
-        Bucket: process.env.AWS_S3_BUCKET,
+        Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
         Key: modulePath,
         Body: moduleBuf,
       };
@@ -54,7 +54,7 @@ describe('s3\'s', async () => {
 
     after(async () => {
       const params = {
-        Bucket: process.env.AWS_S3_BUCKET,
+        Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
         Key: modulePath,
       };
       await s3.delete(params);

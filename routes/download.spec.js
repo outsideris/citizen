@@ -83,7 +83,7 @@ describe('GET /v1/tarball/:namespace/:name/:provider/*.tar.gz', () => {
     if (process.env.MOCK) {
       nock('https://s3.ap-northeast-1.amazonaws.com')
         .persist()
-        .get(`/${process.env.AWS_S3_BUCKET}/${modulePath}/module.tar.gz`)
+        .get(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}/module.tar.gz`)
         .once()
         .reply(() =>
           [200, new Array(137).join('a'),
