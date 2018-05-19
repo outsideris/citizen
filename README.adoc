@@ -13,6 +13,10 @@ image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.
 Storage required to store modules files
 There are multiple types of storage supported:
 
+* File
+** Environment variables needed to be set
+*** `CITIZEN_STORAGE=file`
+*** `CITIZEN_STORAGE_PATH=LOCAL_PATH_TO_STORE`
 * S3
 ** Environment variables needed to be set
 *** `CITIZEN_STORAGE=s3`
