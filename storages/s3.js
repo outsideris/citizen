@@ -26,7 +26,11 @@ module.exports = {
       Body: tarball,
     };
     const result = await s3.save(params);
-    return result;
+
+    if (result.ETag) {
+      return true;
+    }
+    return false;
   },
   hasModule: async (path) => {
     const params = {
