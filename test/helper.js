@@ -3,6 +3,22 @@ const nock = require('nock');
 module.exports = {
   enableMock: ({ modulePath }) => {
     if (process.env.CITIZEN_MOCK_ENABLED) {
+      nock('https://s3.amazonaws.com')
+        .persist()
+        .put(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}`)
+        .reply(
+          301,
+          `<?xml version="1.0" encoding="UTF-8"?>\n<Error><Code>PermanentRedirect</Code><Message>The bucket you are attempting to access must be addressed using the specified endpoint. Please send all future requests to this endpoint.</Message><Bucket>${process.env.CITIZEN_AWS_S3_BUCKET}</Bucket><Endpoint>${process.env.CITIZEN_AWS_S3_BUCKET}.s3.amazonaws.com</Endpoint><RequestId>66E7A19ACCD7B823</RequestId><HostId>GWudIHA65prhHIpG5drFq6BG0fQsB5nKTnYtLFl0UZ/6MBrAwOJQdRzEDj88kSNmDCGFgzE3Y+c=</HostId></Error>`,
+          ['x-amz-bucket-region', 'ap-northeast-1',
+            'x-amz-request-id', '66E7A19ACCD7B823',
+            'x-amz-id-2', 'GWudIHA65prhHIpG5drFq6BG0fQsB5nKTnYtLFl0UZ/6MBrAwOJQdRzEDj88kSNmDCGFgzE3Y+c=',
+            'Content-Type', 'application/xml',
+            'Transfer-Encoding', 'chunked',
+            'Date', 'Mon, 21 May 2018 13:12:55 GMT',
+            'Connection', 'close',
+            'Server', 'AmazonS3'],
+        );
+
       nock('https://s3.ap-northeast-1.amazonaws.com')
         .persist()
         .put(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}`)
