@@ -8,10 +8,11 @@ stages:
 
 cache:
   directories:
-    - ~/.npm
-    - ~/npm
     - test/integration/temp/terraform
 
+before_install:
+  - npm install -g npm@latest
+  - npm --version
 install:
   - npm ci
   - ./test/integration/download-terraform
