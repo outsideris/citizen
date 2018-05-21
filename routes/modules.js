@@ -77,7 +77,7 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
         definition,
       });
 
-      if (fileResult.ETag && metaResult.ok) {
+      if (fileResult && metaResult.ok) {
         return res.status(201).render('modules/register', {
           id: destPath,
           owner,

@@ -7,9 +7,8 @@ cache:
 env:
   global:
     - HOSTNAME=localhost
-    - AWS_S3_BUCKET=kr.ne.outsider.test
-    - AWS_ACCESS_KEY_ID=oooooo
-    - AWS_SECRET_ACCESS_KEY=xxxxx
+    - CITIZEN_STORAGE=file
+    - CITIZEN_STORAGE_PATH=/tmp/citizen
     - CITIZEN_ADDR=http://127.0.0.1:3000
     - MOCK=true
     - DEBUG=*,-mocha:*,-express:*,-nock.*,-pouchdb:*,-eslint:*,-eslint*,-snapdragon:*,-body-parser:*,-morgan,-superagent

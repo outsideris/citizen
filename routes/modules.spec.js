@@ -1,36 +1,30 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const AWS = require('aws-sdk');
 const { promisify } = require('util');
+const rimraf = promisify(require('rimraf'));
+const fs = require('fs');
+const path = require('path');
 
 const app = require('../app');
-const { enableMock, clearMock, deleteDbAll } = require('../test/helper');
+const { deleteDbAll } = require('../test/helper');
 const { db, save } = require('../lib/store');
 
-const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
-s3.delete = promisify(s3.deleteObject);
+const writeFile = promisify(fs.writeFile);
+const readFile = promisify(fs.readFile);
+const mkdirp = promisify(require('mkdirp'));
 
 describe('POST /v1/:namespace/:name/:provider/:version', () => {
-  const modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
+  let moduleBuf;
+  let modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
+  const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
 
-  beforeEach(() => {
-    enableMock({ modulePath: `${modulePath}/module.tar.gz` });
-    enableMock({ modulePath: `${modulePath}/test.tar.gz` });
-    enableMock({ modulePath: `${modulePath}/complex.tar.gz` });
+  beforeEach(async () => {
+    modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
   });
 
   afterEach(async () => {
     await deleteDbAll(db);
-    if (process.env.MOCK) {
-      return clearMock();
-    }
-
-    const params = {
-      Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
-      Key: modulePath,
-    };
-    const result = await s3.delete(params);
-    return result;
+    await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
   it('should register new module', () =>
@@ -44,7 +38,13 @@ describe('POST /v1/:namespace/:name/:provider/:version', () => {
         expect(res.body.modules[0]).to.have.property('id').to.equal(modulePath);
       }));
 
-  it('should reject the reqeust if the module is already exists.', () =>
+  it('should reject the reqeust if the module is already exists.', async () => {
+    const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, `${modulePath}/test.tar.gz`);
+    const parsedPath = path.parse(pathToStore);
+    await mkdirp(parsedPath.dir);
+    await writeFile(pathToStore, moduleBuf);
+    moduleBuf = await readFile(tarballPath);
+
     request(app)
       .post(`/v1/${modulePath}`)
       .attach('module', 'test/fixture/test.tar.gz')
@@ -52,7 +52,8 @@ describe('POST /v1/:namespace/:name/:provider/:version', () => {
       .expect(409)
       .then((res) => {
         expect(res.body).to.have.property('errors').to.be.an('array');
-      }));
+      });
+  });
 
   it('should register new module with owner infomation', () =>
     request(app)

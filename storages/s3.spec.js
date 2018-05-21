@@ -13,7 +13,7 @@ const readFile = promisify(fs.readFile);
 s3.save = promisify(s3.putObject);
 s3.delete = promisify(s3.deleteObject);
 
-describe('s3\'s', async () => {
+describe.skip('s3\'s', async () => {
   const modulePath = `citizen/${(new Date()).getTime()}/test.tar.gz`;
   const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
   let moduleBuf;

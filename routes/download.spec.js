@@ -1,18 +1,13 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const AWS = require('aws-sdk');
-const { promisify } = require('util');
 const fs = require('fs');
 const path = require('path');
-const nock = require('nock');
+const { promisify } = require('util');
+const rimraf = promisify(require('rimraf'));
 
 const app = require('../app');
 const { deleteDbAll } = require('../test/helper');
 const { db, save } = require('../lib/store');
-const { enableMock, clearMock } = require('../test/helper');
-
-const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
-s3.delete = promisify(s3.deleteObject);
 
 describe('GET /v1/:namespace/:name/:provider/:version/download', () => {
   before(async () => {
@@ -73,38 +68,15 @@ describe('GET /v1/tarball/:namespace/:name/:provider/*.tar.gz', () => {
   const modulePath = `download/tar/aws/${version}`;
 
   beforeEach(async () => {
-    enableMock({ modulePath: `${modulePath}/module.tar.gz` });
     await request(app)
       .post(`/v1/${modulePath}`)
       .attach('module', 'test/fixture/module.tar.gz')
       .expect(201);
-    clearMock();
-
-    if (process.env.MOCK) {
-      nock('https://s3.ap-northeast-1.amazonaws.com')
-        .persist()
-        .get(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}/module.tar.gz`)
-        .once()
-        .reply(() =>
-          [200, new Array(137).join('a'),
-            ['x-amz-id-2', 'UTXd/Ac9Lpf5htlqmY7jIa//st0VNw3HiV0H2tFpjQrabzdF0a1A0RXwaXXEDJsSMC0z9ieqSJg=',
-              'x-amz-request-id', '51DCE049BC4189E5',
-              'Date', 'Sun, 21 Jan 2018 16:47:35 GMT',
-              'Last-Modified', 'Sun, 21 Jan 2018 16:47:35 GMT',
-              'ETag', '"ed168b6114db5f54d38bb1bd9ba45106"',
-              'Accept-Ranges', 'bytes',
-              'Content-Type', 'application/octet-stream',
-              'Content-Length', '136',
-              'Server', 'AmazonS3'],
-          ]);
-    }
   });
 
   afterEach(async () => {
-    if (process.env.MOCK) {
-      nock.cleanAll();
-    }
     await deleteDbAll(db);
+    await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
   it('should download a tarball for a specific module', () => {

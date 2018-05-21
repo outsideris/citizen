@@ -50,7 +50,7 @@ describe('terraform CLI', () => {
           }
         }
 
-        process.env.HOSTNAME = url.host;
+        process.env.CITIZEN_HOSTNAME = url.host;
         server = registry.run(port);
         process.env.CITIZEN_ADDR = `http://127.0.0.1:${port}`;
 
@@ -140,6 +140,7 @@ describe('terraform CLI', () => {
       await unlink(definitonFile);
       await rimraf(join(__dirname, 'fixture', '.terraform'));
       await deleteDbAll(db);
+      await rimraf(process.env.CITIZEN_STORAGE_PATH);
     });
 
     it('should download module from registry', (done) => {

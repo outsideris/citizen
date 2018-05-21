@@ -27,7 +27,7 @@ module.exports = {
   },
   hasModule: async (path) => {
     const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, path);
-    debug(`chech if it has module: ${pathToStore}.`);
+    debug(`check if it has module: ${pathToStore}.`);
     try {
       await access(pathToStore);
       return true;
