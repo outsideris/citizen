@@ -32,10 +32,12 @@ jobs:
     - stage: lint
       script: npm run lint
 
-    - script: npm test -- --forbid-only
+    - stage: test
+      script: npm test -- --forbid-only
       node_js: '8'
 
-    - script: npm test -- --forbid-only
+    - stage: test
+      script: npm test -- --forbid-only
       node_js: '10'
 
 env:
