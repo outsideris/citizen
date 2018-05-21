@@ -8,7 +8,7 @@ stages:
 
 cache:
   directories:
-    - test/integration/temp/terraform
+    - test/integration/temp
 
 before_install:
   - npm install -g npm@latest
@@ -23,7 +23,9 @@ jobs:
       script: npm run lint
 
     - stage: test
-      script: npm test -- --forbid-only
+      script:
+        - ls -la test/integration/temp
+        - npm test -- --forbid-only
       node_js: '8'
 
     - stage: test
