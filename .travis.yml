@@ -3,7 +3,6 @@ node_js:
   - '8'
 
 stages:
-  - precache
   - lint
   - test
 
@@ -13,22 +12,12 @@ cache:
     - ~/npm
     - test/integration/temp/terraform
 
-before_install: |
-  [[ ! -x ~/npm/node_modules/.bin/npm ]] && {
-    cd ~/npm && npm install npm@^6
-    cd -
-  } || true
-  export PATH=~/npm/node_modules/.bin:$PATH
-
 install:
   - npm ci
   - ./test/integration/download-terraform
 
 jobs:
   include:
-    - stage: precache
-      script: true
-
     - stage: lint
       script: npm run lint
 
