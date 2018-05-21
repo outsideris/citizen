@@ -23,9 +23,7 @@ jobs:
       script: npm run lint
 
     - stage: test
-      script:
-        - ls -la test/integration/temp
-        - npm test -- --forbid-only
+      script: npm test -- --forbid-only
       node_js: '8'
 
     - stage: test
