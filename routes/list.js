@@ -91,8 +91,8 @@ router.get('/:namespace/:name', async (req, res) => {
     // FIXME: to support for too many modules
     limit: 100,
     selector: {
-      namespace: { $eq: req.params.namespace },
-      name: { $eq: req.params.name },
+      namespace: req.params.namespace,
+      name: req.params.name,
     },
   };
 

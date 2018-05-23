@@ -67,26 +67,29 @@ describe('POST /v1/:namespace/:name/:provider/:version', () => {
         expect(res.body.modules[0]).to.have.property('id').to.equal(modulePath);
       }));
 
-  it('should register module information', () =>
+  it('should register module information', (done) => {
     request(app)
       .post(`/v1/${modulePath}`)
       .attach('module', 'test/fixture/complex.tar.gz')
       .expect('Content-Type', /application\/json/)
       .expect(201)
-      .then(res => db.find({
-        selector: {
-          namespace: { $eq: res.body.namespace },
-          name: { $eq: res.body.name },
-          provider: { $eq: res.body.provider },
-          version: { $eq: res.body.version },
-        },
-      }))
-      .then((data) => {
-        expect(data.docs[0]).to.have.property('root');
-        expect(data.docs[0].root).to.have.property('name').to.equal('consul');
-        expect(data.docs[0]).to.have.property('submodules').to.be.an.instanceof(Array);
-        expect(data.docs[0].submodules).to.have.lengthOf(3);
-      }));
+      .then((res) => {
+        db.find({
+          namespace: res.body.modules[0].namespace,
+          name: res.body.modules[0].name,
+          provider: res.body.modules[0].provider,
+          version: res.body.modules[0].version,
+        }, (err, docs) => {
+          if (err) { return done(err); }
+
+          expect(docs[0]).to.have.property('root');
+          expect(docs[0].root).to.have.property('name').to.equal('consul');
+          expect(docs[0]).to.have.property('submodules').to.be.an.instanceof(Array);
+          expect(docs[0].submodules).to.have.lengthOf(3);
+          return done();
+        });
+      });
+  });
 });
 
 describe('GET /v1/:namespace/:name/:provider/:version', () => {

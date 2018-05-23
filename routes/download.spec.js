@@ -93,20 +93,21 @@ describe('GET /v1/tarball/:namespace/:name/:provider/*.tar.gz', () => {
       });
   });
 
-  it('should increase download count for a specific module', () =>
+  it('should increase download count for a specific module', (done) => {
     request(app)
       .get(`/v1/tarball/download/tar/aws/${version}/module.tar.gz`)
       .expect(200)
-      .then(() =>
+      .then(() => {
         db.find({
-          selector: {
-            namespace: { $eq: 'download' },
-            name: { $eq: 'tar' },
-            provider: { $eq: 'aws' },
-            version: { $eq: `${version}` },
-          },
-        }))
-      .then((doc) => {
-        expect(doc.docs[0]).to.have.property('downloads').to.equal(1);
-      }));
+          namespace: 'download',
+          name: 'tar',
+          provider: 'aws',
+          version: `${version}`,
+        }, (err, docs) => {
+          if (err) { return done(err); }
+          expect(docs[0]).to.have.property('downloads').to.equal(1);
+          return done();
+        });
+      });
+  });
 });
