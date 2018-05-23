@@ -32,8 +32,6 @@
     "multiparty": "^4.1.3",
     "nedb": "^1.8.0",
     "pino": "^4.16.1",
-    "pouchdb": "^6.4.2",
-    "pouchdb-find": "^6.4.3",
     "recursive-readdir": "^2.2.1",
     "request": "^2.83.0",
     "rimraf": "^2.6.2",
