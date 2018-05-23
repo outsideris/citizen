@@ -2,7 +2,6 @@
 node_modules/
 .idea/
 .envrc
-citizen-db/
 dist/
-citizen-db-mrview-*/
 test/integration/temp/
+data/

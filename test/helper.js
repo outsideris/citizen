@@ -73,8 +73,10 @@ module.exports = {
       nock.cleanAll();
     }
   },
-  deleteDbAll: async (db) => {
-    const result = await db.allDocs();
-    await Promise.all(result.rows.map(row => db.remove(row.id, row.value.rev)));
-  },
+  deleteDbAll: db => new Promise((resolve, reject) => {
+    db.remove({}, { multi: true }, (err, numRemoved) => {
+      if (err) { return reject(err); }
+      return resolve(numRemoved);
+    });
+  }),
 };
