@@ -4,6 +4,8 @@ An Private link:https://registry.terraform.io/[Terraform Module Registry]
 
 image:https://travis-ci.org/outsideris/citizen.svg?branch=master["Build Status", link="https://travis-ci.org/outsideris/citizen"]
 image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.svg?type=shield["FOSSA Status", link="https://app.fossa.io/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen?ref=badge_shield"]
+image:https://david-dm.org/outsideris/citizen/status.svg["Dependency Status", link="https://david-dm.org/outsideris/citizen"]
+image:https://david-dm.org/outsideris/citizen/dev-status.svg["devDependency Status", link="https://david-dm.org/outsideris/citizen?type=dev"]
 
 == Requirements
 * Node.js 8+
