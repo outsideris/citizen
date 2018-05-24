@@ -6,6 +6,9 @@ node_js:
 stages:
   - lint
   - test
+  - prepare deploy
+  - github releas
+  - docker release
 
 services:
   - docker
@@ -20,19 +23,6 @@ before_install:
 install:
   - npm ci
   - ./test/integration/download-terraform
-
-jobs:
-  include:
-    - stage: lint
-      script: npm run lint
-
-    - stage: test
-      script: npm test -- --forbid-only
-      node_js: '8'
-
-    - stage: test
-      script: npm test -- --forbid-only
-      node_js: '10'
 
 env:
   global:
@@ -49,28 +39,50 @@ env:
     # DOCKER_PASS
     - secure: Z3WqqmKskXjgnckfgFjKaPyg8g2J+Cf4Irv2SIkOzK+ki8G7/K5zIcYz/gmnRNSMYMCGrFHCUi/Z9YyckGdZ+XN+1DIYkk53OzPSLgf47Zz4zkQbUc9AsU1OF+aiQ2kkF3+Dr9uTz4mLAcnvLOfkzC6m1F6UMsOlmJPnq4wSXvm8UjqAwhRHl6QTgRNEUHi39GL2WbTieVYw73fVGiqlD43T6uNrmaZ90qox7rPOJ2jVur2nsw3dc7TV3VbrQqcuRuMptUSdLKL7Ab1WohiKcsSotggb4uwoyZsDdSfQNkt/ODkFoJ6ezn4IDNDOxCC2+EoFNEojt3rFDWthQLly0yfSiuAQO/WypgB75nQHNfcu+6kcgequJ440HXcGUD7BhGGNwDW+dsMxPeymR9YiFZAaMr5YVEWhw6r5qxLF9q0awTDS1WvqV8nQamagEOKpdkPGLbmXLWpMxwmbCWE714Ng52Ui/VHgVmMf9h+hTjUXShoj8P58vVGBMc7l++JNT8NiyA8+2VjIaii8jZtJNhBXnKIAplMOSdvdbmAmHgbWdCLcWnz9iUfx275ABLjgBbuhRKIZotfwvnaKBrjNGYMLMNXz8lYm39yxVTmINoxr7CzO0W7F/zWBUSbMeENPWFNT4J5xF+3OX8zkeWP+SF8v8IMPROQZX+1tHDil6+I=
 
-after_success:
+jobs:
+  include:
+    - stage: lint
+      script: npm run lint
 
+    - stage: test
+      script: npm test -- --forbid-only
+      node_js: '8'
 
-before_deploy:
-  - npm run build
-deploy:
-  - provider: releases
-    api_key:
-      secure: mUU9a65fvVZaMb8vuNZ2a7d8VDtrdtXPv7suoZTEAIdG3M/koINOoDJU49ulWv8yxQXA/yMzXImOfj1RuryoLp+1kmxqgmeZCHG00ncS0EyNAo8On+Wgw3VB8qevYXJfSWvuG5BDL8P//0h4PSUjZmd0YpB7CHEmt+1FHIPC2HIiU5pmEsaRthGzQy3wB8NnFvp8n+t2MIlXSg1ZEaeVhLKHnte6ddt6Hc9rPbXtPOHODEl/FOdO2GSFNtkr90P0U/VZM+6Wqsh0b9kuQDcgHC2Vgoy5SzUOGjxGDOVSzDp+vI54cznzq+vh4/6S+nF2uXiBFONtYOHwTWwZpPnaLSdCKevYUWgkJKCIrf98v3rb9ds8ocXZutM+GhDeO3o/Eh94ydua/aHzF9aeroc3gpeYcV9NZOqh+yMH6jo3/u4b1hmGRdu0V6aQe0HVmRWjPcTHcV+laAC7Mt/MeAX9FX+TwnPZhflwTIWER0r2mb8Bhnqsg5TkMDAWoE6t8p1zk25nC0lCxWbVdtO8W0Q9KGgvkskoNxdoVy0v4JnwiljebXnImei/FDCgHKuJP+sSZCrDiMsRCuFyxX7kCCOBzopIeMBjNEDZ3QIHta/AsWH/MjgOGLOxWQ17NKshGcvXwv97SFdlax6Ut0q/+S6L+N9W8tJ8uWwKY7JFByI6p2Y=
-    file_glob: true
-    file: dist/*
-    skip_cleanup: true
-    on:
-      repo: outsideris/citizen
-      tags: true
-  - provider: script
-    script:
-      - docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - export REPO=outsideris/citizen
-      - docker build -t $REPO:$TRAVIS_TAG .
-      - docker push $REPO
-    skip_cleanup: true
-    on:
-      repo: outsideris/citizen
-      tags: true
+    - stage: test
+      script: npm test -- --forbid-only
+      node_js: '10'
+
+    - stage: prepare deploy
+      script: skip
+      deploy:
+        provider: script
+        script: npm run build
+        skip_cleanup: true
+        on:
+          tags: true
+
+    - stage: github release
+      script: echo "Deploying to GitHub releases"
+      deploy:
+        provider: releases
+        api_key:
+          secure: mUU9a65fvVZaMb8vuNZ2a7d8VDtrdtXPv7suoZTEAIdG3M/koINOoDJU49ulWv8yxQXA/yMzXImOfj1RuryoLp+1kmxqgmeZCHG00ncS0EyNAo8On+Wgw3VB8qevYXJfSWvuG5BDL8P//0h4PSUjZmd0YpB7CHEmt+1FHIPC2HIiU5pmEsaRthGzQy3wB8NnFvp8n+t2MIlXSg1ZEaeVhLKHnte6ddt6Hc9rPbXtPOHODEl/FOdO2GSFNtkr90P0U/VZM+6Wqsh0b9kuQDcgHC2Vgoy5SzUOGjxGDOVSzDp+vI54cznzq+vh4/6S+nF2uXiBFONtYOHwTWwZpPnaLSdCKevYUWgkJKCIrf98v3rb9ds8ocXZutM+GhDeO3o/Eh94ydua/aHzF9aeroc3gpeYcV9NZOqh+yMH6jo3/u4b1hmGRdu0V6aQe0HVmRWjPcTHcV+laAC7Mt/MeAX9FX+TwnPZhflwTIWER0r2mb8Bhnqsg5TkMDAWoE6t8p1zk25nC0lCxWbVdtO8W0Q9KGgvkskoNxdoVy0v4JnwiljebXnImei/FDCgHKuJP+sSZCrDiMsRCuFyxX7kCCOBzopIeMBjNEDZ3QIHta/AsWH/MjgOGLOxWQ17NKshGcvXwv97SFdlax6Ut0q/+S6L+N9W8tJ8uWwKY7JFByI6p2Y=
+        file_glob: true
+        file: dist/*
+        skip_cleanup: true
+        on:
+          tags: true
+
+    - stage: docker release
+      script: echo "Deploying Dokcer image"
+      deploy:
+        provider: script
+        script:
+          - docker login -u $DOCKER_USER -p $DOCKER_PASS
+          - export REPO=outsideris/citizen
+          - docker build -t $REPO:$TRAVIS_TAG .
+          - docker push $REPO
+        skip_cleanup: true
+        on:
+          repo: outsideris/citizen
+          tags: true
