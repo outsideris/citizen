@@ -77,11 +77,7 @@ jobs:
       script: echo "Deploying Dokcer image"
       deploy:
         provider: script
-        script:
-          - docker login -u $DOCKER_USER -p $DOCKER_PASS
-          - export REPO=outsideris/citizen
-          - docker build -t $REPO:$TRAVIS_TAG .
-          - docker push $REPO
+        script: bash scripts/docker-deploy.sh
         skip_cleanup: true
         on:
           repo: outsideris/citizen
