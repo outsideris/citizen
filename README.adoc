@@ -1,41 +1,95 @@
 = Citizen
 
-An Private link:https://registry.terraform.io/[Terraform Module Registry]
-
 image:https://travis-ci.org/outsideris/citizen.svg?branch=master["Build Status", link="https://travis-ci.org/outsideris/citizen"]
 image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.svg?type=shield["FOSSA Status", link="https://app.fossa.io/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen?ref=badge_shield"]
 image:https://david-dm.org/outsideris/citizen/status.svg["Dependency Status", link="https://david-dm.org/outsideris/citizen"]
 image:https://david-dm.org/outsideris/citizen/dev-status.svg["devDependency Status", link="https://david-dm.org/outsideris/citizen?type=dev"]
 
+An Private link:https://registry.terraform.io/[Terraform Module Registry]
+in the early stages of development.
+
 == Requirements
 * Node.js 8+
-* Support HTTPS - Terraform module registry only support HTTPS.
+* HTTPS - Terraform module registry only support HTTPS.
 
-== Storage
-Storage required to store modules files
-There are multiple types of storage supported:
+== Usage
+[Download the latest release!](https://github.com/outsideris/citizen//releases/latest)
 
-* File
-** Environment variables needed to be set
-*** `CITIZEN_STORAGE=file`
-*** `CITIZEN_STORAGE_PATH=LOCAL_PATH_TO_STORE`
-* S3
-** Environment variables needed to be set
-*** `CITIZEN_STORAGE=s3`
-*** `CITIZEN_AWS_S3_BUCKET=YOUR_BUCKET_NAME`
-*** `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+=== `citizen server`
+To launch the registry server
+[source, sh]
+....
+$ ./citizen server
+....
 
-== Installation
-set environment variables
+It will be launched at link:http://localhost:3000[http://localhost:3000]. You can check it at link:http://localhost:3000/health[http://localhost:3000/health].
+
+Because link:https://www.terraform.io/[Terraform CLI] works with only HTTPS server, you should set up HTTPS in front of the registry server.
+
+If you want to test it at local, you need a tool which provides HTTPS like link:https://ngrok.com/[ngrok].
+
+Environment variables:
+* `CITIZEN_HOSTNAME`: Citizen registry server hostname. It should be HTTPS hostname, not registry server itself to allow terraform CLI connect the registry properly. e.g. `registry.example.com`.
+* `CITIZEN_STORAGE` : Storage type to store module files. You can use `file` or `s3` type.
+* `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
+* `CITIZEN_AWS_S3_BUCKET``: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.
+* `AWS_ACCESS_KEY_ID`: Your AWS access key only if `CITIZEN_STORAGE` is `s3`.
+* `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key only if `CITIZEN_STORAGE` is `s3`.
+
+=== `citizen publish`
+Since link:https://registry.terraform.io/[official Terraform Module Registry] is integrated with GitHub, users can publish terraform modules if they just push it on GitHub.
+
+Citizen provides a special command to publish a module onto citizen registry server instead integrating GitHub.
+
+In a module directory, you can publish your terraform module via a command below:
+[source, sh]
+....
+$ ./citizen publish <namespace> <name> <provider> <version>
+....
+
+You should set `CITIZEN_ADDR` as citizen registry server address which you will publish your modules to. e.g. `https://registry.example.com`.
+
+=== Examples
+If you have ALB module in `./alb` directory and your registry server is launched at `https://registry.example.com`, you run below command in `./alb` directory to publish ALB module.
+[source, sh]
+....
+$ CITIZEN_ADDR=https://registry.example.com \
+  citizen publish dev-team alb aws 0.1.0
+....
+
+Then, you can define it in your terraform file like this:
+....
+module "alb" {
+  source = "registry.example.com/dev-team/alb/aws"
+  version = "0.1.0"
+}
+....
+
+== Docker
+You can use docker to launch the registry server.
+The docker image is in link:https://hub.docker.com/r/outsideris/citizen/[outsideris/citizen].
 
 [source, sh]
 ....
-$ export HOSTNAME=YOUR_HOSTNAME
+$ docker run -d -p "3000:3000" outsideris/citizen:latest
+...
+
+== Development
+Set environment variables, see above.
+
+[source, sh]
+....
+$ ./bin/citizen server
+$ ./bin/citizen publish
 ....
 
-replace `YOUR_HOSTNAME` like `www.example.com:3000`.
+=== Test
+[source, sh]
+....
+$ npm test
+....
 
-== Build binaries
+=== Build distributions
 
 [source, sh]
 ....
