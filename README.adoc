@@ -9,6 +9,7 @@ An Private link:https://registry.terraform.io/[Terraform Module Registry]
 in the early stages of development.
 
 == Requirements
+
 * Node.js 8+
 * HTTPS - Terraform module registry only support HTTPS.
 
@@ -29,6 +30,7 @@ Because link:https://www.terraform.io/[Terraform CLI] works with only HTTPS serv
 If you want to test it at local, you need a tool which provides HTTPS like link:https://ngrok.com/[ngrok].
 
 Environment variables:
+
 * `CITIZEN_HOSTNAME`: Citizen registry server hostname. It should be HTTPS hostname, not registry server itself to allow terraform CLI connect the registry properly. e.g. `registry.example.com`.
 * `CITIZEN_STORAGE` : Storage type to store module files. You can use `file` or `s3` type.
 * `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
