@@ -28,9 +28,20 @@ describe('file storage\'s', async () => {
   });
 
   describe('saveModule()', () => {
-    it('should save the module onto disk', async () => {
+    it('should save the module onto disk with relative path', async () => {
       const result = await saveModule(modulePath, moduleBuf);
       expect(result).to.be.true;
+    });
+
+    it('should save the module onto disk with absolute path', async () => {
+      const oldPath = process.env.CITIZEN_STORAGE_PATH;
+      process.env.CITIZEN_STORAGE_PATH = '/tmp/citizen-test';
+
+      const result = await saveModule(modulePath, moduleBuf);
+      expect(result).to.be.true;
+
+      await rimraf(process.env.CITIZEN_STORAGE_PATH);
+      process.env.CITIZEN_STORAGE_PATH = oldPath;
     });
   });
 
