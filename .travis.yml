@@ -5,7 +5,6 @@ node_js:
 stages:
 - lint
 - test
-- prepare deploy
 - github releas
 - docker release
 services:
@@ -44,16 +43,8 @@ jobs:
   - stage: test
     script: npm test -- --forbid-only
     node_js: '10'
-  - stage: prepare deploy
-    script: skip
-    deploy:
-      provider: script
-      script: npm run build
-      skip_cleanup: true
-      on:
-        tags: true
   - stage: github release
-    script: echo "Deploying to GitHub releases"
+    script: npm run build
     deploy:
       provider: releases
       api_key:
