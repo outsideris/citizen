@@ -13,7 +13,7 @@ in the early stages of development.
 * HTTPS - Terraform module registry only support HTTPS.
 
 == Usage
-[Download the latest release!](https://github.com/outsideris/citizen//releases/latest)
+link:https://github.com/outsideris/citizen//releases/latest[Download the latest release!]
 
 === `citizen server`
 To launch the registry server
@@ -72,7 +72,7 @@ The docker image is in link:https://hub.docker.com/r/outsideris/citizen/[outside
 [source, sh]
 ....
 $ docker run -d -p "3000:3000" outsideris/citizen:latest
-...
+....
 
 == Development
 Set environment variables, see above.
