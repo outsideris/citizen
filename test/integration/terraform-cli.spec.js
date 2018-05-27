@@ -50,7 +50,6 @@ describe('terraform CLI', () => {
           }
         }
 
-        process.env.CITIZEN_HOSTNAME = url.host;
         server = registry.run(port);
         process.env.CITIZEN_ADDR = `http://127.0.0.1:${port}`;
 
@@ -93,7 +92,7 @@ describe('terraform CLI', () => {
         res.on('end', () => {
           data = JSON.parse(data);
           expect(res.statusCode).to.equal(200);
-          expect(data['modules.v1']).to.equal(`${url.href}v1/`);
+          expect(data['modules.v1']).to.equal('/v1/modules/');
           done();
         });
       }).on('error', done);

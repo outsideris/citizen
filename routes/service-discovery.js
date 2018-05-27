@@ -4,8 +4,9 @@ const router = Router();
 
 // ref: https://www.terraform.io/docs/internals/remote-service-discovery.html
 router.get('/.well-known/terraform.json', (req, res) => {
+  // match with https://registry.terraform.io/.well-known/terraform.json
   res.json({
-    'modules.v1': `https://${process.env.CITIZEN_HOSTNAME || 'localhost'}/v1/`,
+    'modules.v1': '/v1/modules/',
   });
 });
 

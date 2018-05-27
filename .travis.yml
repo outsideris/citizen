@@ -20,7 +20,7 @@ install:
 - "./test/integration/download-terraform"
 env:
   global:
-  - CITIZEN_HOSTNAME=localhost
+  - CITIZEN_DB_DIR=./data
   - CITIZEN_STORAGE=file
   - CITIZEN_STORAGE_PATH=/tmp/citizen
   - CITIZEN_ADDR=http://127.0.0.1:3000

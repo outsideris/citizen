@@ -17,7 +17,6 @@ COPY --from=build /www/dist/citizen-linux /usr/local/bin/citizen
 
 WORKDIR /www
 
-ENV CITIZEN_HOSTNAME YOUR_HOST
 ENV CITIZEN_DB_DIR ./data
 ENV CITIZEN_STORAGE file
 ENV CITIZEN_STORAGE_PATH /path/to/store
