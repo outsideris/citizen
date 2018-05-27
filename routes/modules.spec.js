@@ -13,7 +13,7 @@ const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 const mkdirp = promisify(require('mkdirp'));
 
-describe('POST /v1/:namespace/:name/:provider/:version', () => {
+describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   let moduleBuf;
   let modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
   const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
@@ -29,7 +29,7 @@ describe('POST /v1/:namespace/:name/:provider/:version', () => {
 
   it('should register new module', () =>
     request(app)
-      .post(`/v1/${modulePath}`)
+      .post(`/v1/modules/${modulePath}`)
       .attach('module', 'test/fixture/module.tar.gz')
       .expect('Content-Type', /application\/json/)
       .expect(201)
@@ -46,7 +46,7 @@ describe('POST /v1/:namespace/:name/:provider/:version', () => {
     moduleBuf = await readFile(tarballPath);
 
     request(app)
-      .post(`/v1/${modulePath}`)
+      .post(`/v1/modules/${modulePath}`)
       .attach('module', 'test/fixture/test.tar.gz')
       .expect('Content-Type', /application\/json/)
       .expect(409)
@@ -57,7 +57,7 @@ describe('POST /v1/:namespace/:name/:provider/:version', () => {
 
   it('should register new module with owner infomation', () =>
     request(app)
-      .post(`/v1/${modulePath}`)
+      .post(`/v1/modules/${modulePath}`)
       .field('owner', 'outsideris')
       .attach('module', 'test/fixture/module.tar.gz')
       .expect('Content-Type', /application\/json/)
@@ -69,7 +69,7 @@ describe('POST /v1/:namespace/:name/:provider/:version', () => {
 
   it('should register module information', (done) => {
     request(app)
-      .post(`/v1/${modulePath}`)
+      .post(`/v1/modules/${modulePath}`)
       .attach('module', 'test/fixture/complex.tar.gz')
       .expect('Content-Type', /application\/json/)
       .expect(201)
@@ -92,7 +92,7 @@ describe('POST /v1/:namespace/:name/:provider/:version', () => {
   });
 });
 
-describe('GET /v1/:namespace/:name/:provider/:version', () => {
+describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
   before(async () => {
     await save({
       namespace: 'router', name: 'specific', provider: 'aws', version: '1.1.2', owner: '',
@@ -105,7 +105,7 @@ describe('GET /v1/:namespace/:name/:provider/:version', () => {
 
   it('should return a specific module', () =>
     request(app)
-      .get('/v1/router/specific/aws/1.1.2')
+      .get('/v1/modules/router/specific/aws/1.1.2')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -115,12 +115,12 @@ describe('GET /v1/:namespace/:name/:provider/:version', () => {
 
   it('should return 404 if given module does not exist', () =>
     request(app)
-      .get('/v1/router/specific/aws/2.1.2')
+      .get('/v1/modules/router/specific/aws/2.1.2')
       .expect('Content-Type', /application\/json/)
       .expect(404));
 });
 
-describe('GET /v1/:namespace/:name/:provider', () => {
+describe('GET /v1/modules/:namespace/:name/:provider', () => {
   before(async () => {
     await save({
       namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.1', owner: '', definition: { root: { name: 'latest' }, submodules: [{ name: 'example' }] },
@@ -136,7 +136,7 @@ describe('GET /v1/:namespace/:name/:provider', () => {
 
   it('should return latest version for a specific module provider', () =>
     request(app)
-      .get('/v1/router/latest/aws')
+      .get('/v1/modules/router/latest/aws')
       .expect('Content-Type', /application\/json/)
       .expect(200)
       .then((res) => {
@@ -147,7 +147,7 @@ describe('GET /v1/:namespace/:name/:provider', () => {
 
   it('should return 404 if given module does not exist', () =>
     request(app)
-      .get('/v1/router/latest/nomodule')
+      .get('/v1/modules/router/latest/nomodule')
       .expect('Content-Type', /application\/json/)
       .expect(404)
       .then((res) => {

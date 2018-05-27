@@ -20,7 +20,7 @@ router.get('/:namespace/:name/:provider/:version/download', async (req, res, nex
     return next();
   }
 
-  res.set('X-Terraform-Get', `/v1/tarball/${module.location}`);
+  res.set('X-Terraform-Get', `/v1/modules/tarball/${module.location}`);
   return res.status(204).send();
 });
 
@@ -38,7 +38,7 @@ router.get('/:namespace/:name/:provider/download', async (req, res, next) => {
     return next();
   }
 
-  const target = `/v1/${module.namespace}/${module.name}/${module.provider}/${module.version}/download`;
+  const target = `/v1/modules/${module.namespace}/${module.name}/${module.provider}/${module.version}/download`;
   return res.redirect(target);
 });
 
