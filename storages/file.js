@@ -8,8 +8,6 @@ const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 const access = promisify(fs.access);
 
-// CITIZEN_STORAGE_PATH
-
 module.exports = {
   type: () => 'file',
   saveModule: async (path, tarball) => {
