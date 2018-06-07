@@ -15,7 +15,7 @@
     "build": "pkg . --out-path dist --targets node8-linux-x64,node8-macos-x64,node8-win-x64"
   },
   "dependencies": {
-    "aws-sdk": "^2.176.0",
+    "aws-sdk": "^2.252.1",
     "body-parser": "^1.18.2",
     "colors": "^1.2.4",
     "commander": "^2.12.2",
@@ -31,12 +31,12 @@
     "morgan": "^1.9.0",
     "multiparty": "^4.1.3",
     "nedb": "^1.8.0",
-    "pino": "^4.16.1",
+    "pino": "^4.17.3",
     "recursive-readdir": "^2.2.1",
     "request": "^2.83.0",
     "rimraf": "^2.6.2",
     "semver": "^5.4.1",
-    "tar": "^4.1.1",
+    "tar": "^4.4.4",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
@@ -48,7 +48,7 @@
     "get-port": "^3.2.0",
     "mocha": "^5.0.4",
     "ngrok": "^3.0.1",
-    "nock": "^9.1.6",
+    "nock": "^9.3.2",
     "nodemon": "^1.12.1",
     "pkg": "^4.3.0",
     "supertest": "^3.0.0",
