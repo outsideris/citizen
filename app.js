@@ -3,8 +3,11 @@ const path = require('path');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const logger = require('./lib/logger');
+const helmet = require('helmet');
 
 const app = express();
+
+app.use(helmet());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
