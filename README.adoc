@@ -5,7 +5,7 @@ image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.
 image:https://david-dm.org/outsideris/citizen/status.svg["Dependency Status", link="https://david-dm.org/outsideris/citizen"]
 image:https://david-dm.org/outsideris/citizen/dev-status.svg["devDependency Status", link="https://david-dm.org/outsideris/citizen?type=dev"]
 
-An Private link:https://registry.terraform.io/[Terraform Module Registry]
+A Private link:https://registry.terraform.io/[Terraform Module Registry]
 in the early stages of development.
 
 == Requirements
@@ -31,7 +31,7 @@ If you want to test it at local, you need a tool which provides HTTPS like link:
 
 Environment variables:
 
-* `CITIZEN_DATA_PATH`: A directory to save database file. Default is `data` directory in current working directory (absolute/relative path can be used).
+* `CITIZEN_DATA_PATH`: A directory to save database file. The default is `data` directory in a current working directory (absolute/relative path can be used).
 * `CITIZEN_STORAGE` : Storage type to store module files. You can use `file` or `s3` type.
 * `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
 * `CITIZEN_AWS_S3_BUCKET``: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.
