@@ -6,18 +6,18 @@ stages:
 - lint
 - test
 - github releas
-- docker release
-services:
-- docker
+
 cache:
   directories:
   - test/integration/temp
+
 before_install:
 - npm install -g npm@latest
 - npm --version
 install:
 - npm ci
 - "./test/integration/download-terraform"
+
 env:
   global:
   - CITIZEN_DB_DIR=./data
@@ -29,9 +29,6 @@ env:
   - AWS_ACCESS_KEY_ID=ooooo
   - AWS_SECRET_ACCESS_KEY=xxxxx
   - DEBUG=*,-mocha:*,-express:*,-nock.*,-pouchdb:*,-eslint:*,-eslint*,-snapdragon:*,-body-parser:*,-morgan,-superagent
-  - DOCKER_USER=outsideris
-  # DOCKER_PASS
-  - secure: "aMS7yAF9iFjeYNHBMSbLn+QgZoH8PcYKdFF8wLW4HSf3m/ek124SYDUanztO3aiWosrSrcRejlcLR+j/AxABF0cXFPdxmzjP0CjtMPOud2ti1CwiozG4MvjVr3Y7KLEueSOTJ0NKHjQ5hioipLdbG+7kFqjGuHfzai4DMfnQQ9NfZ+9LvCbilvWVMHJlj8GIOiKmNaskuKcBI2fEmAOsxS1Wy+8mxDU8Kkfy3Leum/eZ8gpIldiKtPE83ALq/UMyFT5XC31dpbZh81vbgYctUNgu2r3wYMxfPLUMDEayrv6JhZk3dBME6/OFr5G9yw65fe87E4s5KqL/574PFQhj/pfgH8Z3flgieZNmBjASdW5ciIKJPfB63h/Gt34zjtj0SHOn5WwxwBJonf3jKjKIxjEEWKfQ3i2Jg1Vtwh2oilCtUxXkvakuPj/DlyBQajtr5+ZXH0v+2GY8kfg4XUpJuLYXpB60pVy0o97QZJ+A/iuQF9JRjA8FgORDRuSu1irl9eI28mME0uwau8n510Bo3JxeuzAQHciCcuihQ8BEGBarRz84jL3r4mJgslYvOBuM6T7pEu9VINFvuNtKqnv1cY5HFYYfARmIXyIWfdRH1RB7TQl67w/sj/EehttFar2/PamFmCvkgpyWSr82VfrGFhLDKGCO8U82APl3ON2zflw="
 
 jobs:
   include:
@@ -53,13 +50,4 @@ jobs:
       file: dist/*
       skip_cleanup: true
       on:
-        tags: true
-  - stage: docker release
-    script: echo "Deploying Dokcer image"
-    deploy:
-      provider: script
-      script: bash scripts/docker-deploy.sh
-      skip_cleanup: true
-      on:
-        repo: outsideris/citizen
         tags: true
