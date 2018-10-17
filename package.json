@@ -6,8 +6,8 @@
     "citizen": "./bin/citizen"
   },
   "scripts": {
-    "start": "node ./bin/citizen.js server",
-    "dev": "nodemon ./bin/citizen.js server",
+    "start": "node ./bin/citizen server",
+    "dev": "nodemon ./bin/citizen server",
     "lint": "eslint .",
     "test": "mocha --exit --recursive -t 20000 $(find . -name '*.spec.js' -not -path './node_modules/*')",
     "clean": "rimraf dist",

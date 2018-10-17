@@ -10,7 +10,7 @@ const chmod = promisify(fs.chmod);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
 
-const TERRAFORM_VERSION = '0.11.7';
+const TERRAFORM_VERSION = '0.11.8';
 const PLATFORM = process.platform;
 const DOWNLOAD_URL = `https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${PLATFORM}_amd64.zip`;
 
