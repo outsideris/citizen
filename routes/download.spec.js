@@ -20,23 +20,21 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
     await deleteDbAll(db);
   });
 
-  it('should return the location which client can download source code', () =>
-    request(app)
-      .get('/v1/modules/download/source/aws/1.2.0/download')
-      .expect(204)
-      .then((res) => {
-        expect(res.headers).to.have.property('x-terraform-get')
-          .to.equal('/v1/modules/tarball/download/source/aws/1.2.0/module.tar.gz');
-      }));
+  it('should return the location which client can download source code', () => request(app)
+    .get('/v1/modules/download/source/aws/1.2.0/download')
+    .expect(204)
+    .then((res) => {
+      expect(res.headers).to.have.property('x-terraform-get')
+        .to.equal('/v1/modules/tarball/download/source/aws/1.2.0/module.tar.gz');
+    }));
 
-  it('should return 404 if given module does not exist', () =>
-    request(app)
-      .get('/v1/modules/download/source/aws/2.2.0/download')
-      .expect('Content-Type', /application\/json/)
-      .expect(404)
-      .then((res) => {
-        expect(res.body).to.have.property('errors').to.be.an('array');
-      }));
+  it('should return 404 if given module does not exist', () => request(app)
+    .get('/v1/modules/download/source/aws/2.2.0/download')
+    .expect('Content-Type', /application\/json/)
+    .expect(404)
+    .then((res) => {
+      expect(res.body).to.have.property('errors').to.be.an('array');
+    }));
 });
 
 describe('GET /v1/modules/:namespace/:name/:provider/download', () => {
@@ -53,14 +51,13 @@ describe('GET /v1/modules/:namespace/:name/:provider/download', () => {
     await deleteDbAll(db);
   });
 
-  it('should redirect to the latest version of a module', () =>
-    request(app)
-      .get('/v1/modules/download/source/aws/download')
-      .expect(302)
-      .then((res) => {
-        expect(res.headers).to.have.property('location')
-          .to.equal('/v1/modules/download/source/aws/1.3.0/download');
-      }));
+  it('should redirect to the latest version of a module', () => request(app)
+    .get('/v1/modules/download/source/aws/download')
+    .expect(302)
+    .then((res) => {
+      expect(res.headers).to.have.property('location')
+        .to.equal('/v1/modules/download/source/aws/1.3.0/download');
+    }));
 });
 
 describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {

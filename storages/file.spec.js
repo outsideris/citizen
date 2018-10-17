@@ -2,13 +2,13 @@ const path = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
 const { expect } = require('chai');
+const mkdirp = promisify(require('mkdirp'));
+const rimraf = promisify(require('rimraf'));
 
 const { saveModule, hasModule, getModule } = require('./file');
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
-const mkdirp = promisify(require('mkdirp'));
-const rimraf = promisify(require('rimraf'));
 
 describe('file storage\'s', async () => {
   let modulePath;

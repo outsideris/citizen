@@ -2,8 +2,9 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const logger = require('./lib/logger');
 const helmet = require('helmet');
+
+const logger = require('./lib/logger');
 
 const app = express();
 

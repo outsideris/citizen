@@ -1,6 +1,7 @@
-const app = require('../../app');
 const http = require('http');
 const debug = require('debug')('test:integration');
+
+const app = require('../../app');
 
 const run = (port = 3000) => {
   app.set('port', port);
@@ -37,13 +38,12 @@ const run = (port = 3000) => {
   return server;
 };
 
-const terminate = server => new Promise((resolve, reject) =>
-  server.close((err) => {
-    if (err) {
-      reject(err);
-    }
-    resolve();
-  }));
+const terminate = server => new Promise((resolve, reject) => server.close((err) => {
+  if (err) {
+    reject(err);
+  }
+  resolve();
+}));
 
 module.exports = {
   run,
