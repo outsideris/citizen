@@ -16,17 +16,73 @@ pipeline {
   }
 
   stages {
-    stage('Lint') {
-      steps {
-        sh 'npm install'
-        sh 'npm run lint'
+    stage('Checks') {
+      parallel {
+        stage('Lint') {
+          agent {
+            label 'pod'
+          }
+
+          steps {
+            sh 'npm install'
+            sh 'npm run lint'
+          }
+        }
+
+        stage('Test') {
+          agent {
+            label 'pod'
+          }
+
+          steps {
+            sh 'npm install'
+            sh 'npm test -- --forbid-only'
+          }
+        }
       }
     }
 
-    stage('Test') {
-      steps {
-        sh 'npm install'
-        sh 'npm test -- --forbid-only'
+    stage('Artifacts') {
+      parallel {
+        stage('Docker') {
+          agent {
+            label 'build'
+          }
+
+          steps {
+            sh 'docker build -t citizen .'
+          }
+        }
+
+        stage('Helm') {
+          agent {
+            label 'pod'
+          }
+
+          when {
+            beforeAgent true
+            branch 'master'
+          }
+
+          steps {
+            echo 'Uploading Helm chart'
+          }
+        }
+
+        stage('Terraform') {
+          agent {
+            label 'pod'
+          }
+
+          when {
+            beforeAgent true
+            branch 'master'
+          }
+
+          steps {
+            echo 'Uploading Terraform module'
+          }
+        }
       }
     }
   }
