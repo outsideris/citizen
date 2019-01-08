@@ -1,3 +1,8 @@
+/**
+ * This Jenkinsfile uses components of our internal Jenkins library
+ */
+@Library('visenze-lib') import com.visenze.jenkins.Helm
+
 pipeline {
   agent {
     label 'pod'
@@ -65,7 +70,10 @@ pipeline {
           }
 
           steps {
-            echo 'Uploading Helm chart'
+            script {
+              def c = new Helm(this).initialize()
+              c.upload('helm/citizen')
+            }
           }
         }
 
