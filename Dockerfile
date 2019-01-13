@@ -3,8 +3,8 @@ FROM node:8 as build
 
 LABEL maintainer="outsideris@gmail.com"
 
-WORKDIR /www
-ADD . /www
+WORKDIR /citizen
+ADD . /citizen
 
 RUN npm install
 
@@ -13,9 +13,9 @@ RUN npm run build
 # final stage
 FROM bitnami/minideb
 
-COPY --from=build /www/dist/citizen-linux /usr/local/bin/citizen
+COPY --from=build /citizen/dist/citizen-linux /usr/local/bin/citizen
 
-WORKDIR /www
+WORKDIR /citizen
 
 ENV CITIZEN_DB_DIR ./data
 ENV CITIZEN_STORAGE file
