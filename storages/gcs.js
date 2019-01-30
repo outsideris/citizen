@@ -28,14 +28,14 @@ module.exports = {
   hasModule: async (path) => {
     const bucket = gcs.bucket(GCS_BUCKET);
     const file = bucket.file(path);
-    result = await file.exists();
+    const result = await file.exists();
     return (result[0] === true);
   },
   getModule: async (path) => {
     debug(`get the module: ${path}.`);
     const bucket = gcs.bucket(GCS_BUCKET);
     const file = bucket.file(path);
-    result = await file.download();
+    const result = await file.download();
     return result[0];
   },
 };
