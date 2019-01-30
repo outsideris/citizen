@@ -28,6 +28,8 @@ env:
   - CITIZEN_AWS_S3_BUCKET=kr.ne.outsider.test
   - AWS_ACCESS_KEY_ID=ooooo
   - AWS_SECRET_ACCESS_KEY=xxxxx
+  - CITIZEN_GCP_GCS_BUCKET=kr.ne.outsider.test
+  - GOOGLE_APPLICATION_CREDENTIALS=./google.json
   - DEBUG=*,-mocha:*,-express:*,-nock.*,-pouchdb:*,-eslint:*,-eslint*,-snapdragon:*,-body-parser:*,-morgan,-superagent
 
 jobs:
