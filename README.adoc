@@ -37,6 +37,8 @@ Environment variables:
 * `CITIZEN_AWS_S3_BUCKET``: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.
 * `AWS_ACCESS_KEY_ID`: Your AWS access key only if `CITIZEN_STORAGE` is `s3`.
 * `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key only if `CITIZEN_STORAGE` is `s3`.
+* `CITIZEN_GCP_GCS_BUCKET`: A GCS bucket to save modules files if `CITIZEN_STORAGE` is `gcs`.
+* `GOOGLE_APPLICATION_CREDENTIALS`: Your google application credentials only if `CITIZEN_STORAGE` is `gcs`.
 
 === `citizen publish`
 Since link:https://registry.terraform.io/[official Terraform Module Registry] is integrated with GitHub, users can publish terraform modules if they just push it on GitHub.
