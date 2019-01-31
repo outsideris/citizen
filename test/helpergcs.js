@@ -5,7 +5,7 @@ module.exports = {
     if (process.env.CITIZEN_MOCK_ENABLED) {
       nock('https://storage.googleapis.com')
         .persist()
-        .put(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}`)
+        .put(`/${process.env.CITIZEN_GCP_GCS_BUCKET}/${modulePath}`)
         .reply(
           200,
           ['x-guploader-uploadid', 'AEnB2UqkEQCrSfUftzPAeZsQlQkaGEWWPM-rai3qLiXxmv-2AgQfjKq169_rZ1bEzb46M2CgFW61_uUDlcFfOakaUsJgQom2mA',
