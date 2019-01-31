@@ -11,6 +11,12 @@ if (process.env.CITIZEN_STORAGE === 'gcs' && !GCS_BUCKET) {
 module.exports = {
   type: () => 'gcs',
   saveModule: async (path, tarball) => {
+    after(async () => {
+      const bucket = gcs.bucket(GCS_BUCKET);
+      const file = bucket.file(modulePath);
+      await file.delete();
+    });
+
     debug(`save the module into ${path}.`);
 
     if (!path) { throw new Error('path is required.'); }
@@ -22,12 +28,36 @@ module.exports = {
     return true;
   },
   hasModule: async (path) => {
+    before(async () => {
+      const bucket = gcs.bucket(GCS_BUCKET);
+      const file = bucket.file(modulePath);
+      await file.save(tarballPath);
+    });
+
+    after(async () => {
+      const bucket = gcs.bucket(GCS_BUCKET);
+      const file = bucket.file(modulePath);
+      await file.delete();
+    });
+
     const bucket = gcs.bucket(GCS_BUCKET);
     const file = bucket.file(path);
     const result = await file.exists();
     return (result[0] === true);
   },
   getModule: async (path) => {
+    before(async () => {
+      const bucket = gcs.bucket(GCS_BUCKET);
+      const file = bucket.file(modulePath);
+      await file.save(tarballPath);
+    });
+
+    after(async () => {
+      const bucket = gcs.bucket(GCS_BUCKET);
+      const file = bucket.file(modulePath);
+      await file.delete();
+    });
+
     debug(`get the module: ${path}.`);
     const bucket = gcs.bucket(GCS_BUCKET);
     const file = bucket.file(path);
