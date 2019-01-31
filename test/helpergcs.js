@@ -20,24 +20,7 @@ module.exports = {
         .get(`/b/${process.env.CITIZEN_GCP_GCS_BUCKET}/o/${modulePath}?`)
         .reply(200, {})
         .get(`/b/${process.env.CITIZEN_GCP_GCS_BUCKET}/o/${modulePath}/wrong?`)
-        .reply(404, {
-          "kind": "storage#object",
-          "id": "citizen-test/package.json/1548899004933150",
-          "selfLink": "https://www.googleapis.com/storage/v1/b/citizen-test/o/package.json",
-          "name": "package.json",
-          "bucket": "citizen-test",
-          "generation": "1548899004933150",
-          "metageneration": "1",
-          "timeCreated": "2019-01-31T01:43:24.932Z",
-          "updated": "2019-01-31T01:43:24.932Z",
-          "storageClass": "MULTI_REGIONAL",
-          "timeStorageClassUpdated": "2019-01-31T01:43:24.932Z",
-          "size": "1648",
-          "md5Hash": "2VfaltwFQPTnuzqT7AGRSg==",
-          "mediaLink": "https://www.googleapis.com/download/storage/v1/b/citizen-test/o/package.json?generation=1548899004933150&alt=media",
-          "crc32c": "lzLVrA==",
-          "etag": "CJ7I7bfyluACEAE="
-        })
+        .reply(404, {})
         .get(`/b/${process.env.CITIZEN_GCP_GCS_BUCKET}/o/${modulePath}?`)
         .query({ alt: 'media' })
         .reply(200, {});
