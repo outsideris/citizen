@@ -18,12 +18,8 @@ module.exports = {
 
     const bucket = gcs.bucket(GCS_BUCKET);
     const file = bucket.file(path);
-    try {
-      await file.save(tarball);
-      return true;
-    } catch (error) {
-      return false;
-    }
+    await file.save(tarball);
+    return true;
   },
   hasModule: async (path) => {
     const bucket = gcs.bucket(GCS_BUCKET);
