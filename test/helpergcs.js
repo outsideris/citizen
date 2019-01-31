@@ -2,7 +2,6 @@ const nock = require('nock');
 
 module.exports = {
   enableMock: ({ modulePath }) => {
-    console.log(modulePath);
     if (process.env.CITIZEN_MOCK_ENABLED) {
       nock('https://www.googleapis.com/oauth2/v4/token')
         .persist()

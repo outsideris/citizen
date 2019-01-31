@@ -3,10 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { expect } = require('chai');
 const { promisify } = require('util');
-const { Storage } = require('@google-cloud/storage');
 
-const gcs = new Storage();
-const GCS_BUCKET = process.env.CITIZEN_GCP_GCS_BUCKET;
 const { enableMock, clearMock } = require('../test/helpergcs');
 const { saveModule, hasModule, getModule } = require('./gcs');
 
