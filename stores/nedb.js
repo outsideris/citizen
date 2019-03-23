@@ -7,45 +7,6 @@ const dbDir = process.env.CITIZEN_DB_DIR || 'data';
 const dbPath = join(dbDir, 'citizen.db');
 const db = new Datastore({ filename: dbPath, autoload: true });
 
-
-module.exports = {
-  type: () => 'nedb',
-  saveModule: async (path, tarball) => {
-    if (!path) { throw new Error('path is required.'); }
-    if (!tarball) { throw new Error('tarball is required.'); }
-
-    const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, path);
-    debug(`save the module into ${pathToStore}.`);
-    const parsedPath = parse(pathToStore);
-    await mkdirp(parsedPath.dir);
-
-    await writeFile(pathToStore, tarball);
-
-    return true;
-  },
-  hasModule: async (path) => {
-    const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, path);
-    debug(`check if it has module: ${pathToStore}.`);
-    try {
-      await access(pathToStore);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  },
-  getModule: async (path) => {
-    const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, path);
-    debug(`get the module: ${pathToStore}.`);
-    try {
-      const file = await readFile(pathToStore);
-      return file;
-    } catch (e) {
-      return null;
-    }
-  },
-};
-
-
 const save = data => new Promise((resolve, reject) => {
   const {
     namespace,
