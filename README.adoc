@@ -86,9 +86,19 @@ $ ./bin/citizen publish
 ....
 
 === Test
+Set at least a storage path and the s3 bucket name variables for the tests to succeed.
+You need to be able to access the bucket, so you probably want to have an active aws or aws-vault profile.
+
+Run the tests:
 [source, sh]
 ....
 $ npm test
+....
+
+Run the tests with the environment variables prefixed:
+[source, sh]
+....
+$ CITIZEN_STORAGE_PATH=storage CITIZEN_AWS_S3_BUCKET=terraform-registry-modules npm test
 ....
 
 === Build distributions
