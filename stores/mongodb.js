@@ -76,7 +76,7 @@ const findAll = ({
       if (meta.prevOffset < 0) { meta.prevOffset = null; }
       if (meta.nextOffset >= totalRows) { meta.nextOffset = null; }
 
-      return Module.find(options, null, { sort: '-_id', skip: +offset, limit: +limit })
+      return Module.find(options, null, { sort: '_id', skip: +offset, limit: +limit })
         .then((docs) => {
           debug('search result from db: %o', docs);
           return resolve({

@@ -1,7 +1,9 @@
 sudo: required
 language: node_js
 node_js:
-- '8'
+- '10'
+services:
+- mongodb
 stages:
 - lint
 - test
@@ -20,6 +22,7 @@ install:
 
 env:
   global:
+  - CITIZEN_DATABASE=nedb
   - CITIZEN_DB_DIR=./data
   - CITIZEN_STORAGE=file
   - CITIZEN_STORAGE_PATH=/tmp/citizen
@@ -40,6 +43,14 @@ jobs:
   - stage: test
     script: npm test -- --forbid-only
     node_js: '10'
+  - stage: test
+    script: npm test -- --forbid-only
+    node_js: '8'
+    env: CITIZEN_DATABASE=mongodb
+  - stage: test
+    script: npm test -- --forbid-only
+    node_js: '10'
+    env: CITIZEN_DATABASE=mongodb
   - stage: github release
     script: npm run build
     deploy:

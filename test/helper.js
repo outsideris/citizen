@@ -79,4 +79,9 @@ module.exports = {
       return resolve(numRemoved);
     });
   }),
+  deleteDbAllMongo: db => new Promise((resolve, reject) => {
+    db.remove({})
+    .then(doc => resolve(doc))
+    .catch(err => reject(err));
+  }),
 };
