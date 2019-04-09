@@ -9,13 +9,13 @@ const {
   getVersions,
   getLatestVersion,
   increaseDownload,
-} = require('./store');
-const { deleteDbAll } = require('../test/helper');
+} = require('./mongodb');
+const { deleteDbAllMongo } = require('../test/helper');
 
-describe('store\'s', async () => {
+describe('mongodb store', async () => {
   describe('save()', () => {
     after(async () => {
-      await deleteDbAll(db);
+      await deleteDbAllMongo(db);
     });
 
     it('should store module meta', async () => {
@@ -49,7 +49,7 @@ describe('store\'s', async () => {
     });
 
     after(async () => {
-      await deleteDbAll(db);
+      await deleteDbAllMongo(db);
     });
 
     it('should return all modules', async () => {
@@ -125,7 +125,7 @@ describe('store\'s', async () => {
     });
 
     after(async () => {
-      await deleteDbAll(db);
+      await deleteDbAllMongo(db);
     });
 
     it('should return available versions', async () => {
@@ -150,7 +150,7 @@ describe('store\'s', async () => {
     });
 
     after(async () => {
-      await deleteDbAll(db);
+      await deleteDbAllMongo(db);
     });
 
     it('should return latest versions for a specific module', async () => {
@@ -182,7 +182,7 @@ describe('store\'s', async () => {
     });
 
     after(async () => {
-      await deleteDbAll(db);
+      await deleteDbAllMongo(db);
     });
 
     it('should return the specific module', async () => {
@@ -216,7 +216,7 @@ describe('store\'s', async () => {
     });
 
     after(async () => {
-      await deleteDbAll(db);
+      await deleteDbAllMongo(db);
     });
 
     it('should increase download count of the module', async () => {
