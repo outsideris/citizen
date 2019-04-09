@@ -80,7 +80,7 @@ module.exports = {
     });
   }),
   deleteDbAllMongo: db => new Promise((resolve, reject) => {
-    db.remove({})
+    db.deleteMany({})
       .then(doc => resolve(doc))
       .catch(err => reject(err));
   }),
