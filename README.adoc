@@ -31,7 +31,9 @@ If you want to test it at local, you need a tool which provides HTTPS like link:
 
 Environment variables:
 
-* `CITIZEN_DATA_PATH`: A directory to save database file. The default is `data` directory in a current working directory (absolute/relative path can be used).
+* `CITIZEN_DATABASE`: Backend provider for registry metadata. Set to `mongodb` to use MongoDB. Leaving unset will use local `nedb` file.
+* `CITIZEN_MONGO_DB_URI`: MongoDB database URI if using MongoDB backend. URI format is `mongodb://username:password@host:port/database?options...`. Default is `mongodb://localhost:27017/citizen`
+* `CITIZEN_DATA_PATH`: A directory to save database file if using local backend storage. The default is `data` directory in a current working directory (absolute/relative path can be used).
 * `CITIZEN_STORAGE` : Storage type to store module files. You can use `file` or `s3` type.
 * `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
 * `CITIZEN_AWS_S3_BUCKET``: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.
@@ -86,9 +88,19 @@ $ ./bin/citizen publish
 ....
 
 === Test
+Set at least a storage path and the s3 bucket name variables for the tests to succeed.
+You need to be able to access the bucket, so you probably want to have an active aws or aws-vault profile.
+
+Run the tests:
 [source, sh]
 ....
 $ npm test
+....
+
+Run the tests with the environment variables prefixed:
+[source, sh]
+....
+$ CITIZEN_STORAGE_PATH=storage CITIZEN_AWS_S3_BUCKET=terraform-registry-modules npm test
 ....
 
 === Build distributions
