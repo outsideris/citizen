@@ -7,7 +7,7 @@ services:
 stages:
 - lint
 - test
-- github releas
+- github release
 
 cache:
   directories:
@@ -42,6 +42,9 @@ jobs:
   - stage: test
     script: npm test -- --forbid-only
     node_js: '10'
+  - stage: test
+    script: npm test -- --forbid-only
+    node_js: '12'
   - stage: github release
     script: npm run build
     deploy:
