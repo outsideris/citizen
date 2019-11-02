@@ -29,7 +29,7 @@
     "listr": "^0.14.2",
     "lodash": "^4.17.11",
     "mkdirp": "^0.5.1",
-    "mongoose": "^5.5.0",
+    "mongoose": "^5.7.5",
     "morgan": "^1.9.1",
     "multiparty": "^4.2.1",
     "nedb": "^1.8.0",
