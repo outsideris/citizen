@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
 const { expect } = require('chai');
-const mkdirp = promisify(require('mkdirp'));
+const mkdirp = require('mkdirp');
 const rimraf = promisify(require('rimraf'));
 
 const { saveModule, hasModule, getModule } = require('./file');

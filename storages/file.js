@@ -2,7 +2,7 @@ const fs = require('fs');
 const { join, parse } = require('path');
 const { promisify } = require('util');
 const debug = require('debug')('citizen:server');
-const mkdirp = promisify(require('mkdirp'));
+const mkdirp = require('mkdirp');
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);

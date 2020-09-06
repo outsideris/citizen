@@ -4,7 +4,7 @@ const { promisify } = require('util');
 const rimraf = promisify(require('rimraf'));
 const fs = require('fs');
 const path = require('path');
-const mkdirp = promisify(require('mkdirp'));
+const mkdirp = require('mkdirp');
 
 const app = require('../app');
 const { deleteDbAll } = require('../test/helper');

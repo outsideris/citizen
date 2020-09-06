@@ -1,5 +1,5 @@
 const Datastore = require('nedb');
-const uuid = require('uuid/v1');
+const { v4: uuid } = require('uuid');
 const { join } = require('path');
 const debug = require('debug')('citizen:server');
 
