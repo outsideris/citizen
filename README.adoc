@@ -91,6 +91,12 @@ $ ./bin/citizen publish
 Set at least a storage path and the s3 bucket name variables for the tests to succeed.
 You need to be able to access the bucket, so you probably want to have an active aws or aws-vault profile.
 
+Run mongodb first like:
+[source, sh]
+....
+$ docker run -p 27017:27017 --name mongo mongo
+....
+
 Run the tests:
 [source, sh]
 ....
