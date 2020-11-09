@@ -7,7 +7,7 @@ const dbDir = process.env.CITIZEN_DB_DIR || 'data';
 const dbPath = join(dbDir, 'citizen.db');
 const db = new Datastore({ filename: dbPath, autoload: true });
 
-const save = data => new Promise((resolve, reject) => {
+const save = (data) => new Promise((resolve, reject) => {
   const {
     namespace,
     name,
@@ -96,7 +96,7 @@ const getVersions = ({ namespace, name, provider } = {}) => new Promise((resolve
   db.find(options).sort({ _id: 1 }).exec((err, docs) => {
     if (err) { return reject(err); }
 
-    const data = docs.map(d => ({
+    const data = docs.map((d) => ({
       version: d.version,
       submodules: d.submodules,
       root: d.root,

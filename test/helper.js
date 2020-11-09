@@ -73,15 +73,15 @@ module.exports = {
       nock.cleanAll();
     }
   },
-  deleteDbAll: db => new Promise((resolve, reject) => {
+  deleteDbAll: (db) => new Promise((resolve, reject) => {
     db.remove({}, { multi: true }, (err, numRemoved) => {
       if (err) { return reject(err); }
       return resolve(numRemoved);
     });
   }),
-  deleteDbAllMongo: db => new Promise((resolve, reject) => {
+  deleteDbAllMongo: (db) => new Promise((resolve, reject) => {
     db.deleteMany({})
-      .then(doc => resolve(doc))
-      .catch(err => reject(err));
+      .then((doc) => resolve(doc))
+      .catch((err) => reject(err));
   }),
 };

@@ -19,7 +19,7 @@ const Module = mongoose.model('Module', {
 
 const db = Module;
 
-const save = data => new Promise((resolve, reject) => {
+const save = (data) => new Promise((resolve, reject) => {
   const {
     namespace,
     name,
@@ -45,7 +45,7 @@ const save = data => new Promise((resolve, reject) => {
       debug('saved the module into db: %o', module);
       return resolve(newDoc);
     })
-    .catch(err => reject(err));
+    .catch((err) => reject(err));
 });
 
 const findAll = ({
@@ -84,9 +84,9 @@ const findAll = ({
             modules: docs,
           });
         })
-        .catch(err => reject(err));
+        .catch((err) => reject(err));
     })
-    .catch(err => reject(err));
+    .catch((err) => reject(err));
 });
 
 const getVersions = ({
@@ -107,7 +107,7 @@ const getVersions = ({
   debug('search versions in db with %o', options);
   Module.find(options, null, { sort: '_id' })
     .then((docs) => {
-      const data = docs.map(d => ({
+      const data = docs.map((d) => ({
         version: d.version,
         submodules: d.submodules,
         root: d.root,
@@ -115,7 +115,7 @@ const getVersions = ({
       debug('search versions result from db: %o', docs);
       return resolve(data);
     })
-    .catch(err => reject(err));
+    .catch((err) => reject(err));
 });
 
 const getLatestVersion = async ({
@@ -138,7 +138,7 @@ const getLatestVersion = async ({
       debug('search latest version result from db: %o', docs);
       return resolve(docs.length > 0 ? docs[0] : null);
     })
-    .catch(err => reject(err));
+    .catch((err) => reject(err));
 });
 
 const findOne = async ({
@@ -161,8 +161,8 @@ const findOne = async ({
 
   debug('search a module in db with %o', options);
   Module.find(options)
-    .then(docs => resolve(docs.length > 0 ? docs[0] : null))
-    .catch(err => reject(err));
+    .then((docs) => resolve(docs.length > 0 ? docs[0] : null))
+    .catch((err) => reject(err));
 });
 
 const increaseDownload = async ({
@@ -184,8 +184,8 @@ const increaseDownload = async ({
   };
 
   Module.findOneAndUpdate(options, { $inc: { downloads: 1 } }, { new: true })
-    .then(doc => resolve(doc))
-    .catch(err => reject(err));
+    .then((doc) => resolve(doc))
+    .catch((err) => reject(err));
 });
 
 module.exports = {

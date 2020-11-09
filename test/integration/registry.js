@@ -38,7 +38,7 @@ const run = (port = 3000) => {
   return server;
 };
 
-const terminate = server => new Promise((resolve, reject) => server.close((err) => {
+const terminate = (server) => new Promise((resolve, reject) => server.close((err) => {
   if (err) {
     reject(err);
   }

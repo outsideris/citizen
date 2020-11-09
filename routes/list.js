@@ -85,7 +85,7 @@ router.get('/:namespace/:name', async (req, res) => {
   };
 
   const result = await findAll(options);
-  const grouped = _.groupBy(result.modules, m => `${m.namespace}/${m.name}/${m.provider}`);
+  const grouped = _.groupBy(result.modules, (m) => `${m.namespace}/${m.name}/${m.provider}`);
 
   const modules = Object.keys(grouped).map((key) => {
     const sorted = _.orderBy(grouped[key], ['versions']);
