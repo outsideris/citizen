@@ -68,7 +68,7 @@ const findAll = ({
     if (meta.prevOffset < 0) { meta.prevOffset = null; }
     if (meta.nextOffset >= totalRows) { meta.nextOffset = null; }
 
-    return db.find(options).sort({ _id: 1 }).skip(+offset).limit(+limit)
+    return db.find(options).sort({ published_at: 1, version: 1 }).skip(+offset).limit(+limit)
       .exec((error, docs) => {
         if (error) { return reject(err); }
 

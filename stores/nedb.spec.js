@@ -12,7 +12,7 @@ const {
 } = require('./nedb');
 const { deleteDbAll } = require('../test/helper');
 
-describe('store\'s', async () => {
+describe('nedb store\'s', async () => {
   describe('save()', () => {
     after(async () => {
       await deleteDbAll(db);
