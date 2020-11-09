@@ -15,7 +15,7 @@ const readFile = promisify(fs.readFile);
 
 describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   let moduleBuf;
-  let modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
+  let modulePath;
   const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
 
   beforeEach(async () => {
@@ -37,14 +37,14 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
       expect(res.body.modules[0]).to.have.property('id').to.equal(modulePath);
     }));
 
-  it('should reject the reqeust if the module is already exists.', async () => {
+  it('should reject the request if the module is already exists.', async () => {
     const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, `${modulePath}/test.tar.gz`);
     const parsedPath = path.parse(pathToStore);
     await mkdirp(parsedPath.dir);
-    await writeFile(pathToStore, moduleBuf);
     moduleBuf = await readFile(tarballPath);
+    await writeFile(pathToStore, moduleBuf);
 
-    request(app)
+    return request(app)
       .post(`/v1/modules/${modulePath}`)
       .attach('module', 'test/fixture/test.tar.gz')
       .expect('Content-Type', /application\/json/)
