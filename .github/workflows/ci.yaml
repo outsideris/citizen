@@ -10,9 +10,10 @@ jobs:
       matrix:
         node:
           - 10
-          -
+          - 12
+          - 14
     services:
-      nginx:
+      mongodb:
         image: mongo
         ports:
           - 27017:27017
