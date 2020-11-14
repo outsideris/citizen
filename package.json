@@ -9,7 +9,7 @@
     "start": "node ./bin/citizen server",
     "dev": "nodemon ./bin/citizen server",
     "lint": "eslint .",
-    "test": "mocha --exit --recursive -t 20000 $(find . -name '*.spec.js' -not -path './node_modules/*')",
+    "test": "mocha --exit -t 10000 $(find . -name '*.spec.js' -not -path './node_modules/*')",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
     "build": "pkg . --out-path dist --targets node10-linux-x64,node10-macos-x64,node10-win-x64"
