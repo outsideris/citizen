@@ -1,0 +1,19 @@
+module.exports = (data) => ({
+  protocols: ['5.0'],
+  os: data.os,
+  arch: data.arch,
+  filename: data.filename,
+  download_url: data.downloadUrl,
+  shasums_url: data.shaSumsUrl,
+  shasums_signature_url: `${data.shaSumsSignatureUrl || "https://nothing"}`,
+  shasum: data.shasum,
+  signing_keys: {
+    gpg_public_keys: data.gpgKeys.map((key) => ({
+      key_id: key.keyId,
+      ascii_armor: key.asciiArmor,
+      trust_signature: key.trustSignature,
+      source: key.source,
+      source_url: key.sourceUrl,
+    })),
+  },
+});

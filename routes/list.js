@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const _ = require('lodash');
 
-const { findAll, getVersions } = require('../lib/store');
+const { findAll, getVersions } = require('../lib/modules-store');
 const { makeUrl } = require('../lib/util');
 
 const router = Router();

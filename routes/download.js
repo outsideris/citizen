@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const { findOne, getLatestVersion, increaseDownload } = require('../lib/store');
+const { findOne, getLatestVersion, increaseDownload } = require('../lib/modules-store');
 const { getModule } = require('../lib/storage');
 
 const router = Router();

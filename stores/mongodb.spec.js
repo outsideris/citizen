@@ -9,7 +9,7 @@ const {
   getVersions,
   getLatestVersion,
   increaseDownload,
-} = require('./mongodb');
+} = require('./modules-mongodb');
 const { deleteDbAllMongo } = require('../test/helper');
 
 describe('mongodb store', async () => {

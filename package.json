@@ -25,6 +25,7 @@
     "globby": "^11.0.1",
     "gopher-hcl": "^0.2.0",
     "helmet": "^4.2.0",
+    "https-localhost": "^4.6.4",
     "jten": "^0.2.0",
     "listr": "^0.14.2",
     "lodash": "^4.17.20",

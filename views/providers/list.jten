@@ -1,0 +1,23 @@
+module.exports = (data) => ({
+  meta: {
+    limit: data.meta.limit,
+    current_offset: data.meta.currentOffset,
+    next_offset: data.meta.nextOffset,
+    next_url: data.meta.nextUrl,
+  },
+  modules: data.modules.map(m =>
+    ({
+      id: `${m.namespace}/${m.name}/${m.provider}/${m.version}`,
+      owner: m.owner,
+      namespace: m.namespace,
+      name: m.name,
+      version: m.version,
+      provider: m.provider,
+      description: '',
+      source: '',
+      published_at: m.published_at,
+      downloads: 0,
+      verified: false,
+    })
+  ),
+});

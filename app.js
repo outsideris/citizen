@@ -1,12 +1,10 @@
-const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 
+const app = require('https-localhost')();
 const logger = require('./lib/logger');
-
-const app = express();
 
 app.use(helmet());
 
@@ -21,6 +19,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', require('./routes/index'));
 app.use('/', require('./routes/service-discovery'));
+
+app.use('/v1/providers', require('./routes/providers'));
+app.use('/v1/providers', require('./routes/download'));
+app.use('/v1/providers', require('./routes/list'));
+
 app.use('/v1/modules', require('./routes/list'));
 app.use('/v1/modules', require('./routes/modules'));
 app.use('/v1/modules', require('./routes/download'));
