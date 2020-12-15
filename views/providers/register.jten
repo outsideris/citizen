@@ -1,0 +1,13 @@
+module.exports = (data) => ({
+  modules: [
+    {
+      id: data.id,
+      owner: data.owner,
+      namespace: data.namespace,
+      name: data.name,
+      version: data.version,
+      provider: data.provider,
+      published_at: data.published_at,
+    },
+  ],
+});

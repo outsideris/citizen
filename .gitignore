@@ -5,3 +5,6 @@ node_modules/
 dist/
 data/
 test/terraform-binaries/
+.binaries/
+test/tf
+.terraform/

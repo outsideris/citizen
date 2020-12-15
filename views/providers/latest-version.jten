@@ -1,0 +1,15 @@
+module.exports = (data) => ({
+  id: `${data.namespace}/${data.name}/${data.provider}/${data.version}`,
+  owner: data.owner,
+  namespace: data.namespace,
+  name: data.name,
+  version: data.version,
+  provider: data.provider,
+  description: '',
+  source: '',
+  published_at: data.published_at,
+  downloads: 0,
+  verified: false,
+  root: data.root,
+  submodules: data.submodules,
+});

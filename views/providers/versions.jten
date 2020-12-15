@@ -1,0 +1,8 @@
+module.exports = (data) => ({
+  versions: data.versions.map(v => ({
+    version: v.version,
+    protocols: ["5.0"],
+    platforms: v.platforms
+  }))
+});
+ 
