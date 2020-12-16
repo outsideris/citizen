@@ -10,11 +10,12 @@ const access = promisify(fs.access);
 
 module.exports = {
   type: () => 'file',
+  getModulePath: (path) => join(process.env.CITIZEN_STORAGE_PATH, 'modules', path),
   saveModule: async (path, tarball) => {
     if (!path) { throw new Error('path is required.'); }
     if (!tarball) { throw new Error('tarball is required.'); }
 
-    const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'modules', path);
+    const pathToStore = module.exports.getModulePath(path);
     debug(`save the module into ${pathToStore}.`);
     const parsedPath = parse(pathToStore);
     await mkdirp(parsedPath.dir);
@@ -24,7 +25,7 @@ module.exports = {
     return true;
   },
   hasModule: async (path) => {
-    const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'modules', path);
+    const pathToStore = module.exports.getModulePath(path);
     debug(`check if it has module: ${pathToStore}.`);
     try {
       await access(pathToStore);
@@ -34,7 +35,7 @@ module.exports = {
     }
   },
   getModule: async (path) => {
-    const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'modules', path);
+    const pathToStore = module.exports.getModulePath(path);
     debug(`get the module: ${pathToStore}.`);
     try {
       const file = await readFile(pathToStore);
@@ -43,11 +44,12 @@ module.exports = {
       return null;
     }
   },
+  getProviderPath: (path) => join(process.env.CITIZEN_STORAGE_PATH, 'providers', path),
   saveProvider: async (path, file) => {
     if (!path) { throw new Error('path is required.'); }
     if (!file) { throw new Error('file is required.'); }
 
-    const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'providers', path);
+    const pathToStore = module.exports.getProviderPath(path);
     debug(`save the Provider into ${pathToStore}.`);
     const parsedPath = parse(pathToStore);
     await mkdirp(parsedPath.dir);
@@ -57,7 +59,7 @@ module.exports = {
     return true;
   },
   hasProvider: async (path) => {
-    const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'providers', path);
+    const pathToStore = module.exports.getProviderPath(path);
     debug(`check if it has Provider: ${pathToStore}.`);
     try {
       await access(pathToStore);
@@ -67,7 +69,7 @@ module.exports = {
     }
   },
   getProvider: async (path) => {
-    const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'providers', path);
+    const pathToStore = module.exports.getProviderPath(path);
     debug(`get the Provider: ${pathToStore}.`);
     try {
       const file = await readFile(pathToStore);

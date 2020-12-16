@@ -24,7 +24,7 @@ module.exports = {
 
     const params = {
       Bucket: S3_BUCKET,
-      Key: path,
+      Key: `modules/${path}`,
       Body: tarball,
     };
     const result = await s3.save(params);
@@ -37,7 +37,7 @@ module.exports = {
   hasModule: async (path) => {
     const params = {
       Bucket: S3_BUCKET,
-      Key: path,
+      Key: `modules/${path}`,
     };
 
     try {
@@ -62,20 +62,20 @@ module.exports = {
     debug(`get the module: ${path}.`);
     const params = {
       Bucket: S3_BUCKET,
-      Key: path,
+      Key: `modules/${path}`,
     };
     const file = await s3.get(params);
     return file.Body;
   },
   saveProvider: async (path, tarball) => {
-    debug(`save the module into ${path}.`);
+    debug(`save the provider into ${path}.`);
 
     if (!path) { throw new Error('path is required.'); }
     if (!tarball) { throw new Error('tarball is required.'); }
 
     const params = {
       Bucket: S3_BUCKET,
-      Key: path,
+      Key: `providers/${path}`,
       Body: tarball,
     };
     const result = await s3.save(params);
@@ -88,32 +88,32 @@ module.exports = {
   hasProvider: async (path) => {
     const params = {
       Bucket: S3_BUCKET,
-      Key: path,
+      Key: `providers/${path}`,
     };
 
     try {
       const module = await s3.get(params);
       if (module.Body) {
-        debug(`the module already exist: ${path}.`);
+        debug(`the provider already exist: ${path}.`);
         return true;
       }
     } catch (err) {
       if (err.name === 'NoSuchKey') {
-        debug(`the module doesn't exist: ${path}.`);
+        debug(`the provider doesn't exist: ${path}.`);
         return false;
       }
 
       throw err;
     }
 
-    debug(`the module doesn't exist: ${path}.`);
+    debug(`the provider doesn't exist: ${path}.`);
     return false;
   },
   getProvider: async (path) => {
-    debug(`get the module: ${path}.`);
+    debug(`get the provider: ${path}.`);
     const params = {
       Bucket: S3_BUCKET,
-      Key: path,
+      Key: `providers/${path}`,
     };
     const file = await s3.get(params);
     return file.Body;
