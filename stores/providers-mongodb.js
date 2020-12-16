@@ -7,12 +7,16 @@ mongoose.connect(dbUri, { useUnifiedTopology: true, useNewUrlParser: true });
 
 const Provider = mongoose.model('Provider', {
   namespace: String,
-  name: String,
+  type: String,
   version: String,
-  owner: { type: String, default: '' },
-  location: String,
-  definition: mongoose.Schema.Types.Mixed,
-  downloads: { type: Number, default: 0 },
+
+  platforms: [new mongoose.Schema({
+    os: { type: String },
+    arch: { type: String },
+    location: { type: String },
+    filename: { type: String },
+    shasum: { type: String },
+  })],
   published_at: { type: Date, default: Date.now },
 });
 
@@ -21,27 +25,21 @@ const db = Provider;
 const save = (data) => new Promise((resolve, reject) => {
   const {
     namespace,
-    name,
-    provider,
+    type,
     version,
-    owner,
-    location,
-    definition = {},
+    platforms,
   } = data;
 
-  const module = new Provider({
-    owner,
+  const provider = new Provider({
     namespace,
-    name,
-    provider,
+    type,
     version,
-    location,
-    ...definition,
+    platforms,
   });
 
-  module.save()
+  provider.save()
     .then((newDoc) => {
-      debug('saved the module into db: %o', module);
+      debug('saved the provider into db: %o', provider);
       return resolve(newDoc);
     })
     .catch((err) => reject(err));
@@ -50,7 +48,6 @@ const save = (data) => new Promise((resolve, reject) => {
 const findAll = ({
   selector = {},
   namespace = '',
-  provider = '',
   offset = 0,
   limit = 15,
 } = {}) => new Promise((resolve, reject) => {
@@ -59,9 +56,7 @@ const findAll = ({
   if (namespace) {
     options.namespace = namespace;
   }
-  if (provider) {
-    options.provider = provider;
-  }
+
   debug('search db with %o', options);
   Provider.find(options)
     .then((allDocs) => {
@@ -80,7 +75,7 @@ const findAll = ({
           debug('search result from db: %o', docs);
           return resolve({
             meta,
-            modules: docs,
+            providers: docs,
           });
         })
         .catch((err) => reject(err));
@@ -90,27 +85,20 @@ const findAll = ({
 
 const getVersions = ({
   namespace,
-  name,
-  provider,
+  type,
 } = {}) => new Promise((resolve, reject) => {
   if (!namespace) { reject(new Error('namespace required.')); }
-  if (!name) { reject(new Error('name required.')); }
-  if (!provider) { reject(new Error('provider required.')); }
+  if (!type) { reject(new Error('type required.')); }
 
   const options = {
     namespace,
-    name,
-    provider,
+    type,
   };
 
   debug('search versions in db with %o', options);
   Provider.find(options, null, { sort: '_id' })
     .then((docs) => {
-      const data = docs.map((d) => ({
-        version: d.version,
-        submodules: d.submodules,
-        root: d.root,
-      }));
+      const data = docs;
       debug('search versions result from db: %o', docs);
       return resolve(data);
     })
@@ -119,17 +107,14 @@ const getVersions = ({
 
 const getLatestVersion = async ({
   namespace,
-  name,
-  provider,
+  type,
 } = {}) => new Promise((resolve, reject) => {
   if (!namespace) { reject(new Error('namespace required.')); }
-  if (!name) { reject(new Error('name required.')); }
-  if (!provider) { reject(new Error('provider required.')); }
+  if (!type) { reject(new Error('type required.')); }
 
   const options = {
     namespace,
-    name,
-    provider,
+    type,
   };
 
   Provider.find(options, null, { sort: '-version', limit: 1 })
@@ -142,23 +127,20 @@ const getLatestVersion = async ({
 
 const findOne = async ({
   namespace,
-  name,
-  provider,
+  type,
   version,
 } = {}) => new Promise((resolve, reject) => {
   if (!namespace) { reject(new Error('namespace required.')); }
-  if (!name) { reject(new Error('name required.')); }
-  if (!provider) { reject(new Error('provider required.')); }
+  if (!type) { reject(new Error('type required.')); }
   if (!version) { reject(new Error('version required.')); }
 
   const options = {
     namespace,
-    name,
-    provider,
+    type,
     version,
   };
 
-  debug('search a module in db with %o', options);
+  debug('search a provider in db with %o', options);
   Provider.find(options)
     .then((docs) => resolve(docs.length > 0 ? docs[0] : null))
     .catch((err) => reject(err));
@@ -166,20 +148,23 @@ const findOne = async ({
 
 const increaseDownload = async ({
   namespace,
-  name,
-  provider,
+  type,
   version,
+  os,
+  arch,
 } = {}) => new Promise((resolve, reject) => {
   if (!namespace) { reject(new Error('namespace required.')); }
-  if (!name) { reject(new Error('name required.')); }
-  if (!provider) { reject(new Error('provider required.')); }
+  if (!type) { reject(new Error('type required.')); }
   if (!version) { reject(new Error('version required.')); }
+  if (!os) { reject(new Error('os required.')); }
+  if (!arch) { reject(new Error('arch required.')); }
 
   const options = {
     namespace,
-    name,
-    provider,
+    type,
     version,
+    'platforms.os': os,
+    'platforms.arch': arch,
   };
 
   Provider.findOneAndUpdate(options, { $inc: { downloads: 1 } }, { new: true })
@@ -204,8 +189,8 @@ const findProviderPackage = async ({
     namespace,
     type,
     version,
-    os,
-    arch,
+    'platforms.os': os,
+    'platforms.arch': arch,
   };
 
   Provider.findOne(options)
