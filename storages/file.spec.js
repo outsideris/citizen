@@ -47,7 +47,7 @@ describe('file storage\'s', async () => {
 
   describe('hasModule()', () => {
     it('should return true if the module is already exist', async () => {
-      const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, modulePath);
+      const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, 'modules', modulePath);
       const parsedPath = path.parse(pathToStore);
       await mkdirp(parsedPath.dir);
       await writeFile(pathToStore, moduleBuf);
@@ -64,7 +64,7 @@ describe('file storage\'s', async () => {
 
   describe('getModule()', () => {
     it('should get file buffer from disk', async () => {
-      const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, modulePath);
+      const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, 'modules', modulePath);
       const parsedPath = path.parse(pathToStore);
       await mkdirp(parsedPath.dir);
       await writeFile(pathToStore, moduleBuf);

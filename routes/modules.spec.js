@@ -8,7 +8,7 @@ const mkdirp = require('mkdirp');
 
 const app = require('../app');
 const { deleteDbAll } = require('../test/helper');
-const { db, save } = require('../lib/store');
+const { db, save } = require('../lib/modules-store');
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
