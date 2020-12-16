@@ -9,7 +9,7 @@ const rimraf = promisify(require('rimraf'));
 
 const { connect, disconnect } = require('./ngrok');
 const registry = require('./registry');
-const { db } = require('../../lib/store');
+const { db } = require('../../lib/modules-store');
 const { deleteDbAll } = require('../helper');
 
 const writeFile = promisify(fs.writeFile);

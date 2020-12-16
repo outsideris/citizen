@@ -7,7 +7,7 @@ const rimraf = promisify(require('rimraf'));
 
 const app = require('../app');
 const { deleteDbAll } = require('../test/helper');
-const { db, save } = require('../lib/store');
+const { db, save } = require('../lib/modules-store');
 
 describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
   before(async () => {

@@ -9,7 +9,7 @@ const {
   getVersions,
   getLatestVersion,
   increaseDownload,
-} = require('./nedb');
+} = require('./modules-nedb');
 const { deleteDbAll } = require('../test/helper');
 
 describe('nedb store\'s', async () => {

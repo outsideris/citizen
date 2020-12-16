@@ -2,7 +2,7 @@ const request = require('supertest');
 const { expect } = require('chai');
 
 const app = require('../app');
-const { db, save } = require('../lib/store');
+const { db, save } = require('../lib/modules-store');
 const { deleteDbAll } = require('../test/helper');
 
 describe('GET /v1/modules', () => {
