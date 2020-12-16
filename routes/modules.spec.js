@@ -38,7 +38,7 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
     }));
 
   it('should reject the request if the module is already exists.', async () => {
-    const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, `${modulePath}/test.tar.gz`);
+    const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, 'modules', `${modulePath}/test.tar.gz`);
     const parsedPath = path.parse(pathToStore);
     await mkdirp(parsedPath.dir);
     moduleBuf = await readFile(tarballPath);
