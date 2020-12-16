@@ -13,7 +13,7 @@ const { db, save } = require('../lib/modules-store');
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 
-describe('POST /v1/providers/:namespace/:name/:provider/:version', () => {
+describe.skip('POST /v1/providers/:namespace/:name/:provider/:version', () => {
   let moduleBuf;
   let modulePath;
   const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
@@ -90,7 +90,7 @@ describe('POST /v1/providers/:namespace/:name/:provider/:version', () => {
   });
 });
 
-describe('GET /v1/providers/:namespace/:name/:provider/:version', () => {
+describe.skip('GET /v1/providers/:namespace/:name/:provider/:version', () => {
   before(async () => {
     await save({
       namespace: 'router', name: 'specific', provider: 'aws', version: '1.1.2', owner: '',
@@ -116,7 +116,7 @@ describe('GET /v1/providers/:namespace/:name/:provider/:version', () => {
     .expect(404));
 });
 
-describe('GET /v1/providers/:namespace/:name/:provider', () => {
+describe.skip('GET /v1/providers/:namespace/:name/:provider', () => {
   before(async () => {
     await save({
       namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.1', owner: '', definition: { root: { name: 'latest' }, subproviders: [{ name: 'example' }] },
