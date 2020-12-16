@@ -16,7 +16,7 @@ describe('s3\'s', async () => {
   let moduleBuf;
 
   before(async () => {
-    enableMock({ modulePath });
+    enableMock({ modulePath: `modules/${modulePath}` });
     moduleBuf = await readFile(tarballPath);
   });
 
