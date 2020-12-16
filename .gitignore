@@ -8,3 +8,4 @@ test/terraform-binaries/
 .binaries/
 test/tf
 .terraform/
+.env
