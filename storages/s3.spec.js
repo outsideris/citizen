@@ -28,7 +28,7 @@ describe('s3\'s', async () => {
     after(async () => {
       const params = {
         Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
-        Key: modulePath,
+        Key: `modules/${modulePath}`,
       };
       await s3.send(new DeleteObjectCommand(params));
     });
@@ -43,7 +43,7 @@ describe('s3\'s', async () => {
     before(async () => {
       const params = {
         Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
-        Key: modulePath,
+        Key: `modules/${modulePath}`,
         Body: moduleBuf,
       };
       await s3.send(new PutObjectCommand(params));
@@ -52,7 +52,7 @@ describe('s3\'s', async () => {
     after(async () => {
       const params = {
         Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
-        Key: modulePath,
+        Key: `modules/${modulePath}`,
       };
       await s3.send(new DeleteObjectCommand(params));
     });
@@ -72,7 +72,7 @@ describe('s3\'s', async () => {
     before(async () => {
       const params = {
         Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
-        Key: modulePath,
+        Key: `modules/${modulePath}`,
         Body: moduleBuf,
       };
       await s3.send(new PutObjectCommand(params));
@@ -81,7 +81,7 @@ describe('s3\'s', async () => {
     after(async () => {
       const params = {
         Bucket: process.env.CITIZEN_AWS_S3_BUCKET,
-        Key: modulePath,
+        Key: `modules/${modulePath}`,
       };
       await s3.send(new DeleteObjectCommand(params));
     });
