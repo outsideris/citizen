@@ -1,9 +1,12 @@
 const path = require('path');
+const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const httpsServer = require('https-localhost');
 
-const app = require('https-localhost')();
+const app = process.env.NODE_ENV === 'production' ? express() : httpsServer();
+
 const logger = require('./lib/logger');
 
 app.use(helmet());
