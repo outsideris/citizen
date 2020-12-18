@@ -9,3 +9,4 @@ data/
 test/tf
 .terraform/
 .env
+test/integration/fixture/provider

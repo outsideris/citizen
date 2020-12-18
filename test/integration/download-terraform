@@ -10,27 +10,31 @@ const chmod = promisify(fs.chmod);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
 
-const TERRAFORM_VERSION = '0.11.11';
+const TERRAFORM_VERSION = process.argv.length === 3 ? process.argv[2] : '0.11.11';
+
 const PLATFORM = process.platform;
 const DOWNLOAD_URL = `https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_${PLATFORM}_amd64.zip`;
 
 const TARGET_DIR = join(__dirname, 'temp');
 
-const download = async() => {
+const download = async () => {
   try {
     await mkdir(TARGET_DIR);
-  } catch(ignore) { }
+  } catch (ignore) { }
 
   debug(`Start to download terraform v${TERRAFORM_VERSION}`);
 
-  const terraformFile = join(TARGET_DIR, 'terraform');
+  const terraformFile = join(TARGET_DIR, `terraform-${TERRAFORM_VERSION}`);
+  debug('Will save terraform to %s', terraformFile);
   let notExist = true;
   try {
-    notExist = await access(terraformFile)
-  } catch(ignore) { }
+    notExist = await access(terraformFile);
+  } catch (ignore) { }
 
+  debug('Terraform file exists: %s', !notExist);
   return new Promise((resolve, reject) => {
     if (notExist) {
+      debug('Downloading terraform from %s', DOWNLOAD_URL);
       request(DOWNLOAD_URL)
         .pipe(unzipper.Parse())
         .on('entry', (entry) => {
@@ -40,11 +44,11 @@ const download = async() => {
           if (fileName === 'terraform') {
             debug('Write it as a file');
             entry.on('finish', async () => {
-              await chmod(`${TARGET_DIR}/${fileName}`, 0o765);
+              await chmod(terraformFile, 0o765);
               debug('All done.');
               resolve();
             });
-            entry.pipe(fs.createWriteStream(`${TARGET_DIR}/${fileName}`));
+            entry.pipe(fs.createWriteStream(terraformFile));
           } else {
             entry.autodrain();
             reject(new Error('hahaha'));

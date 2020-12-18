@@ -104,144 +104,6 @@ router.get('/:namespace/:type/:version/download/:os/:arch', async (req, res, nex
 });
 
 // register a provider with version
-router.post('/:namespace/:type/:version/:os/:arch', (req, res, next) => {
-  const {
-    namespace,
-    type,
-    version,
-    os,
-    arch,
-  } = req.params;
-  const destPath = `${namespace}/${type}/${version}/${os}/${arch}`;
-
-  let filename;
-
-  let archive;
-  let signature;
-  let sha256sums;
-  let publicKey;
-  let publicKeyId;
-
-  const form = new multiparty.Form();
-
-  form.on('error', (err) => {
-    logger.error(`Error parsing form: ${err.stack}`);
-    next(err);
-  });
-
-  form.on('part', async (part) => {
-    part.on('error', (err) => {
-      logger.error(`Error parsing form: ${err.stack}`);
-      next(err);
-    });
-
-    const archiveBuffer = [];
-    const signatureBuffer = [];
-    const pubkeyBuffer = [];
-    const pubKeyIdBuffer = [];
-    const sha256sumsBuffer = [];
-
-    part.on('data', (buffer) => {
-      if (part.name === 'gpgKeyId') {
-        pubKeyIdBuffer.push(buffer);
-      }
-
-      if (part.name === 'sha256sums') {
-        sha256sumsBuffer.push(buffer);
-      }
-
-      if (part.name === 'pubkey') {
-        pubkeyBuffer.push(buffer);
-      }
-
-      if (part.name === 'signature') {
-        signatureBuffer.push(buffer);
-      }
-
-      if (part.name === 'provider') {
-        archiveBuffer.push(buffer);
-      }
-    });
-    part.on('end', async () => {
-      if (part.name === 'pubkey') {
-        publicKey = Buffer.concat(pubkeyBuffer);
-      }
-
-      if (part.name === 'sha256sums') {
-        sha256sums = Buffer.concat(sha256sumsBuffer);
-      }
-
-      if (part.name === 'provider') {
-        filename = part.filename;
-        archive = Buffer.concat(archiveBuffer);
-      }
-
-      if (part.name === 'signature') {
-        signature = Buffer.concat(signatureBuffer);
-      }
-
-      if (part.name === 'gpgKeyId') {
-        publicKeyId = Buffer.concat(pubKeyIdBuffer).toString();
-      }
-    });
-  });
-
-  form.on('close', async () => {
-    try {
-      const exist = await hasProvider(`${destPath}/${filename}`);
-      if (exist) {
-        const error = new Error('Provider exist');
-        error.status = 409;
-        error.message = `${destPath} is already exist.`;
-        return next(error);
-      }
-
-      const sha256Sum = crypto.createHash('sha256').update(archive).digest('hex');
-      const fileResult = await saveProvider(`${destPath}/${filename}`, archive);
-      const signatureResult = await saveProvider(`${destPath}/${filename}.sig`, signature);
-      const sha256sumsResults = await saveProvider(`${destPath}/${filename}.sums`, sha256sums);
-
-      const gpgKeys = [
-        {
-          keyId: publicKeyId,
-          asciiArmor: publicKey.toString(),
-        },
-      ];
-
-      const metaResult = await save({
-        namespace,
-        type,
-        os,
-        arch,
-        sha256Sum,
-        gpgKeys,
-        version,
-        filename,
-        location: `${destPath}/${filename}`,
-      });
-
-      if (fileResult && signatureResult && metaResult && sha256sumsResults) {
-        return res.status(201).render('providers/register', {
-          id: destPath,
-          namespace,
-          type,
-          filename,
-          version,
-          published_at: new Date(),
-        });
-      }
-
-      return next(new Error());
-    } catch (e) {
-      logger.error(e);
-      return next(e);
-    }
-  });
-
-  form.parse(req);
-});
-
-// register a provider with version
 router.post('/:namespace/:type/:version', (req, res, next) => {
   const {
     namespace,
@@ -250,8 +112,6 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
   } = req.params;
 
   const destPath = `${namespace}/${type}/${version}`;
-
-  let filename;
 
   const form = new multiparty.Form();
 
@@ -320,37 +180,29 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
         platforms: [],
       };
 
-      for (let i = 0; i < files.length; i += 1) {
-        const shasum = crypto.createHash('sha256').update(files[i].file).digest('hex');
-        const location = `${destPath}/${files[i].filename}`;
+      const promises = files.map(async (archive) => {
+        const location = `${destPath}/${archive.filename}`;
+        await saveProvider(location, archive.file);
+      });
 
-        await saveProvider(location, files[i].file);
+      const zipFiles = files.filter((f) => f.filename.match(/\.zip$/i));
+      zipFiles.forEach(async (archive, index) => {
+        const shasum = crypto.createHash('sha256').update(archive.file).digest('hex');
+        const location = `${destPath}/${archive.filename}`;
 
-        if (files[i].filename.match(/\.zip$/)) {
-          provider.platforms.push({
-            os: fields['os[]'][i],
-            arch: fields['arch[]'][i],
-            location,
-            filename: files[i].filename,
-            shasum,
-          });
-        }
-      }
+        provider.platforms.push({
+          os: fields['os[]'][index],
+          arch: fields['arch[]'][index],
+          location,
+          filename: archive.filename,
+          shasum,
+        });
+      });
 
+      await Promise.all(promises);
       await save(provider);
 
-      if (fileResult && signatureResult && metaResult && sha256sumsResults) {
-        return res.status(201).render('providers/register', {
-          id: destPath,
-          namespace,
-          type,
-          filename,
-          version,
-          published_at: new Date(),
-        });
-      }
-
-      return next(new Error());
+      return res.status(201).render('providers/register', provider);
     } catch (e) {
       logger.error(e);
       return next(e);

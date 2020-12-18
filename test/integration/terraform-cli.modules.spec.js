@@ -21,12 +21,17 @@ const terraformDefinition = `module "vpc" {
   source = "__MODULE_ADDRESS__"
 }`;
 
-describe('terraform CLI', () => {
+describe('terraform CLI', function beforeTerraformCli() {
+  this.timeout(5000);
+
   let url;
   let server;
   const targetDir = join(__dirname, 'fixture');
   const definitonFile = join(targetDir, 'tf-test.tf');
-  const terraform = join(__dirname, 'temp', 'terraform');
+  const temp = join(__dirname, 'temp');
+  const citizenStoragePath = join(temp, 'modules', 'storage');
+  const terraformVersion = '0.11.11';
+  const terraform = join(temp, `terraform-${terraformVersion}`);
 
   before((done) => {
     const download = join(__dirname, 'download-terraform');
@@ -50,8 +55,9 @@ describe('terraform CLI', () => {
           }
         }
 
-        server = registry.run(port);
         process.env.CITIZEN_ADDR = `http://127.0.0.1:${port}`;
+        process.env.CITIZEN_STORAGE_PATH = citizenStoragePath;
+        server = registry.run(port);
 
         return done();
       } catch (e) {
@@ -121,7 +127,7 @@ describe('terraform CLI', () => {
 
       execFile(
         client,
-        ['publish', 'citizen-test', 'alb', 'aws', '0.1.0'],
+        ['publish', 'module', 'citizen-test', 'alb', 'aws', '0.1.0'],
         { cwd: moduleDir },
         async (err) => {
           if (err) { return done(err); }
