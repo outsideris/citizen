@@ -146,8 +146,8 @@ describe('GET /v1/providers/:namespace/:type/versions', () => {
     .expect(200)
     .then((res) => {
       expect(res.body).to.have.property('versions');
-      expect(res.body.versions[0]).to.have.property('version').to.equal('1.1.3');
-      expect(res.body.versions[1]).to.have.property('version').to.equal('1.1.2');
+      expect(res.body.versions[0]).to.have.property('version').to.equal('1.1.2');
+      expect(res.body.versions[1]).to.have.property('version').to.equal('1.1.3');
     }));
 
   it('should return 404 if given provider does not exist', () => request(app)

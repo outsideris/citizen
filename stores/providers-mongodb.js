@@ -93,7 +93,7 @@ const getVersions = ({
   };
 
   debug('search versions in db with %o', options);
-  Provider.find(options, null, { sort: '_id' })
+  Provider.find(options, null, { sort: 'version' })
     .then((docs) => {
       const data = docs;
       debug('search versions result from db: %o', docs);
