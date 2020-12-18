@@ -82,7 +82,7 @@ const getVersions = ({ namespace, type } = {}) => new Promise((resolve, reject) 
   };
 
   debug('search versions in db with %o', options);
-  db.find(options).sort({ _id: 1 }).exec((err, docs) => {
+  db.find(options).sort({ version: 1 }).exec((err, docs) => {
     if (err) { return reject(err); }
 
     const data = docs;
