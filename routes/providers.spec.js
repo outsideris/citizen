@@ -17,10 +17,8 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
   let providerBuf;
   let providerPath;
 
-  const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
-
   beforeEach(async () => {
-    providerPath = 'hashicorp/consul/1.0.0';
+    providerPath = 'citizen-test/null/1.0.0';
   });
 
   afterEach(async () => {
@@ -105,52 +103,36 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
       expect(res.body.error).to.contain('os/arch');
     }));
 
-  it.skip('should reject the request if the provider is already exists.', async () => {
-    const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, `${providerPath}/test.tar.gz`);
+  it('should reject the request if the provider is already exists.', async () => {
+    const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, `providers/${providerPath}/terraform-provider-null_1.0.0_linux_amd64.zip`);
     const parsedPath = path.parse(pathToStore);
     await mkdirp(parsedPath.dir);
-    providerBuf = await readFile(tarballPath);
+    providerBuf = await readFile('test/fixture/provider/terraform-provider-null_1.0.0_linux_amd64.zip');
     await writeFile(pathToStore, providerBuf);
 
     return request(app)
       .post(`/v1/providers/${providerPath}`)
-      .attach('provider', 'test/fixture/test.tar.gz')
+      .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_linux_amd64.zip')
+      .attach('sha256sums', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS')
+      .attach('signature', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS.sig')
+      .field('os', ['linux'])
+      .field('arch', ['amd64'])
       .expect('Content-Type', /application\/json/)
       .expect(409)
       .then((res) => {
-        expect(res.body).to.have.property('errors').to.be.an('array');
-      });
-  });
-
-  it.skip('should register provider information', (done) => {
-    request(app)
-      .post(`/v1/providers/${providerPath}`)
-      .attach('provider', 'test/fixture/complex.tar.gz')
-      .expect('Content-Type', /application\/json/)
-      .expect(201)
-      .then((res) => {
-        db.find({
-          namespace: res.body.providers[0].namespace,
-          name: res.body.providers[0].name,
-          provider: res.body.providers[0].provider,
-          version: res.body.providers[0].version,
-        }, (err, docs) => {
-          if (err) { return done(err); }
-
-          expect(docs[0]).to.have.property('root');
-          expect(docs[0].root).to.have.property('name').to.equal('consul');
-          expect(docs[0]).to.have.property('subproviders').to.be.an.instanceof(Array);
-          expect(docs[0].subproviders).to.have.lengthOf(3);
-          return done();
-        });
+        expect(res.body).to.have.property('error');
+        expect(res.body.error).to.contain('Provider already exists');
       });
   });
 });
 
-describe.skip('GET /v1/providers/:namespace/:type//versions', () => {
+describe('GET /v1/providers/:namespace/:type/versions', () => {
   before(async () => {
     await save({
-      namespace: 'router', name: 'specific', version: '1.1.2',
+      namespace: 'citizen-test', type: 'null', version: '1.1.2', platforms: [{ os: 'windows', arch: 'amd64' }],
+    });
+    await save({
+      namespace: 'citizen-test', type: 'null', version: '1.1.3', platforms: [{ os: 'windows', arch: 'amd64' }],
     });
   });
 
@@ -159,16 +141,17 @@ describe.skip('GET /v1/providers/:namespace/:type//versions', () => {
   });
 
   it('should return provider versions', () => request(app)
-    .get('/v1/providers/router/specific/versions')
+    .get('/v1/providers/citizen-test/null/versions')
     .expect('Content-Type', /application\/json/)
     .expect(200)
     .then((res) => {
-      expect(res.body).to.have.property('id').to.equal('router/specific/aws/1.1.2');
-      expect(res.body).to.have.property('version').to.equal('1.1.2');
+      expect(res.body).to.have.property('versions');
+      expect(res.body.versions[0]).to.have.property('version').to.equal('1.1.3');
+      expect(res.body.versions[1]).to.have.property('version').to.equal('1.1.2');
     }));
 
   it('should return 404 if given provider does not exist', () => request(app)
-    .get('/v1/providers/router/specific/2.1.2/download/windows/amd64')
+    .get('/v1/providers/citizen-test/null/2.1.2/download/windows/amd64')
     .expect('Content-Type', /application\/json/)
     .expect(404));
 });
