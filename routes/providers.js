@@ -5,8 +5,8 @@ const multiparty = require('multiparty');
 const { v4: uuid } = require('uuid');
 
 const crypto = require('crypto');
+const { join } = require('path');
 const logger = require('../lib/logger');
-
 const { saveProvider, hasProvider, getProvider } = require('../lib/storage');
 const {
   save, getVersions, findProviderPackage,
@@ -14,8 +14,6 @@ const {
 const {
   findAll: findAllPublishers,
 } = require('../lib/publishers-store');
-
-const { findAll } = require('../lib/providers-store');
 
 const router = Router();
 
@@ -185,6 +183,10 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
 
       const providerFiles = files.filter((f) => f.requestName === 'provider');
 
+      // Ensure os/arch fields are arrays
+      fields.os = fields.os instanceof Array ? fields.os : [fields.os];
+      fields.arch = fields.arch instanceof Array ? fields.arch : [fields.arch];
+
       if (
         (!fields.os || (fields.os && fields.os.length !== providerFiles.length))
         || (!fields.arch || (fields.arch && fields.arch.length !== providerFiles.length))
@@ -201,6 +203,17 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
             error: res.statusMessage,
             filename: file.filename,
             fields,
+          });
+        }
+
+        // It's ok to call async hasProvider in the loop here
+        // eslint-disable-next-line no-await-in-loop
+        const providerExistenceCheck = await hasProvider(join(destPath, file.filename));
+        if (providerExistenceCheck) {
+          res.statusMessage = 'Provider already exists';
+          return res.status(409).send({
+            error: res.statusMessage,
+            filename: file.filename,
           });
         }
       }
