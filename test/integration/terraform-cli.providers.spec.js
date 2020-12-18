@@ -1,5 +1,6 @@
 const https = require('https');
 const fs = require('fs');
+const debug = require('debug')('test:integration');
 const { promisify } = require('util');
 const { expect } = require('chai');
 const getPort = require('get-port');
@@ -155,7 +156,7 @@ describe('terraform CLI', () => {
 
       await execFilePromised(
         client,
-        ['publish', 'provider', 'citizen-test', 'null', '1.0.0'],
+        ['publish', 'provider', 'citizen-test', 'null', '1.0.0', '-v'],
         { cwd: providerDir },
       );
 

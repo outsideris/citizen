@@ -142,12 +142,15 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
         files.push({
           file: Buffer.concat(formData[id]),
           filename: part.filename,
+          requestName: part.name,
         });
       } else {
         const value = Buffer.concat(formData[id]).toString();
-        if (part.name.match(/\[\]$/)) {
-          fields[part.name] = fields[part.name] || [];
-          fields[part.name].push(value);
+        if (Object.keys(fields).indexOf(part.name) !== -1) {
+          fields[part.name] = fields[part.name] instanceof Array
+            ? fields[part.name]
+            : [fields[part.name]];
+          fields[part.name] = fields[part.name].concat(value);
         } else {
           fields[part.name] = value;
         }
@@ -165,18 +168,48 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
       //   return next(error);
       // }
 
-      // const gpgKeys = [
-      //   {
-      //     keyId: publicKeyId,
-      //     asciiArmor: publicKey.toString(),
-      //   },
-      // ];
+      if (files.length === 0) {
+        res.statusMessage = 'You must attach at least one file';
+        return res.status(400).send({ error: 'There are no files attached' });
+      }
+
+      if (files.findIndex((f) => f.requestName === 'sha256sums') === -1) {
+        res.statusMessage = 'You must attach SHA 256 sums file';
+        return res.status(400).send({ error: 'There is no sums file attached' });
+      }
+
+      if (files.findIndex((f) => f.requestName === 'signature') === -1) {
+        res.statusMessage = 'You must attach signature of sums file';
+        return res.status(400).send({ error: 'There is no signature file attached' });
+      }
+
+      const providerFiles = files.filter((f) => f.requestName === 'provider');
+
+      if (
+        (!fields.os || (fields.os && fields.os.length !== providerFiles.length))
+        || (!fields.arch || (fields.arch && fields.arch.length !== providerFiles.length))
+      ) {
+        res.statusMessage = `The os/arch is not matching uploaded files: ${JSON.stringify(fields)}`;
+        return res.status(400).send({ error: 'You must provide list of os/arch matching submitted files' });
+      }
+
+      for (let i = 0; i < providerFiles.length; i += 1) {
+        const file = providerFiles[i];
+        if (file.filename.indexOf(`${fields.os[i]}_${fields.arch[i]}.zip`) === -1) {
+          res.statusMessage = 'OS/Arch fields do not match uploaded files (order is important)';
+          return res.status(400).send({
+            error: res.statusMessage,
+            filename: file.filename,
+            fields,
+          });
+        }
+      }
 
       const provider = {
         namespace,
         type,
-        gpgKeys: [],
         version,
+        gpgKeys: [],
         platforms: [],
       };
 
@@ -185,14 +218,13 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
         await saveProvider(location, archive.file);
       });
 
-      const zipFiles = files.filter((f) => f.filename.match(/\.zip$/i));
-      zipFiles.forEach(async (archive, index) => {
+      providerFiles.forEach(async (archive, index) => {
         const shasum = crypto.createHash('sha256').update(archive.file).digest('hex');
         const location = `${destPath}/${archive.filename}`;
 
         provider.platforms.push({
-          os: fields['os[]'][index],
-          arch: fields['arch[]'][index],
+          os: fields.os[index],
+          arch: fields.arch[index],
           location,
           filename: archive.filename,
           shasum,

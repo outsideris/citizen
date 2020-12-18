@@ -42,6 +42,11 @@ const save = (data) => new Promise((resolve, reject) => {
   });
 });
 
+// TODO Implement
+const update = (data) => {
+  throw new Error('not implented');
+};
+
 const findAll = ({
   selector = {},
   offset = 0,
@@ -98,6 +103,7 @@ const findOne = async ({
 module.exports = {
   db,
   save,
+  update,
   findOne,
   findAll,
 };

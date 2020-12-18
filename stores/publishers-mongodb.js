@@ -77,7 +77,7 @@ const findAll = ({
 const findOne = async ({
   name,
 } = {}) => new Promise((resolve, reject) => {
-  if (!name) { reject(new Error('version required.')); }
+  if (!name) { reject(new Error('name required.')); }
 
   const options = {
     name,
@@ -89,9 +89,19 @@ const findOne = async ({
     .catch((err) => reject(err));
 });
 
+const update = async (data) => {
+  const publisher = await findOne({ name: data.name });
+  if (!publisher) {
+    throw new Error(`Could not find publisher with name ${data.name}`);
+  }
+
+  return Publisher.updateOne({ _id: publisher._id }, { $set: data });
+};
+
 module.exports = {
   db,
   save,
+  update,
   findOne,
   findAll,
 };

@@ -1,25 +1,19 @@
 // https://www.terraform.io/docs/internals/provider-registry-protocol.html
 
 const { Router } = require('express');
-const multiparty = require('multiparty');
-const { v4: uuid } = require('uuid');
-
-const crypto = require('crypto');
-const { reject } = require('lodash');
-const logger = require('../lib/logger');
 
 const {
-  save, findAll, findOne,
+  save, findAll, findOne, update,
 } = require('../lib/publishers-store');
 
 const router = Router();
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
   const publishers = await findAll();
   res.send(publishers);
 });
 
-router.get('/:name', async (req, res, next) => {
+router.get('/:name', async (req, res) => {
   const publisher = await findOne({ name: req.params.name });
   res.send(publisher);
 });
@@ -33,13 +27,28 @@ router.post('/', async (req, res, next) => {
     gpgKeys,
   } = req.body;
 
-  try {
-    const response = await save({
+  const existingPublisher = await findOne({ name });
+  if (req.query.force !== 'true' && existingPublisher) {
+    res.statusMessage = `Publisher with name ${name} already exists`;
+    return res.status(400).send();
+  }
+
+  // If existing publisher and we want to override
+  if (existingPublisher && req.query.force === 'true') {
+    const updatedPublisher = await update({
       name, url, trustSignature, gpgKeys,
     });
-    res.status(201).send(response);
-  } catch (err) {
-    next(err);
+
+    res.send(updatedPublisher);
+  } else {
+    try {
+      const response = await save({
+        name, url, trustSignature, gpgKeys,
+      });
+      res.status(201).send(response);
+    } catch (err) {
+      next(err);
+    }
   }
 });
 

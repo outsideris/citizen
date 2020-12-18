@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-console.log('Hello World', new Error().stack);
-
 const connectionOptions = {
   useUnifiedTopology: true,
   useNewUrlParser: true,
