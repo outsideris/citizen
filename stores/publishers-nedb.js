@@ -35,7 +35,7 @@ const save = (data) => new Promise((resolve, reject) => {
     gpgKeys,
   };
 
-  db.insert(publisher, (err, newDoc) => {
+  return db.insert(publisher, (err, newDoc) => {
     if (err) { return reject(err); }
     debug('saved the publisher into db: %o', publisher);
     return resolve(newDoc);

@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+
+const { join } = require('path');
+const fs = require('fs');
+const path = require('path');
+const { promisify } = require('util');
+const debug = require('debug')('test:integration');
+
+const request = require('request');
+
+if (process.argv.length !== 5) {
+  throw new Error('Must provide provider name, version and target folder');
+}
+
+const PROVIDER_NAME = process.argv[2];
+const PROVIDER_VERSION = process.argv[3];
+const TARGET_DIR = process.argv[4];
+
+const REGISTRY_URL = 'https://registry.terraform.io';
+
+async function download(name, version, targetDir) {
+  debug(`Downloading provider ${name}#${version} to ${targetDir}`);
+  const platforms = ['windows', 'linux', 'darwin'];
+
+  const api = promisify(request.defaults({
+    baseUrl: REGISTRY_URL,
+    json: true,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  }));
+
+  const serviceDiscoveryResponse = await api('/.well-known/terraform.json');
+  const providersPath = serviceDiscoveryResponse.body['providers.v1'];
+
+  fs.mkdirSync(targetDir, { recursive: true });
+
+  const downloadFile = async (url, target, filename) => {
+    const targetFileName = filename || path.basename(url);
+    const filepath = join(target, targetFileName);
+
+    if (fs.existsSync(filepath)) {
+      debug(`File ${targetFileName} already exists, skipping download...`);
+      return;
+    }
+
+    debug(`Downloading ${targetFileName} from ${url}`);
+
+    const file = await promisify(request)(url, { encoding: null });
+    fs.writeFileSync(filepath, file.body);
+  };
+
+  const promises = platforms.map(async (p) => {
+    const downloadDetailsResponse = await api(`${providersPath}/-/${name}/${version}/download/${p}/amd64`);
+    await downloadFile(
+      downloadDetailsResponse.body.download_url,
+      targetDir,
+    );
+
+    await downloadFile(downloadDetailsResponse.body.shasums_url, targetDir);
+    await downloadFile(downloadDetailsResponse.body.shasums_signature_url, targetDir);
+    return downloadDetailsResponse.body;
+  });
+
+  const downloads = await Promise.all(promises);
+  const gpgKeys = downloads[0].signing_keys.gpg_public_keys;
+
+  const publisher = {
+    name: gpgKeys[0].source,
+    gpgKeys: gpgKeys.map((k) => ({
+      keyId: k.key_id,
+      asciiArmor: k.ascii_armor,
+    })),
+  };
+
+  fs.writeFileSync(join(targetDir, 'publisher.json'), JSON.stringify(publisher, null, 2));
+}
+
+download(PROVIDER_NAME, PROVIDER_VERSION, TARGET_DIR);

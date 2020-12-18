@@ -9,3 +9,4 @@ test/terraform-binaries/
 test/tf
 .terraform/
 .env
+test/integration/fixture/provider

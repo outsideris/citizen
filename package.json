@@ -1,6 +1,6 @@
 {
   "name": "citizen",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "private": true,
   "bin": {
     "citizen": "./bin/citizen"
@@ -27,6 +27,7 @@
     "glob-gitignore": "^1.0.14",
     "globby": "^11.0.2",
     "gopher-hcl": "^0.2.0",
+    "gpg": "^0.6.0",
     "helmet": "^4.4.0",
     "https-localhost": "^4.6.4",
     "jten": "^0.2.0",

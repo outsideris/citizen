@@ -1,13 +1,6 @@
 const debug = require('debug')('citizen:server');
-const mongoose = require('mongoose');
 
-const dbUri = process.env.CITIZEN_MONGO_DB_URI || 'mongodb://localhost:27017/citizen';
-
-mongoose.connect(dbUri, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useFindAndModify: false,
-});
+const mongoose = require('./mongoose-setup');
 
 const Module = mongoose.model('Module', {
   namespace: String,

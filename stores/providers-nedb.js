@@ -11,28 +11,17 @@ const save = (data) => new Promise((resolve, reject) => {
   const {
     namespace,
     type,
-    provider,
     version,
     platforms,
-    gpgKeys,
-    location,
-    filename,
-    definition = {},
   } = data;
 
   const module = {
     _id: `${uuid()}`,
     namespace,
     type,
-    provider,
     version,
     platforms,
-    gpgKeys,
-    location,
-    filename,
-    downloads: 0,
     published_at: new Date(),
-    ...definition,
   };
 
   db.insert(module, (err, newDoc) => {

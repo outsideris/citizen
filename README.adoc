@@ -41,7 +41,7 @@ Environment variables:
 * `AWS_ACCESS_KEY_ID`: Your AWS access key only if `CITIZEN_STORAGE` is `s3`.
 * `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key only if `CITIZEN_STORAGE` is `s3`.
 
-=== `citizen publish`
+=== `citizen publish module`
 Since link:https://registry.terraform.io/[official Terraform Module Registry] is integrated with GitHub, users can publish terraform modules if they just push it on GitHub.
 
 Citizen provides a special command to publish a module onto citizen registry server instead integrating GitHub.
@@ -49,7 +49,7 @@ Citizen provides a special command to publish a module onto citizen registry ser
 In a module directory, you can publish your terraform module via a command below:
 [source, sh]
 ....
-$ ./citizen publish <namespace> <name> <provider> <version>
+$ ./citizen publish module <namespace> <name> <provider> <version>
 ....
 
 You should set `CITIZEN_ADDR` as citizen registry server address which you will publish your modules to. e.g. `https://registry.example.com`.
@@ -69,6 +69,60 @@ module "alb" {
   version = "0.1.0"
 }
 ....
+
+
+
+=== `citizen publish provider`
+
+Citizen provides a special command to publish a provider onto citizen.
+
+In a provider directory, you can publish your terraform provider via a command below:
+[source, sh]
+....
+$ ./citizen publish provider <namespace> <type> <version>
+....
+
+You should set `CITIZEN_ADDR` as citizen registry server address which you will publish your modules to. e.g. `https://registry.example.com`.
+
+
+=== Examples
+If you have ALB provider in `./utilities` directory and your registry server is launched at `https://registry.example.com`, you run below command in `./utilities` directory to publish utilities provider.
+[source, sh]
+....
+$ CITIZEN_ADDR=https://registry.example.com \
+  citizen publish provider dev-team utilities 0.1.0
+....
+
+Then, you can define it in your terraform file like this:
+....
+provider "utilities" {
+}
+
+terraform {
+  required_providers {
+    utilities = {
+      source = "registry.example.com/dev-team/utilities"
+      version = "0.1.0"
+    }
+  }
+}
+....
+
+
+=== `citizen publish publisher`
+
+Citizen provider registry requires to have at least one trusted provider publisher. `citizen publisher publisher` command uploads a public GPG key from local GPG store using `gpg` command.
+
+Find GPG key id you want to publisy using `gpg --list-keys` command and extract public key (long text in hex format e.g. CE1E75EC86B9F2). Then run citizen command to publish the key:
+
+[source, sh]
+....
+$ ./citizen publish publisher CE1E75EC86B9F2
+....
+
+You should set `CITIZEN_ADDR` as citizen registry server address which you will publish your modules to. e.g. `https://registry.example.com`.
+
+
 
 == Docker
 You can use docker to launch the registry server.
