@@ -1,6 +1,6 @@
 const debug = require('debug')('citizen:server');
 
-const mongoose = require('./mongodb');
+const mongoose = require('./mongoose-setup');
 
 const Provider = mongoose.model('Provider', {
   namespace: String,
