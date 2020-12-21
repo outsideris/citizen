@@ -17,6 +17,7 @@ const {
 
 const router = Router();
 
+// eslint-disable-next-line consistent-return
 router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res, next) => {
   const options = { ...req.params };
 
@@ -26,7 +27,8 @@ router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res,
     return next();
   }
 
-  const platform = providerPackage.platforms.find((p) => p.os === options.os && p.arch === options.arch);
+  const platform = providerPackage.platforms
+    .find((p) => p.os === options.os && p.arch === options.arch);
 
   const file = await getProvider(platform.location);
 
@@ -79,13 +81,15 @@ router.get('/:namespace/:type/:version/download/:os/:arch', async (req, res, nex
   const providerPackage = await findProviderPackage(options);
   const publishersResponse = await findAllPublishers();
 
-  const trustedGpgKeys = publishersResponse.publishers.reduce((arr, publisher) => arr.concat(publisher.gpgKeys), []);
+  const trustedGpgKeys = publishersResponse.publishers
+    .reduce((arr, publisher) => arr.concat(publisher.gpgKeys), []);
 
   if (!providerPackage) {
     return next();
   }
 
-  const platform = providerPackage.platforms.find((p) => p.os === options.os && p.arch === options.arch);
+  const platform = providerPackage.platforms
+    .find((p) => p.os === options.os && p.arch === options.arch);
 
   const viewModel = {
     filename: platform.filename,

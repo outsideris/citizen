@@ -103,7 +103,7 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
       expect(res.body.error).to.contain('os/arch');
     }));
 
-  it('should reject the request if the provider is already exists.', async () => {
+  it('should reject the request if the provider already exists.', async () => {
     const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, `providers/${providerPath}/terraform-provider-null_1.0.0_linux_amd64.zip`);
     const parsedPath = path.parse(pathToStore);
     await mkdirp(parsedPath.dir);
