@@ -29,7 +29,6 @@
     "gopher-hcl": "^0.2.0",
     "gpg": "^0.6.0",
     "helmet": "^4.4.0",
-    "https-localhost": "^4.6.4",
     "jten": "^0.2.0",
     "listr": "^0.14.2",
     "lodash": "^4.17.20",
