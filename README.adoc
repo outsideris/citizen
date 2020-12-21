@@ -5,8 +5,7 @@ image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.
 image:https://david-dm.org/outsideris/citizen/status.svg["Dependency Status", link="https://david-dm.org/outsideris/citizen"]
 image:https://david-dm.org/outsideris/citizen/dev-status.svg["devDependency Status", link="https://david-dm.org/outsideris/citizen?type=dev"]
 
-A Private link:https://registry.terraform.io/[Terraform Module Registry]
-in the early stages of development.
+A Private link:https://registry.terraform.io/[Terraform Module] and link:https://www.terraform.io/docs/internals/provider-registry-protocol.html[Terraform Provider] registry in the early stages of development.
 
 == Requirements
 
@@ -73,7 +72,35 @@ module "alb" {
 
 === `citizen publish provider`
 
-Citizen provides a special command to publish a provider onto citizen.
+Citizen provides a special command to publish providers onto citizen.
+
+You must first build, package and gpg sign your provider, citizen
+expects following files in the provider location:
+
+- terraform-provider-<type>_<version>_<os>_<os>.zip (one per os/arch combination)
+- terraform-provider-<type>_<version>_SHA256SUMS
+- terraform-provider-<type>_<version>_SHA256SUMS.sig
+
+Where <type> is a name of the provider and version is a provider
+version in the `MAJOR.MINOR.PATCH` version format.
+
+SHA256 sums file can be generated using following shell command (linux/macos):
+
+```sh
+shasum -a *.zip > terraform-provider-<type>_<version>_SHA256SUMS
+```
+
+SHA256.sig file is a GPG signature of the SHA256SUMS file, generate
+using following command:
+
+```sh
+gpg --detach-sign terraform-provider-<type>_<version>_SHA256SUMS
+```
+
+* You need to publish your GPG public key to terraform registry
+otherwise terraform will refuse to install providers. You can 
+publish the key using `citizen publish publisher` command
+documented below.
 
 In a provider directory, you can publish your terraform provider via a command below:
 [source, sh]
