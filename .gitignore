@@ -10,3 +10,5 @@ test/tf
 .terraform/
 .env
 test/integration/fixture/provider
+coverage/
+.nyc_output/
