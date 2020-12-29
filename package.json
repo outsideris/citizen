@@ -15,6 +15,7 @@
     "build": "pkg . --out-path dist --targets node10-linux-x64,node10-macos-x64,node10-win-x64"
   },
   "dependencies": {
+    "@evops/hcl-terraform-parser": "^1.0.0",
     "aws-sdk": "^2.787.0",
     "body-parser": "^1.19.0",
     "colors": "^1.4.0",
@@ -23,7 +24,6 @@
     "express": "^4.17.1",
     "glob-gitignore": "^1.0.14",
     "globby": "^11.0.1",
-    "gopher-hcl": "^0.2.0",
     "gpg": "^0.6.0",
     "helmet": "^4.2.0",
     "jten": "^0.2.0",
