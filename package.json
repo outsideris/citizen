@@ -26,7 +26,6 @@
     "express": "^4.17.1",
     "glob-gitignore": "^1.0.14",
     "globby": "^11.0.2",
-    "gopher-hcl": "^0.2.0",
     "gpg": "^0.6.0",
     "helmet": "^4.4.0",
     "jten": "^0.2.0",
