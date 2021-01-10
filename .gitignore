@@ -3,5 +3,5 @@ node_modules/
 .idea/
 .envrc
 dist/
-test/integration/temp/
 data/
+test/terraform-binaries/
