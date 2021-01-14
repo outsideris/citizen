@@ -1,5 +1,5 @@
 # build stage
-FROM node:10 as build
+FROM node:14 as build
 
 LABEL maintainer="outsideris@gmail.com"
 
