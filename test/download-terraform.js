@@ -17,28 +17,24 @@ const TERRAFORM_VERSIONS = [
   { release: '14', version: '0.14.4' },
 ];
 const PLATFORM = process.platform;
-const TARGET_DIR = join(__dirname, '../', 'terraform-binaries');
-
-(async () => {
-  try {
-    await mkdir(TARGET_DIR);
-  } catch(ignore) { }
-})();
+const TARGET_DIR = join(__dirname, 'terraform-binaries');
 
 const download = async(terraform) => {
   const log = debug(`test:download:terraform-v${terraform.version}`);
-  log('Start to download terraform');
 
   const terraformFile = join(TARGET_DIR, `terraform${terraform.release}`);
-  let notExist = true;
+  let notExist = false;
   try {
-    notExist = await access(terraformFile)
-  } catch(ignore) { }
+    await access(terraformFile)
+  } catch(ignore) {
+    notExist = true;
+  }
 
   const DOWNLOAD_URL = `https://releases.hashicorp.com/terraform/${terraform.version}/terraform_${terraform.version}_${PLATFORM}_amd64.zip`;
 
   return new Promise((resolve, reject) => {
     if (notExist) {
+      log('Start to download terraform');
       return request(DOWNLOAD_URL)
         .pipe(unzipper.Parse())
         .on('entry', (entry) => {
@@ -50,7 +46,7 @@ const download = async(terraform) => {
             entry.on('finish', async () => {
               await chmod(`${TARGET_DIR}/${fileName}${terraform.release}`, 0o765);
               log('All done.');
-              resolve();
+              resolve(terraform.release);
             });
             entry.pipe(fs.createWriteStream(`${TARGET_DIR}/${fileName}${terraform.release}`));
           } else {
@@ -61,8 +57,18 @@ const download = async(terraform) => {
     }
 
     log('skip to download terraform');
-    return resolve();
+    return resolve(terraform.release);
   });
 };
 
-TERRAFORM_VERSIONS.forEach(download);
+exports.mochaHooks = {
+  beforeEach() {
+    (async () => {
+      try {
+        await mkdir(TARGET_DIR);
+      } catch(ignore) { }
+    })();
+
+    return Promise.all(TERRAFORM_VERSIONS.map(download));
+  }
+};
