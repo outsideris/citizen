@@ -62,13 +62,12 @@ const download = async(terraform) => {
 };
 
 exports.mochaHooks = {
-  beforeEach() {
-    (async () => {
-      try {
-        await mkdir(TARGET_DIR);
-      } catch(ignore) { }
-    })();
+  beforeAll: async () => {
+    try {
+      await mkdir(TARGET_DIR);
+    } catch(ignore) { }
 
-    return Promise.all(TERRAFORM_VERSIONS.map(download));
+    const downloadedVersions = await Promise.all(TERRAFORM_VERSIONS.map(download));
+    global.terraformsToTest = downloadedVersions;
   }
 };
