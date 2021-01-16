@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const request = require('request');
 const { join } = require('path');
 const fs = require('fs');
@@ -20,7 +19,7 @@ const PLATFORM = process.platform;
 const TARGET_DIR = join(__dirname, 'terraform-binaries');
 
 const download = async(terraform) => {
-  const log = debug(`test:download:terraform-v${terraform.version}`);
+  const log = debug(`citizen:test:download:terraform-v${terraform.version}`);
 
   const terraformFile = join(TARGET_DIR, `terraform${terraform.release}`);
   let notExist = false;
