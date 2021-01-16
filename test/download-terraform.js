@@ -3,18 +3,20 @@ const { join } = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
 const unzipper = require('unzipper');
+const semver = require('semver')
 const debug = require('debug');
+
+const { citizen } = require('../package.json');
 
 const chmod = promisify(fs.chmod);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
 
-const TERRAFORM_VERSIONS = [
-  { release: '11', version: '0.11.14' },
-  { release: '12', version: '0.12.30' },
-  { release: '13', version: '0.13.6' },
-  { release: '14', version: '0.14.4' },
-];
+const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
+  release: semver.parse(version).minor,
+  version: version
+}));
+
 const PLATFORM = process.platform;
 const TARGET_DIR = join(__dirname, 'terraform-binaries');
 
@@ -66,7 +68,6 @@ exports.mochaHooks = {
       await mkdir(TARGET_DIR);
     } catch(ignore) { }
 
-    const downloadedVersions = await Promise.all(TERRAFORM_VERSIONS.map(download));
-    global.terraformsToTest = downloadedVersions;
+    await Promise.all(TERRAFORM_VERSIONS.map(download));
   }
 };
