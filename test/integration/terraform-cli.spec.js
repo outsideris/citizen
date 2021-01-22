@@ -143,9 +143,13 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
         execFile(terraformCli, ['get'], { cwd }, async (err, stdout) => {
           if (err) { return done(err); }
 
-          expect(stdout).to.include('Found version 0.1.0 of citizen-test/alb/aws on');
-          expect(stdout).to.include('Getting source');
-          await access(join(cwd, '.terraform'));
+          try {
+            expect(stdout).to.include('0.1.0');
+            expect(stdout).to.include('vpc');
+            await access(join(cwd, '.terraform'));
+          } catch(err) {
+            return done(err);
+          }
           return done();
         });
       });
