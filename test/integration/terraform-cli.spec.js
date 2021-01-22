@@ -19,10 +19,6 @@ const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
 
-const terraformDefinition = `module "vpc" {
-  source = "__MODULE_ADDRESS__"
-}`;
-
 const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
   release: semver.parse(version).minor,
   version: version
@@ -70,8 +66,12 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
           // ignored when targetDir already exist
         }
 
-        const definition = terraformDefinition.replace(/__MODULE_ADDRESS__/, `${url.host}/citizen-test/no-vpc/aws`);
-        await writeFile(definitonFile, definition, 'utf8');
+        const terraformDefinition = `module "vpc" {
+          source = "${url.host}/citizen-test/no-vpc/aws"
+          version = "1.0.0"
+        }`;
+
+        await writeFile(definitonFile, terraformDefinition, 'utf8');
       });
 
       after(async () => {
@@ -98,8 +98,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
         const cwd = join(__dirname, 'fixture');
 
         execFile(terraformCli, ['get'], { cwd }, (err, stdout, stderr) => {
-          expect(stdout).to.include('- module.vpc');
-          expect(stderr).to.include('no versions found');
+          expect(stderr).to.include('no versions');
           done();
         });
       });
