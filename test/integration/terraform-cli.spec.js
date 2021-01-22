@@ -21,7 +21,7 @@ const access = promisify(fs.access);
 
 const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
   release: semver.parse(version).minor,
-  version: version
+  version,
 }));
 
 TERRAFORM_VERSIONS.forEach((terraform) => {
@@ -147,8 +147,8 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
             expect(stdout).to.include('0.1.0');
             expect(stdout).to.include('vpc');
             await access(join(cwd, '.terraform'));
-          } catch(err) {
-            return done(err);
+          } catch (e) {
+            return done(e);
           }
           return done();
         });

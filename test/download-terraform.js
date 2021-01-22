@@ -3,7 +3,7 @@ const { join } = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
 const unzipper = require('unzipper');
-const semver = require('semver')
+const semver = require('semver');
 const debug = require('debug');
 
 const { citizen } = require('../package.json');
@@ -14,20 +14,20 @@ const access = promisify(fs.access);
 
 const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
   release: semver.parse(version).minor,
-  version: version
+  version,
 }));
 
 const PLATFORM = process.platform;
 const TARGET_DIR = join(__dirname, 'terraform-binaries');
 
-const download = async(terraform) => {
+const download = async (terraform) => {
   const log = debug(`citizen:test:download:terraform-v${terraform.version}`);
 
   const terraformFile = join(TARGET_DIR, `terraform${terraform.release}`);
   let notExist = false;
   try {
-    await access(terraformFile)
-  } catch(ignore) {
+    await access(terraformFile);
+  } catch (ignore) {
     notExist = true;
   }
 
@@ -66,8 +66,10 @@ exports.mochaHooks = {
   beforeAll: async () => {
     try {
       await mkdir(TARGET_DIR);
-    } catch(ignore) { }
+    } catch (ignore) {
+      // ignored when targetDir already exist
+    }
 
     await Promise.all(TERRAFORM_VERSIONS.map(download));
-  }
+  },
 };
