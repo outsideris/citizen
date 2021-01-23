@@ -1,10 +1,10 @@
-name: CI
+name: Integration Tests
 
 on: [push, pull_request]
 
 jobs:
   unit-test:
-    name: Integration tests
+    name: Integration tests with Node.js v${{ matrix.node }}
     runs-on: ubuntu-latest
 
     strategy:
