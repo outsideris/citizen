@@ -1,6 +1,7 @@
 = Citizen
 
-image:https://github.com/outsideris/citizen/workflows/CI/badge.svg?branch=master["Build Status", link="https://github.com/outsideris/citizen/actions?query=workflow%3ACI+branch%3Amaster"]
+image:https://github.com/outsideris/citizen/workflows/Unit%20tests/badge.svg["Unit Test Status", link="https://github.com/outsideris/citizen/actions?query=workflow%3A%22Unit+tests%22+branch%3Amaster"]
+image:https://github.com/outsideris/citizen/workflows/Integration%20Tests/badge.svg["Integration Test Status", link="https://github.com/outsideris/citizen/actions?query=workflow%3A%22Integration+Tests%22+branch%3Amaster"]
 image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.svg?type=shield["FOSSA Status", link="https://app.fossa.io/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen?ref=badge_shield"]
 image:https://david-dm.org/outsideris/citizen/status.svg["Dependency Status", link="https://david-dm.org/outsideris/citizen"]
 image:https://david-dm.org/outsideris/citizen/dev-status.svg["devDependency Status", link="https://david-dm.org/outsideris/citizen?type=dev"]
