@@ -23,7 +23,7 @@ jobs:
       CITIZEN_AWS_S3_BUCKET: kr.ne.outsider.test
       AWS_ACCESS_KEY_ID: ooooo
       AWS_SECRET_ACCESS_KEY: xxxxx
-      DEBUG: '*,-mocha:*,-express:*,-nock.*,-pouchdb:*,-eslint:*,-eslint*,-snapdragon:*,-body-parser:*,-morgan,-superagent'
+      DEBUG: 'citizen:*'
 
     steps:
       - uses: actions/checkout@v2
