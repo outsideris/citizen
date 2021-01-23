@@ -1,0 +1,44 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  unit-test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node:
+          - 10
+          - 12
+          - 14
+
+    env:
+      CITIZEN_DB_DIR: ./data
+      CITIZEN_STORAGE: file
+      CITIZEN_STORAGE_PATH: /tmp/citizen
+      CITIZEN_ADDR: http://127.0.0.1:3000
+      CITIZEN_MOCK_ENABLED: true
+      CITIZEN_AWS_S3_BUCKET: kr.ne.outsider.test
+      AWS_ACCESS_KEY_ID: ooooo
+      AWS_SECRET_ACCESS_KEY: xxxxx
+      DEBUG: '*,-mocha:*,-express:*,-nock.*,-pouchdb:*,-eslint:*,-eslint*,-snapdragon:*,-body-parser:*,-morgan,-superagent'
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: 'Cache node_modules'
+        uses: actions/cache@v2
+        with:
+          path: |
+            - ~/.npm
+            - test/terraform-binaries
+          key: ${{ runner.os }}-node-v${{ matrix.node }}-integration-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-v${{ matrix.node }}-integration-
+      - run: npm ci
+      - run: npm run test:integration -- --forbid-only

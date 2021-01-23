@@ -3,7 +3,8 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  test:
+  unit-test:
+    name: Unit tests
     runs-on: ubuntu-latest
 
     strategy:
@@ -40,11 +41,8 @@ jobs:
         with:
           path: |
             - ~/.npm
-            - test/integration/temp
-          key: ${{ runner.os }}-node-v${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('test/integration/download-terraform') }}
+          key: ${{ runner.os }}-node-v${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }} }}
           restore-keys: |
             ${{ runner.os }}-node-v${{ matrix.node }}-
       - run: npm ci
-      - name: Download terraform
-        run: ./test/integration/download-terraform
-      - run: npm test -- --forbid-only
+      - run: npm run test:unit -- --forbid-only
