@@ -17,8 +17,8 @@
     "build": "pkg . --out-path dist --targets node10-linux-x64,node10-macos-x64,node10-win-x64"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.3.0",
     "@evops/hcl-terraform-parser": "^1.0.0",
-    "aws-sdk": "^2.828.0",
     "body-parser": "^1.19.0",
     "colors": "^1.4.0",
     "commander": "^6.2.1",
