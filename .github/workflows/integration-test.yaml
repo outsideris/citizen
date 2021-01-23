@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   unit-test:
-    name: Unit tests
+    name: Integration tests
     runs-on: ubuntu-latest
 
     strategy:
