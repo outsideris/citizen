@@ -1,5 +1,5 @@
 const http = require('http');
-const debug = require('debug')('test:integration');
+const debug = require('debug')('citizen:test:integration');
 
 const app = require('../../app');
 
