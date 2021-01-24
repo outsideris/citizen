@@ -1,4 +1,5 @@
 const nock = require('nock');
+const fs = require('fs');
 
 module.exports = {
   enableMock: ({ modulePath }) => {
@@ -21,7 +22,7 @@ module.exports = {
 
       nock('https://s3.ap-northeast-1.amazonaws.com')
         .persist()
-        .put(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}`)
+        .put(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}?x-id=PutObject`)
         .reply(
           200,
           '',
@@ -32,10 +33,10 @@ module.exports = {
             'Content-Length', '0',
             'Server', 'AmazonS3'],
         )
-        .get(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}`)
+        .get(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}?x-id=GetObject`)
         .reply(
           200,
-          '',
+          fs.createReadStream(`${__dirname}/fixture/test.tar.gz`),
           ['x-amz-id-2', 'UTXd/Ac9Lpf5htlqmY7jIa//st0VNw3HiV0H2tFpjQrabzdF0a1A0RXwaXXEDJsSMC0z9ieqSJg=',
             'x-amz-request-id', '51DCE049BC4189E5',
             'Date', 'Sun, 21 Jan 2018 16:47:35 GMT',
@@ -46,7 +47,7 @@ module.exports = {
             'Content-Length', '136',
             'Server', 'AmazonS3'],
         )
-        .get(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}/wrong`)
+        .get(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}/wrong?x-id=GetObject`)
         .reply(
           404,
           '<?xml version="1.0" encoding="UTF-8"?>\n<Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>citizen/1516553253143/test.tar.gz/wrong</Key><RequestId>CA3688C9219019B8</RequestId><HostId>HoNack5lolKkIbPaGJADKOA1jLDxlP/G1gJMdi9Xc3j5WSaeHJphz/uqVLqDrMjA24W/8+kvJXM=</HostId></Error>',
@@ -57,7 +58,7 @@ module.exports = {
             'Date', 'Sun, 21 Jan 2018 16:47:34 GMT',
             'Server', 'AmazonS3'],
         )
-        .delete(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}`)
+        .delete(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}?x-id=DeleteObject`)
         .reply(
           204,
           '',
