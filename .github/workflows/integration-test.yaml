@@ -36,9 +36,16 @@ jobs:
         with:
           path: |
             - ~/.npm
-            - test/terraform-binaries
-          key: ${{ runner.os }}-node-v${{ matrix.node }}-integration-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-${{ hashFiles('**/package-lock.json') }} }}
           restore-keys: |
-            ${{ runner.os }}-node-v${{ matrix.node }}-integration-
+            ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-
+      - name: 'Cache terraform binaries'
+        uses: actions/cache@v2
+        with:
+          path: |
+            - test/terraform-binaries
+          key: ${{ runner.os }}-integration-terraform-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-integration-terraform-
       - run: npm ci
       - run: npm run test:integration -- --forbid-only
