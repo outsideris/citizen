@@ -28,7 +28,7 @@ jobs:
       CITIZEN_AWS_S3_BUCKET: kr.ne.outsider.test
       AWS_ACCESS_KEY_ID: ooooo
       AWS_SECRET_ACCESS_KEY: xxxxx
-      AWS_DEFAULT_REGION: us-west-2
+      AWS_REGION: us-west-2
       DEBUG: 'citizen:*'
 
     steps:
