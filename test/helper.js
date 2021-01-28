@@ -36,7 +36,7 @@ module.exports = {
         .get(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}?x-id=GetObject`)
         .reply(
           200,
-          fs.createReadStream(`${__dirname}/fixture/test.tar.gz`),
+          { Body: fs.createReadStream(`${__dirname}/fixture/test.tar.gz`) },
           ['x-amz-id-2', 'UTXd/Ac9Lpf5htlqmY7jIa//st0VNw3HiV0H2tFpjQrabzdF0a1A0RXwaXXEDJsSMC0z9ieqSJg=',
             'x-amz-request-id', '51DCE049BC4189E5',
             'Date', 'Sun, 21 Jan 2018 16:47:35 GMT',
