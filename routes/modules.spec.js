@@ -13,31 +13,6 @@ const { db, save } = require('../lib/store');
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 
-describe('Terraform 0.12 support', () => {
-  describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
-    let modulePath;
-
-    beforeEach(async () => {
-      modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
-    });
-
-    afterEach(async () => {
-      await deleteDbAll(db);
-      await rimraf(process.env.CITIZEN_STORAGE_PATH);
-    });
-
-    it('should register new v12 module', () => request(app)
-      .post(`/v1/modules/${modulePath}`)
-      .attach('module', 'test/fixture/module.v12.tar.gz')
-      .expect('Content-Type', /application\/json/)
-      .expect(201)
-      .then((res) => {
-        expect(res.body).to.have.property('modules').to.be.an('array');
-        expect(res.body.modules[0]).to.have.property('id').to.equal(modulePath);
-      }));
-  });
-});
-
 describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   let moduleBuf;
   let modulePath;
@@ -79,7 +54,7 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
       });
   });
 
-  it('should register new module with owner infomation', () => request(app)
+  it('should register new module with owner information', () => request(app)
     .post(`/v1/modules/${modulePath}`)
     .field('owner', 'outsideris')
     .attach('module', 'test/fixture/module.tar.gz')
@@ -113,6 +88,16 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
         });
       });
   });
+
+  it('should register module with HCL2 supported by terraform v0.12+', () => request(app)
+    .post(`/v1/modules/${modulePath}`)
+    .attach('module', 'test/fixture/module.v12.tar.gz')
+    .expect('Content-Type', /application\/json/)
+    .expect(201)
+    .then((res) => {
+      expect(res.body).to.have.property('modules').to.be.an('array');
+      expect(res.body.modules[0]).to.have.property('id').to.equal(modulePath);
+    }));
 });
 
 describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
