@@ -1,5 +1,4 @@
 // https://www.terraform.io/docs/internals/provider-registry-protocol.html
-
 const { Router } = require('express');
 
 const {
@@ -39,16 +38,16 @@ router.post('/', async (req, res, next) => {
       name, url, trustSignature, gpgKeys,
     });
 
-    res.send(updatedPublisher);
-  } else {
-    try {
-      const response = await save({
-        name, url, trustSignature, gpgKeys,
-      });
-      res.status(201).send(response);
-    } catch (err) {
-      next(err);
-    }
+    return res.send(updatedPublisher);
+  }
+
+  try {
+    const response = await save({
+      name, url, trustSignature, gpgKeys,
+    });
+    return res.status(201).send(response);
+  } catch (err) {
+    return next(err);
   }
 });
 

@@ -34,7 +34,7 @@ const save = (data) => new Promise((resolve, reject) => {
 const findAll = ({
   selector = {},
   namespace = '',
-  type = '',
+  type = '', // eslint-disable-line no-unused-vars
   offset = 0,
   limit = 15,
 } = {}) => new Promise((resolve, reject) => {

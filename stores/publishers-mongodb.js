@@ -95,6 +95,7 @@ const update = async (data) => {
     throw new Error(`Could not find publisher with name ${data.name}`);
   }
 
+  // eslint-disable-next-line no-underscore-dangle
   return Publisher.updateOne({ _id: publisher._id }, { $set: data });
 };
 

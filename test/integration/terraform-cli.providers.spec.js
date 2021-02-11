@@ -1,6 +1,5 @@
 const https = require('https');
 const fs = require('fs');
-const debug = require('debug')('test:integration');
 const { promisify } = require('util');
 const { expect } = require('chai');
 const getPort = require('get-port');
@@ -122,7 +121,6 @@ describe('terraform CLI', () => {
       const cwd = join(__dirname, 'fixture');
 
       execFile(terraform, ['init'], { cwd }, (err, stdout, stderr) => {
-        // debug(err, stdout, stderr);
         expect(stderr).to.include('Could not retrieve the list of available versions for provider');
         done();
       });

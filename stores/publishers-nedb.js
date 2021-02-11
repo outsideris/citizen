@@ -42,9 +42,9 @@ const save = (data) => new Promise((resolve, reject) => {
   });
 });
 
-// TODO Implement
-const update = (data) => {
-  throw new Error('not implented');
+// TODO: Implement
+const update = () => {
+  throw new Error('Not implemented yet');
 };
 
 const findAll = ({
