@@ -176,7 +176,7 @@ You need to be able to access the bucket, so you probably want to have an active
 Run mongodb first like:
 [source, sh]
 ....
-$ docker run -p 27017:27017 --name mongo mongo
+$ docker run --rm -p 27017:27017 --name mongo mongo
 ....
 
 Run the tests:
