@@ -162,14 +162,6 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
 
   form.on('close', async () => {
     try {
-      // const exist = await hasProvider(`${destPath}/${filename}`);
-      // if (exist) {
-      //   const error = new Error('Provider exist');
-      //   error.status = 409;
-      //   error.message = `${destPath} is already exist.`;
-      //   return next(error);
-      // }
-
       if (files.length === 0) {
         res.statusMessage = 'You must attach at least one file';
         return res.status(400).send({ error: 'There are no files attached' });
