@@ -9,7 +9,7 @@
     "start": "node ./bin/citizen server",
     "dev": "nodemon ./bin/citizen server",
     "lint": "eslint .",
-    "test:unit": "mocha --exit **/*.spec.js",
+    "test:unit": "mocha --exit {lib,routes,storages,stores}/**/**/*.spec.js",
     "test:integration": "mocha --exit -t 10000 --require test/download-terraform.js test/**/*.spec.js",
     "test": "npm run test:unit && npm run test:integration",
     "clean": "rimraf dist",
