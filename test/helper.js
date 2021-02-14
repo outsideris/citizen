@@ -74,15 +74,16 @@ module.exports = {
       nock.cleanAll();
     }
   },
-  deleteDbAll: (db) => new Promise((resolve, reject) => {
-    db.remove({}, { multi: true }, (err, numRemoved) => {
-      if (err) { return reject(err); }
-      return resolve(numRemoved);
-    });
-  }),
-  deleteDbAllMongo: (db) => new Promise((resolve, reject) => {
-    db.deleteMany({})
-      .then((doc) => resolve(doc))
-      .catch((err) => reject(err));
+  deleteDbAll: (db, dbType) => new Promise((resolve, reject) => {
+    if (dbType === 'mongodb') {
+      db.deleteMany({})
+        .then((doc) => resolve(doc))
+        .catch((err) => reject(err));
+    } else {
+      db.remove({}, { multi: true }, (err, numRemoved) => {
+        if (err) { return reject(err); }
+        return resolve(numRemoved);
+      });
+    }
   }),
 };
