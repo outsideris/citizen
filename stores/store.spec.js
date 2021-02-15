@@ -8,6 +8,7 @@ const {
   saveModule,
   findAllModules,
   getModuleVersions,
+  getModuleLatestVersion,
 } = require('./store');
 const { deleteDbAll } = require('../test/helper');
 
@@ -165,6 +166,41 @@ storeTypes.forEach((storeType) => {
         expect(result[0]).to.have.property('version');
         expect(result[0]).to.have.property('submodules');
         expect(result[0]).to.have.property('root');
+      });
+    });
+
+    describe('getModuleLatestVersion()', () => {
+      before(async () => {
+        await saveModule({
+          namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+        });
+        await saveModule({
+          namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+        });
+      });
+
+      after(async () => {
+        await deleteDbAll(moduleDb(), storeType);
+      });
+
+      it('should return latest versions for a specific module', async () => {
+        const result = await getModuleLatestVersion({
+          namespace: 'aws-modules',
+          name: 'vpc',
+          provider: 'aws',
+        });
+
+        expect(result).to.have.property('version').to.equal('1.5.1');
+      });
+
+      it('should return null when given module does not exist', async () => {
+        const result = await getModuleLatestVersion({
+          namespace: 'aws-modules',
+          name: 'vpc',
+          provider: 'wrong-provider',
+        });
+
+        expect(result).to.be.null;
       });
     });
   });

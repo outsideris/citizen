@@ -53,11 +53,21 @@ const getModuleVersions = (options) => new Promise((resolve, reject) => {
   });
 });
 
+const getModuleLatestVersion = (options) => new Promise((resolve, reject) => {
+  moduleDb.find(options).sort({ version: -1 }).limit(1).exec((err, docs) => {
+    if (err) { return reject(err); }
+
+    debug('search latest version result from store: %o', docs);
+    return resolve(docs.length > 0 ? docs[0] : null);
+  });
+});
+
 module.exports = {
   type,
   moduleDb,
   saveModule,
   findModules,
   findAllModules,
-  getModuleVersions
+  getModuleVersions,
+  getModuleLatestVersion,
 };

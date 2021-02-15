@@ -55,6 +55,14 @@ const getModuleVersions = (options) => {
   return Module.find(options, null, { sort: '_id' });
 };
 
+const getModuleLatestVersion = (options) => {
+  return Module.find(options, null, { sort: '-version', limit: 1 })
+    .then((docs) => {
+      debug('search latest version result from db: %o', docs);
+      return docs.length > 0 ? docs[0] : null;
+    });
+};
+
 module.exports = {
   type,
   moduleDb: Module,
@@ -62,4 +70,5 @@ module.exports = {
   findModules,
   findAllModules,
   getModuleVersions,
+  getModuleLatestVersion,
 };
