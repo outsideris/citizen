@@ -1,5 +1,4 @@
 // https://www.terraform.io/docs/internals/provider-registry-protocol.html
-
 const { Router } = require('express');
 const multiparty = require('multiparty');
 const { v4: uuid } = require('uuid');

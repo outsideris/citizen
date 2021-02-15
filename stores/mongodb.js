@@ -55,23 +55,20 @@ const getModuleVersions = (options) => {
   return Module.find(options, null, { sort: '_id' });
 };
 
-const getModuleLatestVersion = (options) => {
-  return Module.find(options, null, { sort: '-version', limit: 1 })
-    .then((docs) => {
-      debug('search latest version result from db: %o', docs);
-      return docs.length > 0 ? docs[0] : null;
-    });
-};
+const getModuleLatestVersion = (options) => Module.find(options, null, { sort: '-version', limit: 1 })
+  .then((docs) => {
+    debug('search latest version result from db: %o', docs);
+    return docs.length > 0 ? docs[0] : null;
+  });
 
 const findOneModule = async (options) => {
   debug('search a module in store with %o', options);
   return Module.find(options)
-    .then((docs) => docs.length > 0 ? docs[0] : null);
+    .then((docs) => (docs.length > 0 ? docs[0] : null));
 };
 
-const increaseModuleDownload = (options) => {
-  return Module.findOneAndUpdate(options, { $inc: { downloads: 1 } }, { new: true });
-};
+const increaseModuleDownload = (options) => Module
+  .findOneAndUpdate(options, { $inc: { downloads: 1 } }, { new: true });
 
 module.exports = {
   type,

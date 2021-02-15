@@ -75,9 +75,9 @@ const findAllModules = async ({
 };
 
 const getModuleVersions = async ({ namespace, name, provider } = {}) => {
-  if (!namespace) { reject(new Error('namespace required.')); }
-  if (!name) { reject(new Error('name required.')); }
-  if (!provider) { reject(new Error('provider required.')); }
+  if (!namespace) { throw new Error('namespace required.'); }
+  if (!name) { throw new Error('name required.'); }
+  if (!provider) { throw new Error('provider required.'); }
 
   const options = {
     namespace,
@@ -112,7 +112,12 @@ const getModuleLatestVersion = async ({ namespace, name, provider } = {}) => {
   return result;
 };
 
-const findOneModule = async ({ namespace, name, provider, version, } = {}) => {
+const findOneModule = async ({
+  namespace,
+  name,
+  provider,
+  version,
+} = {}) => {
   if (!namespace) { throw new Error('namespace required.'); }
   if (!name) { throw new Error('name required.'); }
   if (!provider) { throw new Error('provider required.'); }
@@ -130,7 +135,12 @@ const findOneModule = async ({ namespace, name, provider, version, } = {}) => {
   return result;
 };
 
-const increaseModuleDownload = async ({ namespace, name, provider, version, } = {}) => {
+const increaseModuleDownload = async ({
+  namespace,
+  name,
+  provider,
+  version,
+} = {}) => {
   if (!namespace) { throw new Error('namespace required.'); }
   if (!name) { throw new Error('name required.'); }
   if (!provider) { throw new Error('provider required.'); }
