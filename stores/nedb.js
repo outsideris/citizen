@@ -72,6 +72,19 @@ const findOneModule = (options) => new Promise((resolve, reject) => {
   });
 });
 
+const increaseModuleDownload = (options) => new Promise((resolve, reject) => {
+  moduleDb.update(
+    options,
+    { $inc: { downloads: 1 } },
+    { returnUpdatedDocs: true },
+    (err, numAffected, affectedDocuments) => {
+      if (err) { return reject(err); }
+
+      return resolve(affectedDocuments);
+    },
+  );
+});
+
 module.exports = {
   type,
   moduleDb,
@@ -81,4 +94,5 @@ module.exports = {
   getModuleVersions,
   getModuleLatestVersion,
   findOneModule,
+  increaseModuleDownload,
 };

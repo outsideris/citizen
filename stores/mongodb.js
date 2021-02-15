@@ -69,6 +69,10 @@ const findOneModule = async (options) => {
     .then((docs) => docs.length > 0 ? docs[0] : null);
 };
 
+const increaseModuleDownload = (options) => {
+  return Module.findOneAndUpdate(options, { $inc: { downloads: 1 } }, { new: true });
+};
+
 module.exports = {
   type,
   moduleDb: Module,
@@ -78,4 +82,5 @@ module.exports = {
   getModuleVersions,
   getModuleLatestVersion,
   findOneModule,
+  increaseModuleDownload,
 };

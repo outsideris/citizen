@@ -130,16 +130,11 @@ const findOneModule = async ({ namespace, name, provider, version, } = {}) => {
   return result;
 };
 
-const increaseDownload = async ({
-  namespace,
-  name,
-  provider,
-  version,
-} = {}) => new Promise((resolve, reject) => {
-  if (!namespace) { reject(new Error('namespace required.')); }
-  if (!name) { reject(new Error('name required.')); }
-  if (!provider) { reject(new Error('provider required.')); }
-  if (!version) { reject(new Error('version required.')); }
+const increaseModuleDownload = async ({ namespace, name, provider, version, } = {}) => {
+  if (!namespace) { throw new Error('namespace required.'); }
+  if (!name) { throw new Error('name required.'); }
+  if (!provider) { throw new Error('provider required.'); }
+  if (!version) { throw new Error('version required.'); }
 
   const options = {
     namespace,
@@ -148,17 +143,9 @@ const increaseDownload = async ({
     version,
   };
 
-  db.update(
-    options,
-    { $inc: { downloads: 1 } },
-    { returnUpdatedDocs: true },
-    (err, numAffected, affectedDocuments) => {
-      if (err) { return reject(err); }
-
-      return resolve(affectedDocuments);
-    },
-  );
-});
+  const result = await store.increaseModuleDownload(options);
+  return result;
+};
 
 init();
 
@@ -171,6 +158,5 @@ module.exports = {
   getModuleVersions,
   getModuleLatestVersion,
   findOneModule,
-
-  increaseDownload,
+  increaseModuleDownload,
 };
