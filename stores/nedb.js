@@ -44,10 +44,20 @@ const findAllModules = (options, meta, offset, limit) => new Promise((resolve, r
     });
 });
 
+const getModuleVersions = (options) => new Promise((resolve, reject) => {
+  debug('search versions in store with %o', options);
+  moduleDb.find(options).sort({ _id: 1 }).exec((err, docs) => {
+    if (err) { return reject(err); }
+
+    return resolve(docs);
+  });
+});
+
 module.exports = {
   type,
   moduleDb,
   saveModule,
   findModules,
   findAllModules,
+  getModuleVersions
 };

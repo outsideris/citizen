@@ -7,6 +7,7 @@ const {
   moduleDb,
   saveModule,
   findAllModules,
+  getModuleVersions,
 } = require('./store');
 const { deleteDbAll } = require('../test/helper');
 
@@ -124,6 +125,46 @@ storeTypes.forEach((storeType) => {
         });
         expect(result).to.have.property('modules').to.have.lengthOf(3);
         expect(result.modules[0]).to.have.property('namespace').to.equal('store-aws-modules');
+      });
+    });
+
+    describe('getModuleVersions()', () => {
+      before(async () => {
+        await saveModule({
+          namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '',
+        });
+        await saveModule({
+          namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+        });
+        await saveModule({
+          namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+        });
+      });
+
+      after(async () => {
+        await deleteDbAll(moduleDb(), storeType);
+      });
+
+      it('should return available versions', async () => {
+        const result = await getModuleVersions({
+          namespace: 'aws-modules',
+          name: 'vpc',
+          provider: 'aws',
+        });
+
+        expect(result).to.have.lengthOf(3);
+      });
+
+      it('should return module with properties', async () => {
+        const result = await getModuleVersions({
+          namespace: 'aws-modules',
+          name: 'vpc',
+          provider: 'aws',
+        });
+
+        expect(result[0]).to.have.property('version');
+        expect(result[0]).to.have.property('submodules');
+        expect(result[0]).to.have.property('root');
       });
     });
   });

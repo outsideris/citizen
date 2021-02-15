@@ -74,7 +74,7 @@ const findAllModules = async ({
   return result;
 };
 
-const getVersions = ({ namespace, name, provider } = {}) => new Promise((resolve, reject) => {
+const getModuleVersions = async ({ namespace, name, provider } = {}) => {
   if (!namespace) { reject(new Error('namespace required.')); }
   if (!name) { reject(new Error('name required.')); }
   if (!provider) { reject(new Error('provider required.')); }
@@ -85,19 +85,17 @@ const getVersions = ({ namespace, name, provider } = {}) => new Promise((resolve
     provider,
   };
 
-  debug('search versions in db with %o', options);
-  db.find(options).sort({ _id: 1 }).exec((err, docs) => {
-    if (err) { return reject(err); }
+  debug('search versions in store with %o', options);
+  const docs = await store.getModuleVersions(options);
 
-    const data = docs.map((d) => ({
-      version: d.version,
-      submodules: d.submodules,
-      root: d.root,
-    }));
-    debug('search versions result from db: %o', docs);
-    return resolve(data);
-  });
-});
+  const result = docs.map((d) => ({
+    version: d.version,
+    submodules: d.submodules,
+    root: d.root,
+  }));
+  debug('search versions result from store: %o', docs);
+  return result;
+};
 
 const getLatestVersion = async ({ namespace, name, provider } = {}) => new Promise(
   (resolve, reject) => {
@@ -185,9 +183,9 @@ module.exports = {
   moduleDb,
   saveModule,
   findAllModules,
+  getModuleVersions,
 
   findOne,
-  getVersions,
   getLatestVersion,
   increaseDownload,
 };

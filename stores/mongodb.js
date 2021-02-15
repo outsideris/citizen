@@ -50,10 +50,16 @@ const findAllModules = (options, meta, offset, limit) => {
     });
 };
 
+const getModuleVersions = (options) => {
+  debug('search versions in store with %o', options);
+  return Module.find(options, null, { sort: '_id' });
+};
+
 module.exports = {
   type,
   moduleDb: Module,
   saveModule,
   findModules,
   findAllModules,
+  getModuleVersions,
 };
