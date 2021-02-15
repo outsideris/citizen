@@ -38,17 +38,17 @@ const saveModule = async (data) => {
   };
 
   const m = await store.saveModule(module);
-  debug('saved the module into db: %o', module);
+  debug('saved the module into store: %o', module);
   return m;
 };
 
-const findAll = ({
+const findAllModules = async ({
   selector = {},
   namespace = '',
   provider = '',
   offset = 0,
   limit = 15,
-} = {}) => new Promise((resolve, reject) => {
+} = {}) => {
   const options = selector;
 
   if (namespace) {
@@ -57,33 +57,22 @@ const findAll = ({
   if (provider) {
     options.provider = provider;
   }
-  debug('search db with %o', options);
+  debug('search store with %o', options);
 
-  db.find(options, (err, allDocs) => {
-    if (err) { return reject(err); }
+  const modules = await store.findModules(options);
+  const totalRows = modules.length;
+  const meta = {
+    limit: +limit,
+    currentOffset: +offset,
+    nextOffset: +offset + +limit,
+    prevOffset: +offset - +limit,
+  };
+  if (meta.prevOffset < 0) { meta.prevOffset = null; }
+  if (meta.nextOffset >= totalRows) { meta.nextOffset = null; }
 
-    const totalRows = allDocs.length;
-    const meta = {
-      limit: +limit,
-      currentOffset: +offset,
-      nextOffset: +offset + +limit,
-      prevOffset: +offset - +limit,
-    };
-    if (meta.prevOffset < 0) { meta.prevOffset = null; }
-    if (meta.nextOffset >= totalRows) { meta.nextOffset = null; }
-
-    return db.find(options).sort({ published_at: 1, version: 1 }).skip(+offset).limit(+limit)
-      .exec((error, docs) => {
-        if (error) { return reject(err); }
-
-        debug('search result from db: %o', docs);
-        return resolve({
-          meta,
-          modules: docs,
-        });
-      });
-  });
-});
+  const result = await store.findAllModules(options, meta, +offset, +limit);
+  return result;
+};
 
 const getVersions = ({ namespace, name, provider } = {}) => new Promise((resolve, reject) => {
   if (!namespace) { reject(new Error('namespace required.')); }
@@ -195,9 +184,9 @@ module.exports = {
   type,
   moduleDb,
   saveModule,
+  findAllModules,
 
   findOne,
-  findAll,
   getVersions,
   getLatestVersion,
   increaseDownload,

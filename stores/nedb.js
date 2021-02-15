@@ -14,13 +14,40 @@ const saveModule = (data) => new Promise((resolve, reject) => {
 
   moduleDb.insert(m, (err, newDoc) => {
     if (err) { return reject(err); }
-    debug('saved the module into db: %o', module);
+    debug('saved the module into store: %o', module);
     return resolve(newDoc);
   });
+});
+
+const findModules = (options) => new Promise((resolve, reject) => {
+  moduleDb.find(options, (err, allDocs) => {
+    if (err) {
+      return reject(err);
+    }
+
+    return resolve(allDocs);
+  });
+});
+
+const findAllModules = (options, meta, offset, limit) => new Promise((resolve, reject) => {
+  debug('search store with %o', options);
+
+  moduleDb.find(options).sort({ published_at: 1, version: 1 }).skip(offset).limit(limit)
+    .exec((error, docs) => {
+      if (error) { return reject(error); }
+
+      debug('search result from store: %o', docs);
+      return resolve({
+        meta,
+        modules: docs,
+      });
+    });
 });
 
 module.exports = {
   type,
   moduleDb,
   saveModule,
+  findModules,
+  findAllModules,
 };

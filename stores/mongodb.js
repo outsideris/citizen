@@ -35,8 +35,25 @@ const saveModule = (data) => new Promise((resolve, reject) => {
     .catch((err) => reject(err));
 });
 
+const findModules = (options) => Module.find(options);
+
+const findAllModules = (options, meta, offset, limit) => {
+  debug('search store with %o', options);
+
+  return Module.find(options, null, { sort: '_id', skip: offset, limit })
+    .then((docs) => {
+      debug('search result from store: %o', docs);
+      return {
+        meta,
+        modules: docs,
+      };
+    });
+};
+
 module.exports = {
   type,
   moduleDb: Module,
   saveModule,
+  findModules,
+  findAllModules,
 };
