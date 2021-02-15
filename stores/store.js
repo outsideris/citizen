@@ -112,16 +112,11 @@ const getModuleLatestVersion = async ({ namespace, name, provider } = {}) => {
   return result;
 };
 
-const findOne = async ({
-  namespace,
-  name,
-  provider,
-  version,
-} = {}) => new Promise((resolve, reject) => {
-  if (!namespace) { reject(new Error('namespace required.')); }
-  if (!name) { reject(new Error('name required.')); }
-  if (!provider) { reject(new Error('provider required.')); }
-  if (!version) { reject(new Error('version required.')); }
+const findOneModule = async ({ namespace, name, provider, version, } = {}) => {
+  if (!namespace) { throw new Error('namespace required.'); }
+  if (!name) { throw new Error('name required.'); }
+  if (!provider) { throw new Error('provider required.'); }
+  if (!version) { throw new Error('version required.'); }
 
   const options = {
     namespace,
@@ -130,14 +125,10 @@ const findOne = async ({
     version,
   };
 
-  debug('search a module in db with %o', options);
-  db.find(options, (err, docs) => {
-    if (err) { return reject(err); }
-
-    debug('search a module result from db: %o', docs);
-    return resolve(docs.length > 0 ? docs[0] : null);
-  });
-});
+  debug('search a module in store with %o', options);
+  const result = await store.findOneModule(options);
+  return result;
+};
 
 const increaseDownload = async ({
   namespace,
@@ -179,7 +170,7 @@ module.exports = {
   findAllModules,
   getModuleVersions,
   getModuleLatestVersion,
+  findOneModule,
 
-  findOne,
   increaseDownload,
 };

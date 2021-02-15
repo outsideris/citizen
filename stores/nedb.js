@@ -62,6 +62,16 @@ const getModuleLatestVersion = (options) => new Promise((resolve, reject) => {
   });
 });
 
+const findOneModule = (options) => new Promise((resolve, reject) => {
+  debug('search a module in store with %o', options);
+  moduleDb.find(options, (err, docs) => {
+    if (err) { return reject(err); }
+
+    debug('search a module result from store: %o', docs);
+    return resolve(docs.length > 0 ? docs[0] : null);
+  });
+});
+
 module.exports = {
   type,
   moduleDb,
@@ -70,4 +80,5 @@ module.exports = {
   findAllModules,
   getModuleVersions,
   getModuleLatestVersion,
+  findOneModule,
 };

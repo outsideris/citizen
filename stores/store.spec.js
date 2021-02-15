@@ -9,6 +9,7 @@ const {
   findAllModules,
   getModuleVersions,
   getModuleLatestVersion,
+  findOneModule,
 } = require('./store');
 const { deleteDbAll } = require('../test/helper');
 
@@ -198,6 +199,40 @@ storeTypes.forEach((storeType) => {
           namespace: 'aws-modules',
           name: 'vpc',
           provider: 'wrong-provider',
+        });
+
+        expect(result).to.be.null;
+      });
+    });
+
+    describe('findOneModule()', () => {
+      before(async () => {
+        await saveModule({
+          namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
+        });
+      });
+
+      after(async () => {
+        await deleteDbAll(moduleDb(), storeType);
+      });
+
+      it('should return the specific module', async () => {
+        const result = await findOneModule({
+          namespace: 'aws-modules',
+          name: 'vpc',
+          provider: 'aws',
+          version: '1.5.1',
+        });
+
+        expect(result).to.have.property('version').to.equal('1.5.1');
+      });
+
+      it('should return null when given module does not exist', async () => {
+        const result = await findOneModule({
+          namespace: 'aws-modules',
+          name: 'vpc',
+          provider: 'aws',
+          version: '2.5.0',
         });
 
         expect(result).to.be.null;

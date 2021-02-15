@@ -63,6 +63,12 @@ const getModuleLatestVersion = (options) => {
     });
 };
 
+const findOneModule = async (options) => {
+  debug('search a module in store with %o', options);
+  return Module.find(options)
+    .then((docs) => docs.length > 0 ? docs[0] : null);
+};
+
 module.exports = {
   type,
   moduleDb: Module,
@@ -71,4 +77,5 @@ module.exports = {
   findAllModules,
   getModuleVersions,
   getModuleLatestVersion,
+  findOneModule,
 };
