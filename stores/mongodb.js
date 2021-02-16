@@ -101,6 +101,11 @@ const findAllProviders = (options, meta, offset, limit) => {
     });
 };
 
+const getProviderVersions = (options) => {
+  debug('search versions in store with %o', options);
+  return Provider.find(options, null, { sort: 'version' });
+};
+
 module.exports = {
   type,
   moduleDb: Module,
@@ -115,4 +120,5 @@ module.exports = {
   saveProvider,
   findProviders,
   findAllProviders,
+  getProviderVersions,
 };

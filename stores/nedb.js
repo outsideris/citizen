@@ -47,7 +47,7 @@ const findAllModules = (options, meta, offset, limit) => new Promise((resolve, r
 });
 
 const getModuleVersions = (options) => new Promise((resolve, reject) => {
-  debug('search versions in store with %o', options);
+  debug('search module versions in store with %o', options);
   moduleDb.find(options).sort({ _id: 1 }).exec((err, docs) => {
     if (err) { return reject(err); }
 
@@ -126,6 +126,15 @@ const findAllProviders = (options, meta, offset, limit) => new Promise((resolve,
     });
 });
 
+const getProviderVersions = (options) => new Promise((resolve, reject) => {
+  debug('search provider versions in store with %o', options);
+  providerDb.find(options).sort({ version: 1 }).exec((err, docs) => {
+    if (err) { return reject(err); }
+
+    return resolve(docs);
+  });
+});
+
 module.exports = {
   type,
   moduleDb,
@@ -140,4 +149,5 @@ module.exports = {
   saveProvider,
   findProviders,
   findAllProviders,
+  getProviderVersions,
 };

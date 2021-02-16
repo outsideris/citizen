@@ -217,6 +217,42 @@ const findAllProviders = async ({
   return result;
 };
 
+const getProviderVersions = async ({ namespace, type } = {}) => {
+  if (!namespace) { throw new Error('namespace required.'); }
+  if (!type) { reject(new Error('type required.')); }
+
+  const options = {
+    namespace,
+    type,
+  };
+
+  debug('search versions in store with %o', options);
+  const docs = await store.getProviderVersions(options);
+
+  if (docs.length > 0) {
+    const result = {
+      id: `${docs[0].namespace}/${docs[0].type}`,
+      versions: [],
+    };
+
+    // FIXME: to match official API response
+    result.versions = docs.map((d) => ({
+      version: d.version,
+      // FIXME: what is protocols
+      protocols: [],
+      platforms: d.platforms.map((p) => ({
+        os: p.os,
+        arch: p.arch,
+      })),
+    }));
+    debug('search provider versions result from store: %o', result);
+
+    return result;
+  }
+
+  return {};
+};
+
 init();
 
 module.exports = {
@@ -232,4 +268,5 @@ module.exports = {
   providerDb,
   saveProvider,
   findAllProviders,
+  getProviderVersions,
 };
