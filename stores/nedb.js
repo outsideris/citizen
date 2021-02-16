@@ -101,6 +101,31 @@ const saveProvider = (data) => new Promise((resolve, reject) => {
   });
 });
 
+const findProviders = (options) => new Promise((resolve, reject) => {
+  providerDb.find(options, (err, allDocs) => {
+    if (err) {
+      return reject(err);
+    }
+
+    return resolve(allDocs);
+  });
+});
+
+const findAllProviders = (options, meta, offset, limit) => new Promise((resolve, reject) => {
+  debug('search store with %o', options);
+
+  providerDb.find(options).sort({ published_at: 1, version: 1 }).skip(offset).limit(limit)
+    .exec((error, docs) => {
+      if (error) { return reject(error); }
+
+      debug('search result from store: %o', docs);
+      return resolve({
+        meta,
+        providers: docs,
+      });
+    });
+});
+
 module.exports = {
   type,
   moduleDb,
@@ -113,4 +138,6 @@ module.exports = {
   increaseModuleDownload,
   providerDb,
   saveProvider,
+  findProviders,
+  findAllProviders,
 };

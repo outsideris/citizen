@@ -185,6 +185,38 @@ const saveProvider = async (data) => {
   return result;
 };
 
+const findAllProviders = async ({
+  selector = {},
+  namespace = '',
+  type = '',
+  offset = 0,
+  limit = 15,
+} = {}) => {
+  const options = selector;
+
+  if (namespace) {
+    options.namespace = namespace;
+  }
+  if (type) {
+    options.type = type;
+  }
+  debug('search store with %o', options);
+
+  const providers = await store.findProviders(options);
+  const totalRows = providers.length;
+  const meta = {
+    limit: +limit,
+    currentOffset: +offset,
+    nextOffset: +offset + +limit,
+    prevOffset: +offset - +limit,
+  };
+  if (meta.prevOffset < 0) { meta.prevOffset = null; }
+  if (meta.nextOffset >= totalRows) { meta.nextOffset = null; }
+
+  const result = await store.findAllProviders(options, meta, +offset, +limit);
+  return result;
+};
+
 init();
 
 module.exports = {
@@ -199,4 +231,5 @@ module.exports = {
   increaseModuleDownload,
   providerDb,
   saveProvider,
+  findAllProviders,
 };

@@ -13,6 +13,7 @@ const {
   increaseModuleDownload,
   providerDb,
   saveProvider,
+  findAllProviders,
 } = require('./store');
 const { deleteDbAll } = require('../test/helper');
 
@@ -292,6 +293,108 @@ storeTypes.forEach((storeType) => {
           expect(result.type).to.equal('citizen');
           expect(result.published_at).to.exist;
           expect(result.platforms[0]).to.have.property('os').to.equal('linux');
+        });
+      });
+
+      describe('findAllProviders()', () => {
+        before(async () => {
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.0.4',
+            platforms: [{
+              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+            }],
+          });
+
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.1.0',
+            platforms: [{
+              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+            }],
+          });
+
+          await saveProvider({
+            namespace: 'thirdparty',
+            type: 'terraform',
+            version: '1.0.0',
+            platforms: [{
+              os: 'windows', arch: 'amd64', location: '', filename: '', shasum: '',
+            }],
+          });
+
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.2.0',
+            platforms: [{
+              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+            }],
+          });
+        });
+
+        after(async () => {
+          await deleteDbAll(providerDb(), storeType);
+        });
+
+        it('should return all providers', async () => {
+          const result = await findAllProviders();
+
+          expect(result).to.have.property('providers').to.have.lengthOf(4);
+          expect(result.providers[0]).to.have.property('namespace').to.equal('outsider');
+        });
+
+        it('should filter providers by namespace', async () => {
+          const result = await findAllProviders({
+            namespace: 'outsider',
+          });
+          expect(result).to.have.property('providers').to.have.lengthOf(3);
+          expect(result.providers[0]).to.have.property('namespace').to.equal('outsider');
+        });
+
+        it('should support pagination', async () => {
+          const result = await findAllProviders({ offset: 2, limit: 2 });
+          expect(result).to.have.property('providers').to.have.lengthOf(2);
+          expect(result.providers[0]).to.have.property('namespace').to.equal('thirdparty');
+          expect(result.providers[0]).to.have.property('version').to.equal('1.0.0');
+        });
+
+        it('should return pagination information', async () => {
+          const result = await findAllProviders({ offset: 2, limit: 1 });
+
+          expect(result).to.have.property('meta');
+          expect(result.meta).to.have.property('limit').to.equal(1);
+          expect(result.meta).to.have.property('currentOffset').to.equal(2);
+          expect(result.meta).to.have.property('nextOffset').to.equal(3);
+          expect(result.meta).to.have.property('prevOffset').to.equal(1);
+        });
+
+        it('should prevOffset pagination information', async () => {
+          const result = await findAllProviders({ offset: 0, limit: 2 });
+
+          expect(result.meta).to.have.property('limit').to.equal(2);
+          expect(result.meta).to.have.property('currentOffset').to.equal(0);
+          expect(result.meta).to.have.property('nextOffset').to.equal(2);
+          expect(result.meta).to.have.property('prevOffset').to.be.null;
+        });
+
+        it('should return pagination information', async () => {
+          const result = await findAllProviders({ offset: 2, limit: 2 });
+
+          expect(result.meta).to.have.property('limit').to.equal(2);
+          expect(result.meta).to.have.property('currentOffset').to.equal(2);
+          expect(result.meta).to.have.property('nextOffset').to.be.null;
+          expect(result.meta).to.have.property('prevOffset').to.equal(0);
+        });
+
+        it('should filter providers by type', async () => {
+          const result = await findAllProviders({
+            type: 'terraform',
+          });
+          expect(result).to.have.property('providers').to.have.lengthOf(1);
+          expect(result.providers[0]).to.have.property('namespace').to.equal('thirdparty');
         });
       });
     });
