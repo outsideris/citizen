@@ -14,6 +14,8 @@ const {
   providerDb,
   saveProvider,
   findAllProviders,
+  getProviderVersions,
+  findProviderPackage,
 } = require('./store');
 const { deleteDbAll } = require('../test/helper');
 
@@ -319,7 +321,7 @@ storeTypes.forEach((storeType) => {
           await saveProvider({
             namespace: 'thirdparty',
             type: 'terraform',
-            version: '1.0.0',
+            version: '1.2.0',
             platforms: [{
               os: 'windows', arch: 'amd64', location: '', filename: '', shasum: '',
             }],
@@ -328,7 +330,7 @@ storeTypes.forEach((storeType) => {
           await saveProvider({
             namespace: 'outsider',
             type: 'citizen',
-            version: '1.2.0',
+            version: '1.3.0',
             platforms: [{
               os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
             }],
@@ -358,7 +360,7 @@ storeTypes.forEach((storeType) => {
           const result = await findAllProviders({ offset: 2, limit: 2 });
           expect(result).to.have.property('providers').to.have.lengthOf(2);
           expect(result.providers[0]).to.have.property('namespace').to.equal('thirdparty');
-          expect(result.providers[0]).to.have.property('version').to.equal('1.0.0');
+          expect(result.providers[0]).to.have.property('version').to.equal('1.2.0');
         });
 
         it('should return pagination information', async () => {
@@ -395,6 +397,102 @@ storeTypes.forEach((storeType) => {
           });
           expect(result).to.have.property('providers').to.have.lengthOf(1);
           expect(result.providers[0]).to.have.property('namespace').to.equal('thirdparty');
+        });
+      });
+
+      describe('getProviderVersions()', () => {
+        before(async () => {
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.0.4',
+            platforms: [{
+              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+            }],
+          });
+
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.1.0',
+            platforms: [{
+              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+            }],
+          });
+
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.2.0',
+            platforms: [{
+              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+            }],
+          });
+        });
+
+        after(async () => {
+          await deleteDbAll(providerDb(), storeType);
+        });
+
+        it('should return available versions', async () => {
+          const result = await getProviderVersions({
+            namespace: 'outsider',
+            type: 'citizen',
+          });
+
+          expect(result).to.have.property('id').to.equal('outsider/citizen');
+          expect(result).to.have.property('versions')
+            .to.be.an('array')
+            .to.have.lengthOf(3);
+        });
+
+        it('should return provider with properties', async () => {
+          const result = await getProviderVersions({
+            namespace: 'outsider',
+            type: 'citizen',
+          });
+
+          expect(result.versions[0]).to.have.property('version');
+          expect(result.versions[0]).to.have.property('protocols');
+          expect(result.versions[0]).to.have.property('platforms');
+        });
+      });
+
+      describe('findProviderPackage()', () => {
+        before(async () => {
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.1.0',
+            platforms: [{
+              os: 'windows', arch: 'amd64', location: '', filename: '', shasum: '',
+            }],
+          });
+
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.2.0',
+            platforms: [{
+              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+            }],
+          });
+        });
+
+        after(async () => {
+          await deleteDbAll(providerDb(), storeType);
+        });
+
+        it('should return provider that matched', async () => {
+          const result = await findProviderPackage({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.1.0',
+            os: 'windows',
+            arch: 'amd64',
+          });
+
+          expect(result).to.have.property('version').to.equal('1.1.0');
         });
       });
     });

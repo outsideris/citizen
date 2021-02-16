@@ -170,7 +170,7 @@ const saveProvider = async (data) => {
   };
 
   if (data.platforms && data.platforms.length > 0) {
-    data.platforms.forEach((platform) =>{
+    data.platforms.forEach((platform) => {
       p.platforms.push({
         os: platform.os,
         arch: platform.arch,
@@ -185,6 +185,7 @@ const saveProvider = async (data) => {
   return result;
 };
 
+// TODO: check if this is needed
 const findAllProviders = async ({
   selector = {},
   namespace = '',
@@ -219,7 +220,7 @@ const findAllProviders = async ({
 
 const getProviderVersions = async ({ namespace, type } = {}) => {
   if (!namespace) { throw new Error('namespace required.'); }
-  if (!type) { reject(new Error('type required.')); }
+  if (!type) { throw new Error('type required.'); }
 
   const options = {
     namespace,
@@ -253,6 +254,33 @@ const getProviderVersions = async ({ namespace, type } = {}) => {
   return {};
 };
 
+// FIXME: return correct response format
+const findProviderPackage = async ({
+  namespace = '',
+  type = '',
+  version = '',
+  os = '',
+  arch = '',
+} = {}) => {
+  if (!namespace) { throw new Error('namespace required.'); }
+  if (!type) { throw new Error('type required.'); }
+  if (!version) { throw new Error('version required.'); }
+  if (!os) { throw new Error('os required.'); }
+  if (!arch) { throw new Error('arch required.'); }
+
+  const options = {
+    namespace,
+    type,
+    version,
+    'platforms.os': os,
+    'platforms.arch': arch,
+  };
+
+  debug('search a provider store with %o', options);
+  const result = await store.findProviderPackage(options);
+  return result;
+};
+
 init();
 
 module.exports = {
@@ -269,4 +297,5 @@ module.exports = {
   saveProvider,
   findAllProviders,
   getProviderVersions,
+  findProviderPackage,
 };

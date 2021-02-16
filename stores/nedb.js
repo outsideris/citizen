@@ -135,6 +135,14 @@ const getProviderVersions = (options) => new Promise((resolve, reject) => {
   });
 });
 
+const findProviderPackage = (options) => new Promise((resolve, reject) => {
+  providerDb.find(options).sort({ version: -1 }).exec((err, docs) => {
+    if (err) { return reject(err); }
+
+    return resolve(docs.length > 0 ? docs[0] : null);
+  });
+});
+
 module.exports = {
   type,
   moduleDb,
@@ -150,4 +158,5 @@ module.exports = {
   findProviders,
   findAllProviders,
   getProviderVersions,
+  findProviderPackage,
 };

@@ -106,6 +106,10 @@ const getProviderVersions = (options) => {
   return Provider.find(options, null, { sort: 'version' });
 };
 
+const findProviderPackage = (options) => Provider
+  .find(options, null, { sort: '-version' })
+  .then((docs) => (docs.length > 0 ? docs[0] : null));
+
 module.exports = {
   type,
   moduleDb: Module,
@@ -121,4 +125,5 @@ module.exports = {
   findProviders,
   findAllProviders,
   getProviderVersions,
+  findProviderPackage,
 };
