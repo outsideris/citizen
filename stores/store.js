@@ -14,6 +14,7 @@ const init = (dbType) => {
 
 const type = () => store.type;
 
+// modules
 const moduleDb = () => store.moduleDb;
 
 const saveModule = async (data) => {
@@ -157,6 +158,33 @@ const increaseModuleDownload = async ({
   return result;
 };
 
+// providers
+const providerDb = () => store.providerDb;
+
+const saveProvider = async (data) => {
+  const p = {
+    namespace: data.namespace,
+    type: data.type,
+    version: data.version,
+    platforms: [],
+  };
+
+  if (data.platforms && data.platforms.length > 0) {
+    data.platforms.forEach((platform) =>{
+      p.platforms.push({
+        os: platform.os,
+        arch: platform.arch,
+        location: platform.location,
+        filename: platform.filename,
+        shasum: platform.shasum,
+      });
+    });
+  }
+
+  const result = await store.saveProvider(p);
+  return result;
+};
+
 init();
 
 module.exports = {
@@ -169,4 +197,6 @@ module.exports = {
   getModuleLatestVersion,
   findOneModule,
   increaseModuleDownload,
+  providerDb,
+  saveProvider,
 };

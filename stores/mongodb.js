@@ -10,6 +10,9 @@ const connectionOptions = {
 const dbUri = process.env.CITIZEN_MONGO_DB_URI || 'mongodb://localhost:27017/citizen';
 mongoose.connect(dbUri, connectionOptions);
 
+const type = 'mongodb';
+
+// modules
 const Module = mongoose.model('Module', {
   namespace: String,
   name: String,
@@ -22,18 +25,10 @@ const Module = mongoose.model('Module', {
   published_at: { type: Date, default: Date.now },
 });
 
-const type = 'mongodb';
-
-const saveModule = (data) => new Promise((resolve, reject) => {
+const saveModule = (data) => {
   const module = new Module(data);
-
-  module.save()
-    .then((newDoc) => {
-      debug('saved the module into db: %o', module);
-      return resolve(newDoc);
-    })
-    .catch((err) => reject(err));
-});
+  return module.save();
+};
 
 const findModules = (options) => Module.find(options);
 
@@ -70,6 +65,27 @@ const findOneModule = async (options) => {
 const increaseModuleDownload = (options) => Module
   .findOneAndUpdate(options, { $inc: { downloads: 1 } }, { new: true });
 
+// providers
+const Provider = mongoose.model('Provider', {
+  namespace: String,
+  type: String,
+  version: String,
+
+  platforms: [new mongoose.Schema({
+    os: { type: String },
+    arch: { type: String },
+    location: { type: String },
+    filename: { type: String },
+    shasum: { type: String },
+  })],
+  published_at: { type: Date, default: Date.now },
+});
+
+const saveProvider = (data) => {
+  const provider = new Provider(data);
+  return provider.save();
+};
+
 module.exports = {
   type,
   moduleDb: Module,
@@ -80,4 +96,6 @@ module.exports = {
   getModuleLatestVersion,
   findOneModule,
   increaseModuleDownload,
+  providerDb: Provider,
+  saveProvider,
 };

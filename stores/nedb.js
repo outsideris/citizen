@@ -4,11 +4,13 @@ const { join } = require('path');
 const debug = require('debug')('citizen:server:store:nedb');
 
 const dbDir = process.env.CITIZEN_DB_DIR || 'data';
+
 const moduleDbPath = join(dbDir, 'citizen.db');
 const moduleDb = new Datastore({ filename: moduleDbPath, autoload: true });
 
 const type = 'nedb';
 
+// modules
 const saveModule = (data) => new Promise((resolve, reject) => {
   const m = Object.assign(data, { _id: `${uuid()}`, downloads: 0, published_at: new Date() });
 
@@ -85,6 +87,20 @@ const increaseModuleDownload = (options) => new Promise((resolve, reject) => {
   );
 });
 
+// providers
+const providerDbPath = join(dbDir, 'citizen-providers.db');
+const providerDb = new Datastore({ filename: providerDbPath, autoload: true });
+
+const saveProvider = (data) => new Promise((resolve, reject) => {
+  const p = Object.assign(data, { _id: `${uuid()}`, published_at: new Date() });
+
+  providerDb.insert(p, (err, newDoc) => {
+    if (err) { return reject(err); }
+    debug('saved the module into db: %o', module);
+    return resolve(newDoc);
+  });
+});
+
 module.exports = {
   type,
   moduleDb,
@@ -95,4 +111,6 @@ module.exports = {
   getModuleLatestVersion,
   findOneModule,
   increaseModuleDownload,
+  providerDb,
+  saveProvider,
 };
