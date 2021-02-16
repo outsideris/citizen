@@ -3,7 +3,7 @@ const { expect } = require('chai');
 
 const {
   init,
-  type,
+  getStoreType,
   moduleDb,
   saveModule,
   findAllModules,
@@ -32,7 +32,7 @@ storeTypes.forEach((storeType) => {
     });
 
     it(`should use ${storeType}`, () => {
-      expect(type()).to.equal(storeType);
+      expect(getStoreType()).to.equal(storeType);
     });
 
     describe('module', () => {

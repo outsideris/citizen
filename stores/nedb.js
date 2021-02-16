@@ -8,7 +8,7 @@ const dbDir = process.env.CITIZEN_DB_DIR || 'data';
 const moduleDbPath = join(dbDir, 'citizen.db');
 const moduleDb = new Datastore({ filename: moduleDbPath, autoload: true });
 
-const type = 'nedb';
+const storeType = 'nedb';
 
 // modules
 const saveModule = (data) => new Promise((resolve, reject) => {
@@ -144,7 +144,7 @@ const findProviderPackage = (options) => new Promise((resolve, reject) => {
 });
 
 module.exports = {
-  type,
+  storeType,
   moduleDb,
   saveModule,
   findModules,

@@ -12,7 +12,7 @@ const init = (dbType) => {
   }
 };
 
-const type = () => store.type;
+const getStoreType = () => store.storeType;
 
 // modules
 const moduleDb = () => store.moduleDb;
@@ -285,7 +285,7 @@ init();
 
 module.exports = {
   init,
-  type,
+  getStoreType,
   moduleDb,
   saveModule,
   findAllModules,

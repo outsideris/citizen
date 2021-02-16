@@ -10,7 +10,7 @@ const connectionOptions = {
 const dbUri = process.env.CITIZEN_MONGO_DB_URI || 'mongodb://localhost:27017/citizen';
 mongoose.connect(dbUri, connectionOptions);
 
-const type = 'mongodb';
+const storeType = 'mongodb';
 
 // modules
 const Module = mongoose.model('Module', {
@@ -111,7 +111,7 @@ const findProviderPackage = (options) => Provider
   .then((docs) => (docs.length > 0 ? docs[0] : null));
 
 module.exports = {
-  type,
+  storeType,
   moduleDb: Module,
   saveModule,
   findModules,
