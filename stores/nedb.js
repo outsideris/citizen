@@ -143,6 +143,60 @@ const findProviderPackage = (options) => new Promise((resolve, reject) => {
   });
 });
 
+// publishers
+const publisherDbPath = join(dbDir, 'citizen-publishers.db');
+const publisherDb = new Datastore({ filename: publisherDbPath, autoload: true });
+
+const savePublisher = (data) => new Promise((resolve, reject) => {
+  const p = Object.assign(data, { _id: `${uuid()}`, published_at: new Date() });
+
+  publisherDb.insert(p, (err, newDoc) => {
+    if (err) { return reject(err); }
+    debug('saved the publisher into db: %o', p);
+    return resolve(newDoc);
+  });
+});
+
+// TODO: Implement
+const updatePublisher = () => {
+  throw new Error('Not implemented yet');
+};
+
+const findPublishers = (options) => new Promise((resolve, reject) => {
+  publisherDb.find(options, (err, allDocs) => {
+    if (err) {
+      return reject(err);
+    }
+
+    return resolve(allDocs);
+  });
+});
+
+const findAllPublishers = (options, meta, offset, limit) => new Promise((resolve, reject) => {
+  debug('search store with %o', options);
+
+  publisherDb.find(options).sort({ published_at: 1, version: 1 }).skip(offset).limit(limit)
+    .exec((error, docs) => {
+      if (error) { return reject(err); }
+
+      debug('search result from db: %o', docs);
+      return resolve({
+        meta,
+        publishers: docs,
+      });
+    });
+});
+
+const findOnePublisher = (options) => new Promise((resolve, reject) => {
+  debug('search a publisher in store with %o', options);
+  publisherDb.find(options, (err, docs) => {
+    if (err) { return reject(err); }
+
+    debug('search a module result from store: %o', docs);
+    return resolve(docs.length > 0 ? docs[0] : null);
+  });
+});
+
 module.exports = {
   storeType,
   moduleDb,
@@ -159,4 +213,9 @@ module.exports = {
   findAllProviders,
   getProviderVersions,
   findProviderPackage,
+  publisherDb,
+  savePublisher,
+  findPublishers,
+  findAllPublishers,
+  findOnePublisher,
 };
