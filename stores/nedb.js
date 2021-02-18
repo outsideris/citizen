@@ -215,6 +215,7 @@ module.exports = {
   findProviderPackage,
   publisherDb,
   savePublisher,
+  updatePublisher,
   findPublishers,
   findAllPublishers,
   findOnePublisher,

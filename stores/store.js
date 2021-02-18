@@ -316,6 +316,12 @@ const savePublisher = async (data) => {
   return result;
 };
 
+const updatePublisher = async (data) => {
+  debug('update a publisher with %o', data);
+  const result = await store.updatePublisher(data);
+  return result;
+};
+
 const findAllPublishers = async ({
   selector = {},
   offset = 0,
@@ -368,6 +374,7 @@ module.exports = {
   findProviderPackage,
   publisherDb,
   savePublisher,
+  updatePublisher,
   findAllPublishers,
   findOnePublisher,
 };
