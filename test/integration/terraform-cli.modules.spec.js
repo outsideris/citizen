@@ -116,7 +116,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
 
         execFile(
           client,
-          ['publish', 'module', 'citizen-test', 'alb', 'aws', '0.1.0'],
+          ['module', 'citizen-test', 'alb', 'aws', '0.1.0'],
           { cwd: moduleDir },
           async (err) => {
             if (err) { return done(err); }

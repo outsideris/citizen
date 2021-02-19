@@ -154,7 +154,7 @@ describe('terraform CLI', () => {
 
       await execFilePromised(
         client,
-        ['publish', 'provider', 'citizen-test', 'null', '1.0.0', '-v'],
+        ['provider', 'citizen-test', 'null', '1.0.0', '-v'],
         { cwd: providerDir },
       );
 
