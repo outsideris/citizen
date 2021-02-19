@@ -2,13 +2,11 @@ const https = require('https');
 const fs = require('fs');
 const { promisify } = require('util');
 const { expect } = require('chai');
-const getPort = require('get-port');
 const { execFile } = require('child_process');
 const { join } = require('path');
 const rimraf = promisify(require('rimraf'));
 const semver = require('semver');
 
-const { connect, disconnect } = require('./ngrok');
 const registry = require('./registry');
 const { moduleDb } = require('../../stores/store');
 const { deleteDbAll } = require('../helper');
@@ -33,27 +31,13 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
     const terraformCli = join(__dirname, '../', 'terraform-binaries', `terraform${terraform.release}`);
 
     before(async () => {
-      const port = await getPort();
-      let exit = true;
-      while (exit) {
-        url = await connect(port); // eslint-disable-line
-        // terraform handle URL which started with a numeric character
-        // as local path, not registry server
-        // see: https://github.com/hashicorp/terraform/pull/18039
-        const startedWithNumeric = /^[0-9]/.test(url.host);
-        if (!startedWithNumeric) {
-          exit = false;
-        } else {
-          await disconnect(); // eslint-disable-line
-        }
-      }
-
-      server = registry.run(port);
-      process.env.CITIZEN_ADDR = `http://127.0.0.1:${port}`;
+      const serverInfo = await registry.run();
+      server = serverInfo.server;
+      url = serverInfo.url;
+      process.env.CITIZEN_ADDR = `http://127.0.0.1:${server.address().port}`;
     });
 
     after(async () => {
-      await disconnect();
       await registry.terminate(server);
       await deleteDbAll(moduleDb());
     });
