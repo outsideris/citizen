@@ -12,7 +12,7 @@ const readFile = promisify(fs.readFile);
 
 describe('file storage\'s', async () => {
   let modulePath;
-  const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
+  const tarballPath = path.join(__dirname, '..', 'test', 'fixture', 'module.tar.gz');
   let moduleBuf;
 
   before(async () => {
@@ -20,7 +20,7 @@ describe('file storage\'s', async () => {
   });
 
   beforeEach(() => {
-    modulePath = `${(new Date()).getTime()}/test.tar.gz`;
+    modulePath = `${(new Date()).getTime()}/module.tar.gz`;
   });
 
   after(async () => {

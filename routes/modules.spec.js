@@ -16,7 +16,7 @@ const readFile = promisify(fs.readFile);
 describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   let moduleBuf;
   let modulePath;
-  const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
+  const tarballPath = path.join(__dirname, '..', 'test', 'fixture', 'module.tar.gz');
 
   beforeEach(async () => {
     modulePath = `hashicorp/consul/aws/${(new Date()).getTime()}`;
@@ -38,7 +38,7 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
     }));
 
   it('should reject the request if the module is already exists.', async () => {
-    const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, 'modules', `${modulePath}/test.tar.gz`);
+    const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, 'modules', `${modulePath}/module.tar.gz`);
     const parsedPath = path.parse(pathToStore);
     await mkdirp(parsedPath.dir);
     moduleBuf = await readFile(tarballPath);
@@ -46,7 +46,7 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
 
     return request(app)
       .post(`/v1/modules/${modulePath}`)
-      .attach('module', 'test/fixture/test.tar.gz')
+      .attach('module', 'test/fixture/module.tar.gz')
       .expect('Content-Type', /application\/json/)
       .expect(409)
       .then((res) => {
@@ -81,23 +81,14 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
           if (err) { return done(err); }
 
           expect(docs[0]).to.have.property('root');
-          expect(docs[0].root).to.have.property('name').to.equal('consul');
           expect(docs[0]).to.have.property('submodules').to.be.an.instanceof(Array);
-          expect(docs[0].submodules).to.have.lengthOf(3);
+          expect(docs[0].root).to.have.property('name').to.equal('consul');
+          expect(docs[0].root).to.have.property('outputs').to.have.property('side_effect_alb_dns');
+          expect(docs[0].root).to.have.property('module_calls').to.have.property('ecs_service_well_known');
           return done();
         });
       });
   });
-
-  it('should register module with HCL2 supported by terraform v0.12+', () => request(app)
-    .post(`/v1/modules/${modulePath}`)
-    .attach('module', 'test/fixture/module.v12.tar.gz')
-    .expect('Content-Type', /application\/json/)
-    .expect(201)
-    .then((res) => {
-      expect(res.body).to.have.property('modules').to.be.an('array');
-      expect(res.body.modules[0]).to.have.property('id').to.equal(modulePath);
-    }));
 });
 
 describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {

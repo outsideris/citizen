@@ -36,7 +36,7 @@ module.exports = {
         .get(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}?x-id=GetObject`)
         .reply(
           200,
-          { Body: fs.createReadStream(`${__dirname}/fixture/test.tar.gz`) },
+          { Body: fs.createReadStream(`${__dirname}/fixture/module.tar.gz`) },
           ['x-amz-id-2', 'UTXd/Ac9Lpf5htlqmY7jIa//st0VNw3HiV0H2tFpjQrabzdF0a1A0RXwaXXEDJsSMC0z9ieqSJg=',
             'x-amz-request-id', '51DCE049BC4189E5',
             'Date', 'Sun, 21 Jan 2018 16:47:35 GMT',
@@ -50,7 +50,7 @@ module.exports = {
         .get(`/${process.env.CITIZEN_AWS_S3_BUCKET}/${modulePath}/wrong?x-id=GetObject`)
         .reply(
           404,
-          '<?xml version="1.0" encoding="UTF-8"?>\n<Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>citizen/1516553253143/test.tar.gz/wrong</Key><RequestId>CA3688C9219019B8</RequestId><HostId>HoNack5lolKkIbPaGJADKOA1jLDxlP/G1gJMdi9Xc3j5WSaeHJphz/uqVLqDrMjA24W/8+kvJXM=</HostId></Error>',
+          '<?xml version="1.0" encoding="UTF-8"?>\n<Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>citizen/1516553253143/module.tar.gz/wrong</Key><RequestId>CA3688C9219019B8</RequestId><HostId>HoNack5lolKkIbPaGJADKOA1jLDxlP/G1gJMdi9Xc3j5WSaeHJphz/uqVLqDrMjA24W/8+kvJXM=</HostId></Error>',
           ['x-amz-request-id', 'CA3688C9219019B8',
             'x-amz-id-2', 'HoNack5lolKkIbPaGJADKOA1jLDxlP/G1gJMdi9Xc3j5WSaeHJphz/uqVLqDrMjA24W/8+kvJXM=',
             'Content-Type', 'application/xml',

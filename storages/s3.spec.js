@@ -11,8 +11,8 @@ const { saveModule, hasModule, getModule } = require('./s3');
 const readFile = promisify(fs.readFile);
 
 describe('s3\'s', async () => {
-  const modulePath = `citizen/${(new Date()).getTime()}/test.tar.gz`;
-  const tarballPath = path.join(__dirname, '../test', 'fixture/test.tar.gz');
+  const modulePath = `citizen/${(new Date()).getTime()}/module.tar.gz`;
+  const tarballPath = path.join(__dirname, '../test', 'fixture/module.tar.gz');
   let moduleBuf;
 
   before(async () => {

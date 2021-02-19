@@ -77,7 +77,7 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
   });
 
   it('should download a tarball for a specific module', () => {
-    const targetFile = fs.readFileSync(path.join(__dirname, '../test', 'fixture/test.tar.gz'));
+    const targetFile = fs.readFileSync(path.join(__dirname, '..', 'test', 'fixture', 'module.tar.gz'));
     const contentLength = `${targetFile.length}`;
 
     return request(app)
