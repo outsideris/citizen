@@ -5,10 +5,3 @@ node_modules/
 dist/
 data/
 test/terraform-binaries/
-.binaries/
-test/tf
-.terraform/
-.env
-test/integration/fixture/provider
-coverage/
-.nyc_output/
