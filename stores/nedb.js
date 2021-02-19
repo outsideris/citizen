@@ -177,7 +177,7 @@ const findAllPublishers = (options, meta, offset, limit) => new Promise((resolve
 
   publisherDb.find(options).sort({ published_at: 1, version: 1 }).skip(offset).limit(limit)
     .exec((error, docs) => {
-      if (error) { return reject(err); }
+      if (error) { return reject(error); }
 
       debug('search result from db: %o', docs);
       return resolve({

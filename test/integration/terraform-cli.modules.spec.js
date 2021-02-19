@@ -10,7 +10,7 @@ const semver = require('semver');
 
 const { connect, disconnect } = require('./ngrok');
 const registry = require('./registry');
-const { db } = require('../../lib/modules-store');
+const { moduleDb } = require('../../stores/store');
 const { deleteDbAll } = require('../helper');
 const { citizen } = require('../../package.json');
 
@@ -55,7 +55,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
     after(async () => {
       await disconnect();
       await registry.terminate(server);
-      await deleteDbAll(db);
+      await deleteDbAll(moduleDb());
     });
 
     describe('basic setup', () => {
@@ -133,7 +133,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
       after(async () => {
         await unlink(definitonFile);
         await rimraf(join(__dirname, 'fixture', '.terraform'));
-        await deleteDbAll(db);
+        await deleteDbAll(moduleDb());
         await rimraf(process.env.CITIZEN_STORAGE_PATH);
       });
 

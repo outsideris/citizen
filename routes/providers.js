@@ -6,13 +6,13 @@ const { v4: uuid } = require('uuid');
 const crypto = require('crypto');
 const { join } = require('path');
 const logger = require('../lib/logger');
-const { saveProvider, hasProvider, getProvider } = require('../lib/storage');
+const { saveProvider: saveProviderStorage, hasProvider, getProvider } = require('../lib/storage');
 const {
-  save, getVersions, findProviderPackage,
-} = require('../lib/providers-store');
-const {
-  findAll: findAllPublishers,
-} = require('../lib/publishers-store');
+  saveProvider,
+  getProviderVersions,
+  findProviderPackage,
+  findAllPublishers,
+} = require('../stores/store');
 
 const router = Router();
 
@@ -38,7 +38,7 @@ router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res,
 router.get('/:namespace/:type/versions', async (req, res, next) => {
   const options = { ...req.params };
 
-  const versions = await getVersions(options);
+  const versions = await getProviderVersions(options);
 
   if (!versions) {
     return next();
@@ -48,7 +48,7 @@ router.get('/:namespace/:type/versions', async (req, res, next) => {
     return res.status(404).send({});
   }
 
-  return res.render('providers/versions', { versions });
+  return res.render('providers/versions', { versions: versions.versions });
 });
 
 router.get('/:namespace/:type/:version/sha256sums', async (req, res) => {
@@ -223,7 +223,7 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
 
       const promises = files.map(async (archive) => {
         const location = `${destPath}/${archive.filename}`;
-        await saveProvider(location, archive.file);
+        await saveProviderStorage(location, archive.file);
       });
 
       providerFiles.forEach(async (archive, index) => {
@@ -240,7 +240,7 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
       });
 
       await Promise.all(promises);
-      await save(provider);
+      await saveProvider(provider);
 
       return res.status(201).render('providers/register', provider);
     } catch (e) {

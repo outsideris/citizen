@@ -3,8 +3,8 @@ const multiparty = require('multiparty');
 
 const logger = require('../lib/logger');
 const { parseHcl } = require('../lib/util');
-const { saveModule, hasModule } = require('../lib/storage');
-const { save, getLatestVersion, findOne } = require('../lib/modules-store');
+const storage = require('../lib/storage');
+const { saveModule, getModuleLatestVersion, findOneModule } = require('../stores/store');
 
 const router = Router();
 
@@ -57,7 +57,7 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
 
   form.on('close', async () => {
     try {
-      const exist = await hasModule(`${destPath}/${filename}`);
+      const exist = await storage.hasModule(`${destPath}/${filename}`);
       if (exist) {
         const error = new Error('Module exist');
         error.status = 409;
@@ -65,9 +65,9 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
         return next(error);
       }
 
-      const fileResult = await saveModule(`${destPath}/${filename}`, tarball);
+      const fileResult = await storage.saveModule(`${destPath}/${filename}`, tarball);
       const definition = await parseHcl(name, tarball);
-      const metaResult = await save({
+      const metaResult = await saveModule({
         namespace,
         name,
         provider,
@@ -103,7 +103,7 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
 router.get('/:namespace/:name/:provider/:version', async (req, res, next) => {
   const options = { ...req.params };
 
-  const module = await findOne(options);
+  const module = await findOneModule(options);
 
   if (!module) {
     return next();
@@ -116,7 +116,7 @@ router.get('/:namespace/:name/:provider/:version', async (req, res, next) => {
 router.get('/:namespace/:name/:provider', async (req, res, next) => {
   const options = { ...req.params };
 
-  const module = await getLatestVersion(options);
+  const module = await getModuleLatestVersion(options);
 
   if (!module) {
     return next();

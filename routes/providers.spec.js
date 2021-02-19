@@ -8,7 +8,7 @@ const mkdirp = require('mkdirp');
 
 const app = require('../app');
 const { deleteDbAll } = require('../test/helper');
-const { db, save } = require('../lib/providers-store');
+const { providerDb, saveProvider } = require('../stores/store');
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
@@ -22,7 +22,7 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
   });
 
   afterEach(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(providerDb());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
@@ -128,16 +128,16 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
 
 describe('GET /v1/providers/:namespace/:type/versions', () => {
   before(async () => {
-    await save({
+    await saveProvider({
       namespace: 'citizen-test', type: 'null', version: '1.1.2', platforms: [{ os: 'windows', arch: 'amd64' }],
     });
-    await save({
+    await saveProvider({
       namespace: 'citizen-test', type: 'null', version: '1.1.3', platforms: [{ os: 'windows', arch: 'amd64' }],
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(providerDb());
   });
 
   it('should return provider versions', () => request(app)

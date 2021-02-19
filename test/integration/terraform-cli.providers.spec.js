@@ -12,7 +12,7 @@ const rimraf = promisify(require('rimraf'));
 
 const { connect, disconnect } = require('./ngrok');
 const registry = require('./registry');
-const { db } = require('../../lib/providers-store');
+const { providerDb } = require('../../stores/store');
 const { deleteDbAll } = require('../helper');
 
 const writeFile = promisify(fs.writeFile);
@@ -82,7 +82,7 @@ describe('terraform CLI', () => {
   after(async () => {
     await disconnect();
     await registry.terminate(server);
-    await deleteDbAll(db);
+    await deleteDbAll(providerDb());
   });
 
   describe('basic setup', () => {
@@ -177,7 +177,7 @@ describe('terraform CLI', () => {
     after(async () => {
       await unlink(definitonFile);
       await rimraf(join(__dirname, 'fixture', '.terraform'));
-      await deleteDbAll(db);
+      await deleteDbAll(providerDb());
       await rimraf(process.env.CITIZEN_STORAGE_PATH);
     });
 

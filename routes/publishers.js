@@ -2,18 +2,21 @@
 const { Router } = require('express');
 
 const {
-  save, findAll, findOne, update,
-} = require('../lib/publishers-store');
+  savePublisher,
+  findAllPublishers,
+  findOnePublisher,
+  updatePublisher,
+} = require('../stores/store');
 
 const router = Router();
 
 router.get('/', async (req, res) => {
-  const publishers = await findAll();
+  const publishers = await findAllPublishers();
   res.send(publishers);
 });
 
 router.get('/:name', async (req, res) => {
-  const publisher = await findOne({ name: req.params.name });
+  const publisher = await findOnePublisher({ name: req.params.name });
   res.send(publisher);
 });
 
@@ -26,7 +29,7 @@ router.post('/', async (req, res, next) => {
     gpgKeys,
   } = req.body;
 
-  const existingPublisher = await findOne({ name });
+  const existingPublisher = await findOnePublisher({ name });
   if (req.query.force !== 'true' && existingPublisher) {
     res.statusMessage = `Publisher with name ${name} already exists`;
     return res.status(400).send();
@@ -34,7 +37,7 @@ router.post('/', async (req, res, next) => {
 
   // If existing publisher and we want to override
   if (existingPublisher && req.query.force === 'true') {
-    const updatedPublisher = await update({
+    const updatedPublisher = await updatePublisher({
       name, url, trustSignature, gpgKeys,
     });
 
@@ -42,7 +45,7 @@ router.post('/', async (req, res, next) => {
   }
 
   try {
-    const response = await save({
+    const response = await savePublisher({
       name, url, trustSignature, gpgKeys,
     });
     return res.status(201).send(response);

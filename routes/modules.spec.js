@@ -8,7 +8,7 @@ const mkdirp = require('mkdirp');
 
 const app = require('../app');
 const { deleteDbAll } = require('../test/helper');
-const { db, save } = require('../lib/modules-store');
+const { moduleDb, saveModule } = require('../stores/store');
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
@@ -23,7 +23,7 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   });
 
   afterEach(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
@@ -72,7 +72,7 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
       .expect('Content-Type', /application\/json/)
       .expect(201)
       .then((res) => {
-        db.find({
+        moduleDb().find({
           namespace: res.body.modules[0].namespace,
           name: res.body.modules[0].name,
           provider: res.body.modules[0].provider,
@@ -93,13 +93,13 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
 
 describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
   before(async () => {
-    await save({
+    await saveModule({
       namespace: 'router', name: 'specific', provider: 'aws', version: '1.1.2', owner: '',
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
   });
 
   it('should return a specific module', () => request(app)
@@ -119,16 +119,16 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
 
 describe('GET /v1/modules/:namespace/:name/:provider', () => {
   before(async () => {
-    await save({
+    await saveModule({
       namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.1', owner: '', definition: { root: { name: 'latest' }, submodules: [{ name: 'example' }] },
     });
-    await save({
+    await saveModule({
       namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.2', owner: '', definition: { root: { name: 'latest' }, submodules: [{ name: 'example' }] },
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
   });
 
   it('should return latest version for a specific module provider', () => request(app)

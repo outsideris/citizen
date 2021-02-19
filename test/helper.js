@@ -75,7 +75,7 @@ module.exports = {
     }
   },
   deleteDbAll: (db, dbType) => new Promise((resolve, reject) => {
-    if (dbType === 'mongodb') {
+    if (dbType === 'mongodb' || (!dbType && process.env.CITIZEN_DATABASE === 'mongodb')) {
       db.deleteMany({})
         .then((doc) => resolve(doc))
         .catch((err) => reject(err));

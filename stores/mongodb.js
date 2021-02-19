@@ -126,10 +126,16 @@ const Publisher = mongoose.model('Publisher', {
 const savePublisher = (data) => {
   const publisher = new Publisher(data);
   return publisher.save();
-}
+};
 
-const updatePublisher  = async (data) => {
-  const publisher = await findOne({ name: data.name });
+const findOnePublisher = async (options) => {
+  debug('search a module in store with %o', options);
+  return Publisher.find(options)
+    .then((docs) => (docs.length > 0 ? docs[0] : null));
+};
+
+const updatePublisher = async (data) => {
+  const publisher = await findOnePublisher({ name: data.name });
   if (!publisher) {
     throw new Error(`Could not find publisher with name ${data.name}`);
   }
@@ -151,12 +157,6 @@ const findAllPublishers = (options, meta, offset, limit) => {
         providers: docs,
       };
     });
-};
-
-const findOnePublisher = async (options) => {
-  debug('search a module in store with %o', options);
-  return Publisher.find(options)
-    .then((docs) => (docs.length > 0 ? docs[0] : null));
 };
 
 module.exports = {

@@ -2,27 +2,27 @@ const request = require('supertest');
 const { expect } = require('chai');
 
 const app = require('../app');
-const { db, save } = require('../lib/modules-store');
+const { moduleDb, saveModule } = require('../stores/store');
 const { deleteDbAll } = require('../test/helper');
 
 describe('GET /v1/modules', () => {
   before(async () => {
-    await save({
+    await saveModule({
       namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
   });
 
   it('should return all modules', () => request(app)
@@ -70,22 +70,22 @@ describe('GET /v1/modules', () => {
 
 describe('GET /v1/modules/:namespace', () => {
   before(async () => {
-    await save({
+    await saveModule({
       namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'microsoft', version: '1.2.1', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'microsoft', version: '1.5.0', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
   });
 
   it('should return all modules of namespace', () => request(app)
@@ -111,22 +111,22 @@ describe('GET /v1/modules/:namespace', () => {
 
 describe('GET /v1/modules/search', () => {
   before(async () => {
-    await save({
+    await saveModule({
       namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'microsoft', version: '1.2.1', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'microsoft', version: '1.5.0', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
   });
 
   it('should return all modules which matched by q', () => request(app)
@@ -160,22 +160,22 @@ describe('GET /v1/modules/search', () => {
 
 describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
   before(async () => {
-    await save({
+    await saveModule({
       namespace: 'GCP', name: 'lb-http', provider: 'google', version: '1.0.4', owner: '', definition: { root: { name: 'lb-http' }, submodules: [{ name: 'example' }] },
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '', definition: { root: { name: 'vpc' }, submodules: [{ name: 'example' }] },
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '', definition: { root: { name: 'vpc' }, submodules: [{ name: 'example' }] },
     });
-    await save({
+    await saveModule({
       namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', definition: { root: { name: 'vpc' }, submodules: [{ name: 'example' }] },
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
   });
 
   it('should return available versions for a specific module', () => request(app)
@@ -206,25 +206,25 @@ describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
 
 describe('GET /v1/modules/:namespace/:name', () => {
   before(async () => {
-    await save({
+    await saveModule({
       namespace: 'hashicorp', name: 'consul', provider: 'azurerm', version: '0.1.0', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'hashicorp', name: 'consul', provider: 'azurerm', version: '0.2.0', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'hashicorp', name: 'consul', provider: 'aws', version: '1.1.1', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'hashicorp', name: 'consul', provider: 'aws', version: '1.1.2', owner: '',
     });
-    await save({
+    await saveModule({
       namespace: 'hashicorp', name: 'consul', provider: 'google', version: '1.1.2', owner: '',
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
   });
 
   it('should return all latest version of module for all providers', () => request(app)

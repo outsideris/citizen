@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const _ = require('lodash');
 
-const { findAll, getVersions } = require('../lib/modules-store');
+const { findAllModules, getModuleVersions } = require('../stores/store');
 const { makeUrl } = require('../lib/util');
 
 const router = Router();
@@ -30,7 +30,7 @@ router.get('/search', async (req, res) => {
     options.namespace = req.params.namespace;
   }
 
-  const data = await findAll(options);
+  const data = await findAllModules(options);
   if (data.meta.nextOffset) {
     data.meta.nextUrl = makeUrl(req, {
       limit: data.meta.limit,
@@ -47,7 +47,7 @@ router.get(['/', '/:namespace'], async (req, res) => {
     options.namespace = req.params.namespace;
   }
 
-  const data = await findAll(options);
+  const data = await findAllModules(options);
   if (data.meta.nextOffset) {
     data.meta.nextUrl = makeUrl(req, {
       limit: data.meta.limit,
@@ -62,7 +62,7 @@ router.get('/:namespace/:name/:provider/versions', async (req, res, next) => {
   const options = { ...req.params };
 
   try {
-    const versions = await getVersions(options);
+    const versions = await getModuleVersions(options);
     res.render('modules/versions', {
       source: `${req.params.namespace}/${req.params.name}/${req.params.provider}`,
       versions,
@@ -84,7 +84,7 @@ router.get('/:namespace/:name', async (req, res) => {
     },
   };
 
-  const result = await findAll(options);
+  const result = await findAllModules(options);
   const grouped = _.groupBy(result.modules, (m) => `${m.namespace}/${m.name}/${m.provider}`);
 
   const modules = Object.keys(grouped).map((key) => {

@@ -7,17 +7,17 @@ const rimraf = promisify(require('rimraf'));
 
 const app = require('../app');
 const { deleteDbAll } = require('../test/helper');
-const { db, save } = require('../lib/modules-store');
+const { moduleDb, saveModule } = require('../stores/store');
 
 describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
   before(async () => {
-    await save({
+    await saveModule({
       namespace: 'download', name: 'source', provider: 'aws', version: '1.2.0', location: 'download/source/aws/1.2.0/module.tar.gz',
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
   });
 
   it('should return the location which client can download source code', () => request(app)
@@ -39,16 +39,16 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
 
 describe('GET /v1/modules/:namespace/:name/:provider/download', () => {
   before(async () => {
-    await save({
+    await saveModule({
       namespace: 'download', name: 'source', provider: 'aws', version: '1.2.0', location: 'download/source/aws/1.2.0/module.tar.gz',
     });
-    await save({
+    await saveModule({
       namespace: 'download', name: 'source', provider: 'aws', version: '1.3.0', location: 'download/source/aws/1.3.0/module.tar.gz',
     });
   });
 
   after(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
   });
 
   it('should redirect to the latest version of a module', () => request(app)
@@ -72,7 +72,7 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
   });
 
   afterEach(async () => {
-    await deleteDbAll(db);
+    await deleteDbAll(moduleDb());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
@@ -95,7 +95,7 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
       .get(`/v1/modules/tarball/download/tar/aws/${version}/module.tar.gz`)
       .expect(200)
       .then(() => {
-        db.find({
+        moduleDb().find({
           namespace: 'download',
           name: 'tar',
           provider: 'aws',

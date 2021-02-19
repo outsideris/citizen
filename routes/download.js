@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const { findOne, getLatestVersion, increaseDownload } = require('../lib/modules-store');
+const { findOneModule, getModuleLatestVersion, increaseModuleDownload } = require('../stores/store');
 const { getModule } = require('../lib/storage');
 
 const router = Router();
@@ -9,7 +9,7 @@ const router = Router();
 router.get('/:namespace/:name/:provider/:version/download', async (req, res, next) => {
   const options = { ...req.params };
 
-  const module = await findOne(options);
+  const module = await findOneModule(options);
 
   if (!module) {
     return next();
@@ -23,7 +23,7 @@ router.get('/:namespace/:name/:provider/:version/download', async (req, res, nex
 router.get('/:namespace/:name/:provider/download', async (req, res, next) => {
   const options = { ...req.params };
 
-  const module = await getLatestVersion(options);
+  const module = await getModuleLatestVersion(options);
 
   if (!module) {
     return next();
@@ -37,14 +37,14 @@ router.get('/:namespace/:name/:provider/download', async (req, res, next) => {
 router.get('/tarball/:namespace/:name/:provider/:version/*.tar.gz', async (req, res, next) => {
   const options = { ...req.params };
 
-  const module = await findOne(options);
+  const module = await findOneModule(options);
 
   if (!module) {
     return next();
   }
 
   const file = await getModule(module.location);
-  await increaseDownload(options);
+  await increaseModuleDownload(options);
   return res.attachment('module.tar.gz').type('gz').send(file);
 });
 
