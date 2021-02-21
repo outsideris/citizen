@@ -1,4 +1,4 @@
-const request = require('request');
+const got = require('got');
 const { join } = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
@@ -36,7 +36,7 @@ const download = async (terraform) => {
   return new Promise((resolve, reject) => {
     if (notExist) {
       log('Start to download terraform');
-      return request(DOWNLOAD_URL)
+      return got.stream(DOWNLOAD_URL)
         .pipe(unzipper.Parse())
         .on('entry', (entry) => {
           log('download completed');
