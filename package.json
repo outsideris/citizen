@@ -46,6 +46,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "adm-zip": "^0.5.3",
     "chai": "^4.2.0",
     "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.2.1",
