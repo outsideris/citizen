@@ -75,14 +75,14 @@ module "alb" {
 }
 ....
 
-=== `citizen provider <namespace> <type> <version>`
+=== `citizen provider <namespace> <type> <version> [protocols]`
 
 Citizen provides a special command to publish providers onto citizen.
 
 You must first build, package and gpg sign your provider, citizen
 expects following files in the provider location:
 
-- terraform-provider-<type>_<version>_<os>_<os>.zip (one per os/arch combination)
+- terraform-provider-<type>_<version>_<os>_<arch>.zip (one per os/arch combination)
 - terraform-provider-<type>_<version>_SHA256SUMS
 - terraform-provider-<type>_<version>_SHA256SUMS.sig
 
