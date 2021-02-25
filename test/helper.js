@@ -1,5 +1,9 @@
 const nock = require('nock');
 const fs = require('fs');
+const tmp = require('tmp');
+const AdmZip = require('adm-zip');
+
+const { genShaSums, sign } = require('../lib/provider/provider')
 
 module.exports = {
   enableMock: ({ modulePath }) => {
@@ -85,5 +89,21 @@ module.exports = {
         return resolve(numRemoved);
       });
     }
+  }),
+  generateProvider: (prefix, platforms) => new Promise((resolve, reject) => {
+    tmp.dir({ unsafeCleanup: true }, (err, tempDir, cleanupCallback) => {
+      if (err) { return reject(err); }
+
+      const zip = new AdmZip();
+      const content = 'resource "aws_alb" "main" {}';
+      zip.addFile("main.tf", Buffer.alloc(content.length, content));
+      platforms.forEach((p) => {
+        zip.writeZip(`${tempDir}/${prefix}_${p}.zip`);
+      });
+      genShaSums(prefix, tempDir)
+        .then((shaSumsFile) => sign(shaSumsFile, tempDir))
+        .then(() => resolve([tempDir, cleanupCallback]))
+        .catch((e) => reject(e));
+    });
   }),
 };
