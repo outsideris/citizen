@@ -70,11 +70,10 @@ const Provider = mongoose.model('Provider', {
   namespace: String,
   type: String,
   version: String,
-
+  protocols: [String],
   platforms: [new mongoose.Schema({
     os: { type: String },
     arch: { type: String },
-    location: { type: String },
     filename: { type: String },
     shasum: { type: String },
   })],

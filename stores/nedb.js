@@ -96,7 +96,7 @@ const saveProvider = (data) => new Promise((resolve, reject) => {
 
   providerDb.insert(p, (err, newDoc) => {
     if (err) { return reject(err); }
-    debug('saved the module into db: %o', module);
+    debug('saved the provider into db: %o', module);
     return resolve(newDoc);
   });
 });

@@ -166,6 +166,7 @@ const saveProvider = async (data) => {
     namespace: data.namespace,
     type: data.type,
     version: data.version,
+    protocols: data.protocols,
     platforms: [],
   };
 
@@ -174,7 +175,6 @@ const saveProvider = async (data) => {
       p.platforms.push({
         os: platform.os,
         arch: platform.arch,
-        location: platform.location,
         filename: platform.filename,
         shasum: platform.shasum,
       });
