@@ -2,23 +2,39 @@ const request = require('supertest');
 const { expect } = require('chai');
 const { promisify } = require('util');
 const rimraf = promisify(require('rimraf'));
-const fs = require('fs');
-const path = require('path');
-const mkdirp = require('mkdirp');
 
 const app = require('../app');
-const { deleteDbAll } = require('../test/helper');
+const { deleteDbAll, generateProvider } = require('../test/helper');
 const { providerDb, saveProvider } = require('../stores/store');
 
-const writeFile = promisify(fs.writeFile);
-const readFile = promisify(fs.readFile);
-
 describe('POST /v1/providers/:namespace/:type/:version', () => {
-  let providerBuf;
   let providerPath;
+  let targetDir;
+  let cleanupProvider;
+  let providerData;
 
   beforeEach(async () => {
-    providerPath = 'citizen-test/null/1.0.0';
+    providerData = {
+      namespace: 'citizen',
+      type: 'null',
+      version: '1.0.0',
+      protocols: ['4.1', '5.0'],
+      platforms: [
+        {
+          filename: 'citizen-null_1.0.0_linux_amd64.zip',
+          os: 'linux',
+          arch: 'amd64',
+        },
+        {
+          filename: 'citizen-null_1.0.0_windows_amd64.zip',
+          os: 'windows',
+          arch: 'amd64',
+        },
+      ],
+    };
+    providerPath = 'citizen/null/1.0.0';
+    const result = await generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64']);
+    [targetDir, cleanupProvider] = result;
   });
 
   afterEach(async () => {
@@ -26,17 +42,23 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
+  after(async () => {
+    cleanupProvider();
+  });
+
   it('should register new provider', () => request(app)
     .post(`/v1/providers/${providerPath}`)
-    .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_linux_amd64.zip')
-    .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_windows_amd64.zip')
-    .attach('sha256sums', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS')
-    .attach('signature', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS.sig')
-    .field('os', ['linux', 'windows'])
-    .field('arch', ['amd64', 'amd64'])
+    .attach('file1', `${targetDir}/citizen-null_1.0.0_linux_amd64.zip`)
+    .attach('file2', `${targetDir}/citizen-null_1.0.0_windows_amd64.zip`)
+    .attach('file3', `${targetDir}/citizen-null_1.0.0_SHA256SUMS`)
+    .attach('file4', `${targetDir}/citizen-null_1.0.0_SHA256SUMS.sig`)
+    .field('data', JSON.stringify(providerData))
     .expect('Content-Type', /application\/json/)
     .expect(201)
     .then((res) => {
+      expect(res.body).to.have.property('namespace').to.equal('citizen');
+      expect(res.body).to.have.property('type').to.equal('null');
+      expect(res.body).to.have.property('version').to.equal('1.0.0');
       expect(res.body).to.have.property('platforms').to.be.an('array').to.have.lengthOf(2);
       expect(res.body.platforms[0]).to.have.property('os').to.equal('linux');
       expect(res.body.platforms[0]).to.have.property('arch').to.equal('amd64');
@@ -44,84 +66,78 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
       expect(res.body.platforms[1]).to.have.property('arch').to.equal('amd64');
     }));
 
-  it('should reject if os/arch fields do not match files', () => request(app)
-    .post(`/v1/providers/${providerPath}`)
-    .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_linux_amd64.zip')
-    .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_windows_amd64.zip')
-    .attach('sha256sums', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS')
-    .attach('signature', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS.sig')
-    .field('os', ['windows', 'linux'])
-    .field('arch', ['amd64', 'amd64'])
-    .expect('Content-Type', /application\/json/)
-    .expect(400)
-    .then((res) => {
-      expect(res.body).to.have.property('error');
-      expect(res.body.error).to.contain('OS/Arch');
-    }));
-
   it('should return error if no files attached', () => request(app)
     .post(`/v1/providers/${providerPath}`)
-    .field('name', 'nothing')
+    .field('data', JSON.stringify(providerData))
     .expect('Content-Type', /application\/json/)
     .expect(400)
     .then((res) => {
-      expect(res.body).to.have.property('error').to.be.an('string');
-      expect(res.body.error).to.contain('no files attached');
+      expect(res.body).to.have.property('errors');
+      expect(res.body.errors[0]).to.contain('at least three files');
     }));
 
   it('should return error if no sums file attached', () => request(app)
     .post(`/v1/providers/${providerPath}`)
-    .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_linux_amd64.zip')
+    .attach('file1', `${targetDir}/citizen-null_1.0.0_linux_amd64.zip`)
+    .attach('file2', `${targetDir}/citizen-null_1.0.0_windows_amd64.zip`)
+    .attach('file3', `${targetDir}/citizen-null_1.0.0_SHA256SUMS.sig`)
+    .field('data', JSON.stringify(providerData))
     .expect('Content-Type', /application\/json/)
     .expect(400)
     .then((res) => {
-      expect(res.body).to.have.property('error').to.be.an('string');
-      expect(res.body.error).to.contain('no sums file attached');
+      expect(res.body).to.have.property('errors');
+      expect(res.body.errors[0]).to.contain('no SHA 256 SUMS');
     }));
 
   it('should return error if no signature file attached', () => request(app)
     .post(`/v1/providers/${providerPath}`)
-    .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_linux_amd64.zip')
-    .attach('sha256sums', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS')
+    .attach('file1', `${targetDir}/citizen-null_1.0.0_linux_amd64.zip`)
+    .attach('file2', `${targetDir}/citizen-null_1.0.0_windows_amd64.zip`)
+    .attach('file3', `${targetDir}/citizen-null_1.0.0_SHA256SUMS`)
+    .field('data', JSON.stringify(providerData))
     .expect('Content-Type', /application\/json/)
     .expect(400)
     .then((res) => {
-      expect(res.body).to.have.property('error').to.be.an('string');
-      expect(res.body.error).to.contain('no signature file attached');
+      expect(res.body).to.have.property('errors');
+      expect(res.body.errors[0]).to.contain('no signature file');
     }));
 
-  it('should reject if os/arch not specified', () => request(app)
-    .post(`/v1/providers/${providerPath}`)
-    .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_linux_amd64.zip')
-    .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_windows_amd64.zip')
-    .attach('sha256sums', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS')
-    .attach('signature', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS.sig')
-    .expect('Content-Type', /application\/json/)
-    .expect(400)
-    .then((res) => {
-      expect(res.body).to.have.property('error');
-      expect(res.body.error).to.contain('os/arch');
-    }));
-
-  it('should reject the request if the provider already exists.', async () => {
-    const pathToStore = path.join(process.env.CITIZEN_STORAGE_PATH, `providers/${providerPath}/terraform-provider-null_1.0.0_linux_amd64.zip`);
-    const parsedPath = path.parse(pathToStore);
-    await mkdirp(parsedPath.dir);
-    providerBuf = await readFile('test/fixture/provider/terraform-provider-null_1.0.0_linux_amd64.zip');
-    await writeFile(pathToStore, providerBuf);
+  it('should reject if os/arch fields do not match files', () => {
+    const data = { ...providerData };
+    data.platforms[0].os = 'darwin';
 
     return request(app)
       .post(`/v1/providers/${providerPath}`)
-      .attach('provider', 'test/fixture/provider/terraform-provider-null_1.0.0_linux_amd64.zip')
-      .attach('sha256sums', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS')
-      .attach('signature', 'test/fixture/provider/terraform-provider-null_1.0.0_SHA256SUMS.sig')
-      .field('os', ['linux'])
-      .field('arch', ['amd64'])
+      .attach('file1', `${targetDir}/citizen-null_1.0.0_linux_amd64.zip`)
+      .attach('file2', `${targetDir}/citizen-null_1.0.0_windows_amd64.zip`)
+      .attach('file3', `${targetDir}/citizen-null_1.0.0_SHA256SUMS`)
+      .attach('file4', `${targetDir}/citizen-null_1.0.0_SHA256SUMS.sig`)
+      .field('data', JSON.stringify(data))
+      .expect('Content-Type', /application\/json/)
+      .expect(400)
+      .then((res) => {
+        expect(res.body).to.have.property('errors');
+        expect(res.body.errors[0]).to.contain('os/arch');
+      });
+  });
+
+  it('should reject the request if the provider already exists', async () => {
+    await saveProvider({
+      namespace: 'citizen', type: 'null', version: '1.0.0', platforms: [{ os: 'windows', arch: 'amd64' }],
+    });
+
+    return request(app)
+      .post(`/v1/providers/${providerPath}`)
+      .attach('file1', `${targetDir}/citizen-null_1.0.0_linux_amd64.zip`)
+      .attach('file2', `${targetDir}/citizen-null_1.0.0_windows_amd64.zip`)
+      .attach('file3', `${targetDir}/citizen-null_1.0.0_SHA256SUMS`)
+      .attach('file4', `${targetDir}/citizen-null_1.0.0_SHA256SUMS.sig`)
+      .field('data', JSON.stringify(providerData))
       .expect('Content-Type', /application\/json/)
       .expect(409)
       .then((res) => {
-        expect(res.body).to.have.property('error');
-        expect(res.body.error).to.contain('Provider already exists');
+        expect(res.body).to.have.property('errors');
+        expect(res.body.errors[0]).to.contain('different provider with namespace, type or version');
       });
   });
 });

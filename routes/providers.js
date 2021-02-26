@@ -3,16 +3,16 @@ const { Router } = require('express');
 const multiparty = require('multiparty');
 const { v4: uuid } = require('uuid');
 
-const crypto = require('crypto');
-const { join } = require('path');
 const logger = require('../lib/logger');
-const { saveProvider: saveProviderStorage, hasProvider, getProvider } = require('../lib/storage');
+const { saveProvider: saveProviderStorage, getProvider } = require('../lib/storage');
 const {
   saveProvider,
+  findOneProvider,
   getProviderVersions,
   findProviderPackage,
   findAllPublishers,
 } = require('../stores/store');
+const { extractShasum } = require('../lib/util');
 
 const router = Router();
 
@@ -123,7 +123,7 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
 
   const formData = {};
   const files = [];
-  const fields = {};
+  let data;
 
   form.on('part', async (part) => {
     const id = uuid();
@@ -146,103 +146,89 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
           requestName: part.name,
         });
       } else {
-        const value = Buffer.concat(formData[id]).toString();
-        if (Object.keys(fields).indexOf(part.name) !== -1) {
-          fields[part.name] = fields[part.name] instanceof Array
-            ? fields[part.name]
-            : [fields[part.name]];
-          fields[part.name] = fields[part.name].concat(value);
-        } else {
-          fields[part.name] = value;
-        }
+        data = Buffer.concat(formData[id]).toString();
       }
     });
   });
 
   form.on('close', async () => {
     try {
-      if (files.length === 0) {
-        res.statusMessage = 'You must attach at least one file';
-        return res.status(400).send({ error: 'There are no files attached' });
+      data = JSON.parse(data);
+    } catch (e) {
+      const error = new Error('Invalid JSON format');
+      error.status = 400;
+      error.message = 'There is invalid JSON for a data field';
+      return next(error);
+    }
+
+    try {
+      if (files.length < 3) {
+        const error = new Error('Not enough files');
+        error.status = 400;
+        error.message = 'You must attach at least three files including provider, shashum and signature';
+        return next(error);
       }
 
-      if (files.findIndex((f) => f.requestName === 'sha256sums') === -1) {
-        res.statusMessage = 'You must attach SHA 256 sums file';
-        return res.status(400).send({ error: 'There is no sums file attached' });
+      const shasumsFile = files.filter((f) => f.filename.endsWith('SHA256SUMS'));
+      if (shasumsFile.length < 1) {
+        const error = new Error('No SHA256SUM file');
+        error.status = 400;
+        error.message = 'There is no SHA 256 SUMS file attached';
+        return next(error);
       }
 
-      if (files.findIndex((f) => f.requestName === 'signature') === -1) {
-        res.statusMessage = 'You must attach signature of sums file';
-        return res.status(400).send({ error: 'There is no signature file attached' });
+      if (!files.some((f) => f.filename.endsWith('SHA256SUMS.sig'))) {
+        const error = new Error('No signature file');
+        error.status = 400;
+        error.message = 'There is no signature file attached';
+        return next(error);
       }
 
-      const providerFiles = files.filter((f) => f.requestName === 'provider');
-
-      // Ensure os/arch fields are arrays
-      fields.os = fields.os instanceof Array ? fields.os : [fields.os];
-      fields.arch = fields.arch instanceof Array ? fields.arch : [fields.arch];
-
-      if (
-        (!fields.os || (fields.os && fields.os.length !== providerFiles.length))
-        || (!fields.arch || (fields.arch && fields.arch.length !== providerFiles.length))
-      ) {
-        res.statusMessage = `The os/arch is not matching uploaded files: ${JSON.stringify(fields)}`;
-        return res.status(400).send({ error: 'You must provide list of os/arch matching submitted files' });
+      const providerFiles = files.filter((f) => f.filename.endsWith('.zip'));
+      if (!data.platforms || data.platforms.length !== providerFiles.length) {
+        const error = new Error('Different count between data and files');
+        error.status = 400;
+        error.message = 'You must provide matched platform data and provider files';
+        return next(error);
       }
 
-      for (let i = 0; i < providerFiles.length; i += 1) {
-        const file = providerFiles[i];
-        if (file.filename.indexOf(`${fields.os[i]}_${fields.arch[i]}.zip`) === -1) {
-          res.statusMessage = 'OS/Arch fields do not match uploaded files (order is important)';
-          return res.status(400).send({
-            error: res.statusMessage,
-            filename: file.filename,
-            fields,
-          });
-        }
-
-        // It's ok to call async hasProvider in the loop here
-        // eslint-disable-next-line no-await-in-loop
-        const providerExistenceCheck = await hasProvider(join(destPath, file.filename));
-        if (providerExistenceCheck) {
-          res.statusMessage = 'Provider already exists';
-          return res.status(409).send({
-            error: res.statusMessage,
-            filename: file.filename,
-          });
-        }
+      const isFilesMatched = data.platforms
+        .every((p) => providerFiles.some((f) => f.filename === `${namespace}-${type}_${version}_${p.os}_${p.arch}.zip`));
+      if (!isFilesMatched) {
+        const error = new Error('Unmatched platform data and files');
+        error.status = 400;
+        error.message = 'You must provide list of platform(os/arch) matching submitted files';
+        return next(error);
       }
 
-      const provider = {
-        namespace,
-        type,
-        version,
-        gpgKeys: [],
-        platforms: [],
-      };
+      const hasProvider = await findOneProvider({
+        namespace: data.namespace,
+        type: data.type,
+        version: data.version,
+      });
 
+      if (hasProvider) {
+        const error = new Error('The provider already exists');
+        error.status = 409;
+        error.message = 'You must submit different provider with namespace, type or version';
+        return next(error);
+      }
+
+      const shaFileMap = await extractShasum(shasumsFile[0].file.toString());
+      data.platforms.forEach((p) => {
+        p.shasum = shaFileMap[p.filename]; // eslint-disable-line no-param-reassign
+      });
+
+      // save files
       const promises = files.map(async (archive) => {
         const location = `${destPath}/${archive.filename}`;
         await saveProviderStorage(location, archive.file);
       });
-
-      providerFiles.forEach(async (archive, index) => {
-        const shasum = crypto.createHash('sha256').update(archive.file).digest('hex');
-        const location = `${destPath}/${archive.filename}`;
-
-        provider.platforms.push({
-          os: fields.os[index],
-          arch: fields.arch[index],
-          location,
-          filename: archive.filename,
-          shasum,
-        });
-      });
-
       await Promise.all(promises);
-      await saveProvider(provider);
 
-      return res.status(201).render('providers/register', provider);
+      await saveProvider(data);
+
+      return res.status(201).render('providers/register', data);
     } catch (e) {
       logger.error(e);
       return next(e);
