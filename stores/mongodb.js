@@ -85,6 +85,12 @@ const saveProvider = (data) => {
   return provider.save();
 };
 
+const findOneProvider = async (options) => {
+  debug('search a provider in store with %o', options);
+  return Provider.find(options)
+    .then((docs) => (docs.length > 0 ? docs[0] : null));
+};
+
 const findProviders = (options) => Provider.find(options);
 
 const findAllProviders = (options, meta, offset, limit) => {
@@ -170,6 +176,7 @@ module.exports = {
   increaseModuleDownload,
   providerDb: Provider,
   saveProvider,
+  findOneProvider,
   findProviders,
   findAllProviders,
   getProviderVersions,

@@ -185,7 +185,26 @@ const saveProvider = async (data) => {
   return result;
 };
 
-// TODO: check if this is needed
+const findOneProvider = async ({
+  namespace,
+  type,
+  version,
+} = {}) => {
+  if (!namespace) { throw new Error('namespace required.'); }
+  if (!type) { throw new Error('type required.'); }
+  if (!version) { throw new Error('version required.'); }
+
+  const options = {
+    namespace,
+    type,
+    version,
+  };
+
+  debug('search a provider in store with %o', options);
+  const result = await store.findOneProvider(options);
+  return result;
+};
+
 const findAllProviders = async ({
   selector = {},
   namespace = '',
@@ -369,6 +388,7 @@ module.exports = {
   increaseModuleDownload,
   providerDb,
   saveProvider,
+  findOneProvider,
   findAllProviders,
   getProviderVersions,
   findProviderPackage,

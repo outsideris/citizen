@@ -13,6 +13,7 @@ const {
   increaseModuleDownload,
   providerDb,
   saveProvider,
+  findOneProvider,
   findAllProviders,
   getProviderVersions,
   findProviderPackage,
@@ -48,7 +49,6 @@ storeTypes.forEach((storeType) => {
             provider: 'store-aws',
             version: '0.1.0',
             owner: 'outsideris',
-            location: 'store-hashicorp/store-consul/store-aws/0.1.0/module.tar.gz',
           });
 
           expect(result._id).to.exist; // eslint-disable-line no-underscore-dangle
@@ -306,6 +306,45 @@ storeTypes.forEach((storeType) => {
         });
       });
 
+      describe('findOneProvider()', () => {
+        before(async () => {
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.0.4',
+            platforms: [{
+              os: 'linux', arch: 'amd64', filename: 'outsider-citizen_1.0.4_linux_amd64.zip', shasum: 'aaabbb1',
+            }],
+          });
+        });
+
+        after(async () => {
+          await deleteDbAll(providerDb(), storeType);
+        });
+
+        it('should find the provider', async () => {
+          const options = {
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.0.4',
+          }
+          const result = await findOneProvider(options);
+          expect(result).to.have.property('namespace').to.equal('outsider');
+          expect(result).to.have.property('type').to.equal('citizen');
+          expect(result).to.have.property('version').to.equal('1.0.4');
+        });
+
+        it('should not find provider if not exist', async () => {
+          const options = {
+            namespace: 'outsider',
+            type: 'invisible',
+            version: '1.0.4',
+          }
+          const result = await findOneProvider(options);
+          expect(result).to.be.null;
+        });
+      });
+
       describe('findAllProviders()', () => {
         before(async () => {
           await saveProvider({
@@ -313,7 +352,7 @@ storeTypes.forEach((storeType) => {
             type: 'citizen',
             version: '1.0.4',
             platforms: [{
-              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+              os: 'linux', arch: 'amd64', filename: '', shasum: '',
             }],
           });
 
@@ -322,7 +361,7 @@ storeTypes.forEach((storeType) => {
             type: 'citizen',
             version: '1.1.0',
             platforms: [{
-              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+              os: 'linux', arch: 'amd64', filename: '', shasum: '',
             }],
           });
 
@@ -331,7 +370,7 @@ storeTypes.forEach((storeType) => {
             type: 'terraform',
             version: '1.2.0',
             platforms: [{
-              os: 'windows', arch: 'amd64', location: '', filename: '', shasum: '',
+              os: 'windows', arch: 'amd64', filename: '', shasum: '',
             }],
           });
 
@@ -340,7 +379,7 @@ storeTypes.forEach((storeType) => {
             type: 'citizen',
             version: '1.3.0',
             platforms: [{
-              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+              os: 'linux', arch: 'amd64', filename: '', shasum: '',
             }],
           });
         });
@@ -415,7 +454,7 @@ storeTypes.forEach((storeType) => {
             type: 'citizen',
             version: '1.0.4',
             platforms: [{
-              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+              os: 'linux', arch: 'amd64', filename: '', shasum: '',
             }],
           });
 
@@ -424,7 +463,7 @@ storeTypes.forEach((storeType) => {
             type: 'citizen',
             version: '1.1.0',
             platforms: [{
-              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+              os: 'linux', arch: 'amd64', filename: '', shasum: '',
             }],
           });
 
@@ -433,7 +472,7 @@ storeTypes.forEach((storeType) => {
             type: 'citizen',
             version: '1.2.0',
             platforms: [{
-              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+              os: 'linux', arch: 'amd64', filename: '', shasum: '',
             }],
           });
         });
@@ -473,7 +512,7 @@ storeTypes.forEach((storeType) => {
             type: 'citizen',
             version: '1.1.0',
             platforms: [{
-              os: 'windows', arch: 'amd64', location: '', filename: '', shasum: '',
+              os: 'windows', arch: 'amd64', filename: '', shasum: '',
             }],
           });
 
@@ -482,7 +521,7 @@ storeTypes.forEach((storeType) => {
             type: 'citizen',
             version: '1.2.0',
             platforms: [{
-              os: 'linux', arch: 'amd64', location: '', filename: '', shasum: '',
+              os: 'linux', arch: 'amd64', filename: '', shasum: '',
             }],
           });
         });

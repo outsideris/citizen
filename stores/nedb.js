@@ -93,11 +93,22 @@ const providerDb = new Datastore({ filename: providerDbPath, autoload: true });
 
 const saveProvider = (data) => new Promise((resolve, reject) => {
   const p = Object.assign(data, { _id: `${uuid()}`, published_at: new Date() });
+  if (!p.protocols) { p.protocols = []; }
 
   providerDb.insert(p, (err, newDoc) => {
     if (err) { return reject(err); }
     debug('saved the provider into db: %o', module);
     return resolve(newDoc);
+  });
+});
+
+const findOneProvider = (options) => new Promise((resolve, reject) => {
+  debug('search a provider in store with %o', options);
+  providerDb.find(options, (err, docs) => {
+    if (err) { return reject(err); }
+
+    debug('search a provider result from store: %o', docs);
+    return resolve(docs.length > 0 ? docs[0] : null);
   });
 });
 
@@ -209,6 +220,7 @@ module.exports = {
   increaseModuleDownload,
   providerDb,
   saveProvider,
+  findOneProvider,
   findProviders,
   findAllProviders,
   getProviderVersions,
