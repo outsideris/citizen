@@ -101,8 +101,11 @@ module.exports = {
         zip.writeZip(`${tempDir}/${prefix}_${p}.zip`);
       });
       genShaSums(prefix, tempDir)
-        .then((shaSumsFile) => sign(shaSumsFile, tempDir))
-        .then(() => resolve([tempDir, cleanupCallback]))
+        .then(async (shaSumsFile) => {
+          const sigFile = await sign(shaSumsFile, tempDir)
+          return [shaSumsFile, sigFile];
+        })
+        .then(([shaSumsFile, sigFile]) => resolve([tempDir, cleanupCallback, shaSumsFile, sigFile]))
         .catch((e) => reject(e));
     });
   }),
