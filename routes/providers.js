@@ -16,94 +16,6 @@ const { extractShasum } = require('../lib/util');
 
 const router = Router();
 
-// eslint-disable-next-line consistent-return
-router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res, next) => {
-  const options = { ...req.params };
-
-  const providerPackage = await findProviderPackage(options);
-
-  if (!providerPackage) {
-    return next();
-  }
-
-  const platform = providerPackage.platforms
-    .find((p) => p.os === options.os && p.arch === options.arch);
-
-  const file = await getProvider(platform.location);
-
-  res.attachment(platform.filename).send(file);
-});
-
-// https://www.terraform.io/docs/internals/provider-registry-protocol.html#list-available-versions
-router.get('/:namespace/:type/versions', async (req, res, next) => {
-  const options = { ...req.params };
-
-  const versions = await getProviderVersions(options);
-
-  if (!versions) {
-    return next();
-  }
-
-  if (versions.length === 0) {
-    return res.status(404).send({});
-  }
-
-  return res.render('providers/versions', { versions: versions.versions });
-});
-
-router.get('/:namespace/:type/:version/sha256sums', async (req, res) => {
-  const options = { ...req.params };
-
-  const sumsLocation = `${options.namespace}/${options.type}/${options.version}/terraform-provider-${options.type}_${options.version}_SHA256SUMS`;
-  const response = await getProvider(sumsLocation);
-
-  res
-    .header('x-terraform-protocol-version', '5')
-    .header('x-terraform-protocol-versions', '5.0')
-    .contentType('text/plain')
-    .send(response);
-});
-
-router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res) => {
-  const options = { ...req.params };
-  const sigLocation = `${options.namespace}/${options.type}/${options.version}/terraform-provider-${options.type}_${options.version}_SHA256SUMS.sig`;
-  const response = await getProvider(sigLocation);
-
-  res
-    .send(response);
-});
-
-// https://www.terraform.io/docs/internals/provider-registry-protocol.html#find-a-provider-package
-router.get('/:namespace/:type/:version/download/:os/:arch', async (req, res, next) => {
-  const options = { ...req.params };
-
-  const providerPackage = await findProviderPackage(options);
-  const publishersResponse = await findAllPublishers();
-
-  const trustedGpgKeys = publishersResponse.publishers
-    .reduce((arr, publisher) => arr.concat(publisher.gpgKeys), []);
-
-  if (!providerPackage) {
-    return next();
-  }
-
-  const platform = providerPackage.platforms
-    .find((p) => p.os === options.os && p.arch === options.arch);
-
-  const viewModel = {
-    filename: platform.filename,
-    shasum: platform.shasum,
-    os: platform.os,
-    arch: platform.arch,
-    downloadUrl: `/v1/providers/${options.namespace}/${options.type}/${options.version}/download/${options.os}/${options.arch}/zip`,
-    shaSumsUrl: `/v1/providers/${options.namespace}/${options.type}/${options.version}/sha256sums`,
-    shaSumsSignatureUrl: `/v1/providers/${options.namespace}/${options.type}/${options.version}/sha256sums.sig`,
-    gpgKeys: trustedGpgKeys,
-  };
-
-  return res.render('providers/providerPackage', viewModel);
-});
-
 // register a provider with version
 router.post('/:namespace/:type/:version', (req, res, next) => {
   const {
@@ -236,6 +148,106 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
   });
 
   form.parse(req);
+});
+
+// https://www.terraform.io/docs/internals/provider-registry-protocol.html#list-available-versions
+router.get('/:namespace/:type/versions', async (req, res, next) => {
+  const options = { ...req.params };
+
+  const versions = await getProviderVersions(options);
+
+  if (!versions) {
+    return next();
+  }
+
+  if (versions.length === 0) {
+    return res.status(404).send({});
+  }
+
+  return res.render('providers/versions', { versions: versions.versions });
+});
+
+// https://www.terraform.io/docs/internals/provider-registry-protocol.html#find-a-provider-package
+router.get('/:namespace/:type/:version/download/:os/:arch', async (req, res, next) => {
+  const options = { ...req.params };
+
+  const providerPackage = await findProviderPackage(options);
+  if (!providerPackage) { return next(); }
+
+  const publishersResponse = await findAllPublishers();
+  const trustedGpgKeys = publishersResponse.publishers
+    .reduce((arr, publisher) => arr.concat(publisher.gpgKeys), []);
+
+  const platform = providerPackage.platforms
+    .find((p) => p.os === options.os && p.arch === options.arch);
+
+  const viewModel = {
+    protocols: providerPackage.protocols,
+    filename: platform.filename,
+    os: platform.os,
+    arch: platform.arch,
+    downloadUrl: `/v1/providers/${options.namespace}/${options.type}/${options.version}/download/${options.os}/${options.arch}/zip`,
+    shaSumsUrl: `/v1/providers/${options.namespace}/${options.type}/${options.version}/sha256sums`,
+    shaSumsSignatureUrl: `/v1/providers/${options.namespace}/${options.type}/${options.version}/sha256sums.sig`,
+    shasum: platform.shasum,
+    gpgKeys: trustedGpgKeys,
+  };
+
+  return res.render('providers/providerPackage', viewModel);
+});
+
+// for downloading
+router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res, next) => {
+  try {
+    const options = { ...req.params };
+
+    const providerPackage = await findProviderPackage(options);
+    if (!providerPackage) { return next(); }
+
+    const platform = providerPackage.platforms
+      .find((p) => p.os === options.os && p.arch === options.arch);
+
+    const file = await getProvider(`${options.namespace}/${options.type}/${options.version}/${platform.filename}`);
+    return res.attachment(platform.filename).send(file);
+  } catch (e) {
+    return next(e);
+  }
+});
+
+router.get('/:namespace/:type/:version/sha256sums', async (req, res, next) => {
+  try {
+    const options = { ...req.params };
+
+    const sumsLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS`;
+    const shasumsContent = await getProvider(sumsLocation);
+    if (!shasumsContent) { return next(); }
+
+    return res
+      .header('x-terraform-protocol-version', '5')
+      .header('x-terraform-protocol-versions', '5.0')
+      .contentType('text/plain')
+      .send(shasumsContent.toString('utf8'));
+  } catch (e) {
+    return next(e);
+  }
+});
+
+router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) => {
+  try {
+    const options = { ...req.params };
+    const sigLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`;
+    const sig = await getProvider(sigLocation);
+    if (!sig) {
+      return next();
+    }
+
+    return res
+      .set('Content-Type', 'application/octet-stream')
+      .set('Content-disposition', `attachment; filename=${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`)
+      .send(sig);
+  } catch (e) {
+    return next(e);
+  }
 });
 
 module.exports = router;

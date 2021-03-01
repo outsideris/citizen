@@ -2,6 +2,7 @@ const request = require('supertest');
 const { expect } = require('chai');
 const { promisify } = require('util');
 const rimraf = promisify(require('rimraf'));
+const unzipper = require('unzipper');
 
 const app = require('../app');
 const { deleteDbAll, generateProvider } = require('../test/helper');
@@ -38,12 +39,9 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
   });
 
   afterEach(async () => {
+    cleanupProvider();
     await deleteDbAll(providerDb());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
-  });
-
-  after(async () => {
-    cleanupProvider();
   });
 
   it('should register new provider', () => request(app)
@@ -170,4 +168,147 @@ describe('GET /v1/providers/:namespace/:type/versions', () => {
     .get('/v1/providers/citizen-test/null/2.1.2/download/windows/amd64')
     .expect('Content-Type', /application\/json/)
     .expect(404));
+});
+
+describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () => {
+  let targetDir;
+  let cleanupProvider;
+  let providerData;
+
+  before(async () => {
+    providerData = {
+      namespace: 'citizen',
+      type: 'null',
+      version: '1.0.0',
+      protocols: ['4.1', '5.0'],
+      platforms: [
+        {
+          filename: 'citizen-null_1.0.0_linux_amd64.zip',
+          os: 'linux',
+          arch: 'amd64',
+        },
+        {
+          filename: 'citizen-null_1.0.0_windows_amd64.zip',
+          os: 'windows',
+          arch: 'amd64',
+        },
+      ],
+    };
+    const providerPath = 'citizen/null/1.0.0';
+    const result = await generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64']);
+    [targetDir, cleanupProvider] = result;
+
+    return request(app)
+      .post(`/v1/providers/${providerPath}`)
+      .attach('file1', `${targetDir}/citizen-null_1.0.0_linux_amd64.zip`)
+      .attach('file2', `${targetDir}/citizen-null_1.0.0_windows_amd64.zip`)
+      .attach('file3', `${targetDir}/citizen-null_1.0.0_SHA256SUMS`)
+      .attach('file4', `${targetDir}/citizen-null_1.0.0_SHA256SUMS.sig`)
+      .field('data', JSON.stringify(providerData))
+      .expect('Content-Type', /application\/json/)
+      .expect(201);
+  });
+
+  after(async () => {
+    cleanupProvider();
+    await deleteDbAll(providerDb());
+    await rimraf(process.env.CITIZEN_STORAGE_PATH);
+  });
+
+  it('should return the provider package info', () => request(app)
+    .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+    .expect('Content-Type', /application\/json/)
+    .expect(200)
+    .then((res) => {
+      expect(res.body).to.have.property('os').to.equal('linux');
+      expect(res.body).to.have.property('arch').to.equal('amd64');
+      expect(res.body).to.have.property('protocols').to.include('4.1');
+      expect(res.body).to.have.property('protocols').to.include('5.0');
+      expect(res.body).to.have.property('filename').to.equal('citizen-null_1.0.0_linux_amd64.zip');
+      expect(res.body).to.have.property('download_url');
+      expect(res.body).to.have.property('shasums_url');
+      expect(res.body).to.have.property('shasums_signature_url');
+      expect(res.body).to.have.property('shasum');
+    }));
+
+
+  describe('GET /:namespace/:type/:version/download/:os/:arch/zip', () => {
+    it('should return downloadable download_url for provider', (done) => {
+      const server = request(app);
+      server
+        .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+        .expect('Content-Type', /application\/json/)
+        .expect(200)
+        .then((res) => res.body.download_url)
+        .then((downloadUrl) => {
+          server
+            .get(downloadUrl)
+            .expect('Content-Type', /application\/zip/)
+            .expect(200)
+            .pipe(unzipper.Parse())
+            .on('entry', async (entry) => {
+              try {
+                const buf = await entry.buffer();
+                const content = buf.toString('utf8');
+                expect(content).to.include('aws_alb');
+                done();
+              } catch (e) {
+                done(e);
+              }
+            });
+        });
+    });
+
+    it('should return 404 if download_url is unavailable', () => request(app)
+      .get('/v1/providers/citizen/null/2.0.0/download/linux/amd64/zip')
+      .expect('Content-Type', /application\/json/)
+      .expect(404));
+  });
+
+  describe('GET /:namespace/:type/:version/sha256sums', () => {
+    it('should return downloadable shasums_url for provider', () => {
+      const server = request(app);
+      return server
+        .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+        .expect('Content-Type', /application\/json/)
+        .expect(200)
+        .then((res) => res.body.shasums_url)
+        .then((shasumsUrl) => server
+          .get(shasumsUrl)
+          .expect('Content-Type', /text\/plain/)
+          .expect(200)
+          .then((res) => {
+            expect(res.text).to.include('citizen-null_1.0.0_linux_amd64.zip');
+            expect(res.text).to.include('citizen-null_1.0.0_windows_amd64.zip');
+          }));
+    });
+
+    it('should return 404 if shasums_url is unavailable', () => request(app)
+      .get('/v1/providers/citizen/null/2.0.0/sha256sums')
+      .expect('Content-Type', /application\/json/)
+      .expect(404));
+  });
+
+  describe('GET /:namespace/:type/:version/sha256sums.sig', () => {
+    it('should return downloadable shasums_signature_url for provider', () => {
+      const server = request(app);
+      return server
+        .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+        .expect('Content-Type', /application\/json/)
+        .expect(200)
+        .then((res) => res.body.shasums_signature_url)
+        .then((shaSumsSignatureUrl) => server
+          .get(shaSumsSignatureUrl)
+          .expect('Content-Type', /application\/octet-stream/)
+          .expect(200)
+          .then((res) => {
+            expect(res).to.have.property('body').to.be.an.instanceof(Buffer);
+          }));
+    });
+
+    it('should return 404 if shasums_signature_url is unavailable', () => request(app)
+      .get('/v1/providers/citizen/null/2.0.0/sha256sums.sig')
+      .expect('Content-Type', /application\/json/)
+      .expect(404));
+  });
 });

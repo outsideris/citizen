@@ -3,7 +3,7 @@ const fs = require('fs');
 const tmp = require('tmp');
 const AdmZip = require('adm-zip');
 
-const { genShaSums, sign } = require('../lib/provider/provider')
+const { genShaSums, sign } = require('../lib/provider/provider');
 
 module.exports = {
   enableMock: ({ modulePath }) => {
@@ -96,13 +96,13 @@ module.exports = {
 
       const zip = new AdmZip();
       const content = 'resource "aws_alb" "main" {}';
-      zip.addFile("main.tf", Buffer.alloc(content.length, content));
+      zip.addFile('main.tf', Buffer.alloc(content.length, content));
       platforms.forEach((p) => {
         zip.writeZip(`${tempDir}/${prefix}_${p}.zip`);
       });
-      genShaSums(prefix, tempDir)
+      return genShaSums(prefix, tempDir)
         .then(async (shaSumsFile) => {
-          const sigFile = await sign(shaSumsFile, tempDir)
+          const sigFile = await sign(shaSumsFile, tempDir);
           return [shaSumsFile, sigFile];
         })
         .then(([shaSumsFile, sigFile]) => resolve([tempDir, cleanupCallback, shaSumsFile, sigFile]))

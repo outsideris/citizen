@@ -1,11 +1,11 @@
 module.exports = (data) => ({
-  protocols: ['5.0'],
+  protocols: data.protocols,
   os: data.os,
   arch: data.arch,
   filename: data.filename,
   download_url: data.downloadUrl,
   shasums_url: data.shaSumsUrl,
-  shasums_signature_url: `${data.shaSumsSignatureUrl || "https://nothing"}`,
+  shasums_signature_url: data.shaSumsSignatureUrl,
   shasum: data.shasum,
   signing_keys: {
     gpg_public_keys: data.gpgKeys.map((key) => ({
