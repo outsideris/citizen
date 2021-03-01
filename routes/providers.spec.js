@@ -1,4 +1,5 @@
 const request = require('supertest');
+const got = require('got');
 const { expect } = require('chai');
 const { promisify } = require('util');
 const rimraf = promisify(require('rimraf'));
@@ -232,29 +233,27 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
     }));
 
   describe('GET /:namespace/:type/:version/download/:os/:arch/zip', () => {
-    it('should return downloadable download_url for provider', (done) => {
+    it('should return downloadable download_url for provider', () => {
       const server = request(app);
-      server
+      return server
         .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
         .expect('Content-Type', /application\/json/)
         .expect(200)
         .then((res) => res.body.download_url)
-        .then((downloadUrl) => {
-          server
+        .then(async (downloadUrl) => {
+          await server
             .get(downloadUrl)
             .expect('Content-Type', /application\/zip/)
-            .expect(200)
-            .pipe(unzipper.Parse())
-            .on('entry', async (entry) => {
-              try {
-                const buf = await entry.buffer();
-                const content = buf.toString('utf8');
-                expect(content).to.include('aws_alb');
-                done();
-              } catch (e) {
-                done(e);
-              }
-            });
+            .expect('Content-Disposition', /citizen-null_1\.0\.0_linux_amd64\.zip/)
+            .expect(200);
+
+          const host = await server.get('/').url;
+          const downloadedFile = await got(`${host.substr(0, host.length - 1)}${downloadUrl}`).buffer();
+
+          const directory = await unzipper.Open.buffer(downloadedFile);
+          const file = directory.files.find((f) => f.path === 'main.tf');
+          const content = await file.buffer();
+          expect(content.toString('utf8')).to.include('aws_alb');
         });
     });
 
