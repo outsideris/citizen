@@ -231,7 +231,6 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
       expect(res.body).to.have.property('shasum');
     }));
 
-
   describe('GET /:namespace/:type/:version/download/:os/:arch/zip', () => {
     it('should return downloadable download_url for provider', (done) => {
       const server = request(app);
@@ -259,6 +258,19 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
         });
     });
 
+    it('should return downloadable download_url with protocols headers', () => {
+      const server = request(app);
+      return server
+        .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+        .expect('Content-Type', /application\/json/)
+        .expect(200)
+        .then((res) => res.body.download_url)
+        .then((downloadUrl) => server
+          .get(downloadUrl)
+          .expect('x-terraform-protocol-version', '4')
+          .expect('x-terraform-protocol-versions', '4.1, 5.0'));
+    });
+
     it('should return 404 if download_url is unavailable', () => request(app)
       .get('/v1/providers/citizen/null/2.0.0/download/linux/amd64/zip')
       .expect('Content-Type', /application\/json/)
@@ -283,6 +295,19 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
           }));
     });
 
+    it('should return downloadable shasums_url with protocols headers', () => {
+      const server = request(app);
+      return server
+        .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+        .expect('Content-Type', /application\/json/)
+        .expect(200)
+        .then((res) => res.body.shasums_url)
+        .then((shasumsUrl) => server
+          .get(shasumsUrl)
+          .expect('x-terraform-protocol-version', '4')
+          .expect('x-terraform-protocol-versions', '4.1, 5.0'));
+    });
+
     it('should return 404 if shasums_url is unavailable', () => request(app)
       .get('/v1/providers/citizen/null/2.0.0/sha256sums')
       .expect('Content-Type', /application\/json/)
@@ -304,6 +329,19 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
           .then((res) => {
             expect(res).to.have.property('body').to.be.an.instanceof(Buffer);
           }));
+    });
+
+    it('should return downloadable shasums_signature_url with protocols headers', () => {
+      const server = request(app);
+      return server
+        .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+        .expect('Content-Type', /application\/json/)
+        .expect(200)
+        .then((res) => res.body.shasums_url)
+        .then((shaSumsSignatureUrl) => server
+          .get(shaSumsSignatureUrl)
+          .expect('x-terraform-protocol-version', '4')
+          .expect('x-terraform-protocol-versions', '4.1, 5.0'));
     });
 
     it('should return 404 if shasums_signature_url is unavailable', () => request(app)

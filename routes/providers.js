@@ -207,6 +207,11 @@ router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res,
     const platform = providerPackage.platforms
       .find((p) => p.os === options.os && p.arch === options.arch);
 
+    const provider = await findOneProvider(options);
+    const protocols = provider.protocols.map((prot) => Math.floor(prot));
+    res.header('x-terraform-protocol-version', Math.min(...protocols));
+    res.header('x-terraform-protocol-versions', provider.protocols.join(', '));
+
     const file = await getProvider(`${options.namespace}/${options.type}/${options.version}/${platform.filename}`);
     return res.attachment(platform.filename).send(file);
   } catch (e) {
@@ -222,9 +227,12 @@ router.get('/:namespace/:type/:version/sha256sums', async (req, res, next) => {
     const shasumsContent = await getProvider(sumsLocation);
     if (!shasumsContent) { return next(); }
 
+    const provider = await findOneProvider(options);
+    const protocols = provider.protocols.map((prot) => Math.floor(prot));
+    res.header('x-terraform-protocol-version', Math.min(...protocols));
+    res.header('x-terraform-protocol-versions', provider.protocols.join(', '));
+
     return res
-      .header('x-terraform-protocol-version', '5')
-      .header('x-terraform-protocol-versions', '5.0')
       .contentType('text/plain')
       .send(shasumsContent.toString('utf8'));
   } catch (e) {
@@ -237,9 +245,12 @@ router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) =
     const options = { ...req.params };
     const sigLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`;
     const sig = await getProvider(sigLocation);
-    if (!sig) {
-      return next();
-    }
+    if (!sig) { return next(); }
+
+    const provider = await findOneProvider(options);
+    const protocols = provider.protocols.map((prot) => Math.floor(prot));
+    res.header('x-terraform-protocol-version', Math.min(...protocols));
+    res.header('x-terraform-protocol-versions', provider.protocols.join(', '));
 
     return res
       .set('Content-Type', 'application/octet-stream')
