@@ -55,7 +55,7 @@ module.exports = {
     const parsedPath = parse(pathToStore);
     await mkdirp(parsedPath.dir);
 
-    const result = await writeFile(pathToStore, file);
+    await writeFile(pathToStore, file);
 
     return true;
   },
