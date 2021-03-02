@@ -287,13 +287,13 @@ storeTypes.forEach((storeType) => {
                 filename: 'outsider-citizen_0.1.0_linux_amd64.zip',
                 os: 'linux',
                 arch: 'amd64',
-                shasum: "5f9c7aa76b7c34d722fc9123208e26b22d60440cb47150dd04733b9b94f4541a",
+                shasum: '5f9c7aa76b7c34d722fc9123208e26b22d60440cb47150dd04733b9b94f4541a',
               },
               {
                 filename: 'outsider-citizen_0.1.0_windows_amd64.zip',
                 os: 'windows',
                 arch: 'amd64',
-                shasum: "af9c7aa76b7c34d722fc9123208e26b22d60440cb47150dd04733b9b94f4541a",
+                shasum: 'af9c7aa76b7c34d722fc9123208e26b22d60440cb47150dd04733b9b94f4541a',
               },
             ],
           });
@@ -327,7 +327,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.0.4',
-          }
+          };
           const result = await findOneProvider(options);
           expect(result).to.have.property('namespace').to.equal('outsider');
           expect(result).to.have.property('type').to.equal('citizen');
@@ -339,7 +339,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'invisible',
             version: '1.0.4',
-          }
+          };
           const result = await findOneProvider(options);
           expect(result).to.be.null;
         });

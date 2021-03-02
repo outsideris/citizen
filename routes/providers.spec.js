@@ -144,10 +144,10 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
 describe('GET /v1/providers/:namespace/:type/versions', () => {
   before(async () => {
     await saveProvider({
-      namespace: 'citizen-test', type: 'null', version: '1.1.2', platforms: [{ os: 'windows', arch: 'amd64' }],
+      namespace: 'citizen-test', type: 'null', version: '1.1.2', protocols: ['4.1'], platforms: [{ os: 'windows', arch: 'amd64' }],
     });
     await saveProvider({
-      namespace: 'citizen-test', type: 'null', version: '1.1.3', platforms: [{ os: 'windows', arch: 'amd64' }],
+      namespace: 'citizen-test', type: 'null', version: '1.1.3', protocols: ['5.0'], platforms: [{ os: 'windows', arch: 'amd64' }],
     });
   });
 

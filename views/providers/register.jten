@@ -3,6 +3,7 @@ module.exports = (data) => (
     namespace: data.namespace,
     type: data.type,
     version: data.version,
+    protocols: data.protocols,
     platforms: data.platforms,
     published_at: data.published_at,
   }

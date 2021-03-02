@@ -255,11 +255,9 @@ const getProviderVersions = async ({ namespace, type } = {}) => {
       versions: [],
     };
 
-    // FIXME: to match official API response
     result.versions = docs.map((d) => ({
       version: d.version,
-      // FIXME: what is protocols
-      protocols: [],
+      protocols: d.protocols,
       platforms: d.platforms.map((p) => ({
         os: p.os,
         arch: p.arch,

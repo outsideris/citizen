@@ -138,9 +138,8 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
       });
       await Promise.all(promises);
 
-      await saveProvider(data);
-
-      return res.status(201).render('providers/register', data);
+      const savedData = await saveProvider(data);
+      return res.status(201).render('providers/register', savedData);
     } catch (e) {
       logger.error(e);
       return next(e);
@@ -155,10 +154,7 @@ router.get('/:namespace/:type/versions', async (req, res, next) => {
   const options = { ...req.params };
 
   const versions = await getProviderVersions(options);
-
-  if (!versions) {
-    return next();
-  }
+  if (!versions) { return next(); }
 
   if (versions.length === 0) {
     return res.status(404).send({});
