@@ -8,7 +8,7 @@ module.exports = (data) => ({
   shasums_signature_url: data.shaSumsSignatureUrl,
   shasum: data.shasum,
   signing_keys: {
-    gpg_public_keys: data.gpgKeys.map((key) => ({
+    gpg_public_keys: data.gpgPublicKeys.map((key) => ({
       key_id: key.keyId,
       ascii_armor: key.asciiArmor,
       trust_signature: key.trustSignature,

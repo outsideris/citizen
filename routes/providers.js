@@ -10,7 +10,6 @@ const {
   findOneProvider,
   getProviderVersions,
   findProviderPackage,
-  findAllPublishers,
 } = require('../stores/store');
 const { extractShasum } = require('../lib/util');
 
@@ -170,10 +169,6 @@ router.get('/:namespace/:type/:version/download/:os/:arch', async (req, res, nex
   const providerPackage = await findProviderPackage(options);
   if (!providerPackage) { return next(); }
 
-  const publishersResponse = await findAllPublishers();
-  const trustedGpgKeys = publishersResponse.publishers
-    .reduce((arr, publisher) => arr.concat(publisher.gpgKeys), []);
-
   const platform = providerPackage.platforms
     .find((p) => p.os === options.os && p.arch === options.arch);
 
@@ -186,7 +181,7 @@ router.get('/:namespace/:type/:version/download/:os/:arch', async (req, res, nex
     shaSumsUrl: `/v1/providers/${options.namespace}/${options.type}/${options.version}/sha256sums`,
     shaSumsSignatureUrl: `/v1/providers/${options.namespace}/${options.type}/${options.version}/sha256sums.sig`,
     shasum: platform.shasum,
-    gpgKeys: trustedGpgKeys,
+    gpgPublicKeys: providerPackage.gpgPublicKeys,
   };
 
   return res.render('providers/providerPackage', viewModel);
