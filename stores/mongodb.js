@@ -122,55 +122,6 @@ const findProviderPackage = (options) => Provider
   .find(options, null, { sort: '-version' })
   .then((docs) => (docs.length > 0 ? docs[0] : null));
 
-// publisher
-const Publisher = mongoose.model('Publisher', {
-  name: String,
-  url: String,
-  trustSignature: String,
-
-  gpgKeys: [new mongoose.Schema({
-    keyId: { type: String, required: true },
-    asciiArmor: { type: String, required: true },
-  })],
-  publishedAt: { type: Date, default: Date.now },
-});
-
-const savePublisher = (data) => {
-  const publisher = new Publisher(data);
-  return publisher.save();
-};
-
-const findOnePublisher = async (options) => {
-  debug('search a module in store with %o', options);
-  return Publisher.find(options)
-    .then((docs) => (docs.length > 0 ? docs[0] : null));
-};
-
-const updatePublisher = async (data) => {
-  const publisher = await findOnePublisher({ name: data.name });
-  if (!publisher) {
-    throw new Error(`Could not find publisher with name ${data.name}`);
-  }
-
-  // eslint-disable-next-line no-underscore-dangle
-  return Publisher.updateOne({ _id: publisher._id }, { $set: data });
-};
-
-const findPublishers = (options) => Publisher.find(options);
-
-const findAllPublishers = (options, meta, offset, limit) => {
-  debug('search store with %o', options);
-
-  return Publisher.find(options, null, { sort: '_id', skip: offset, limit })
-    .then((docs) => {
-      debug('search result from store: %o', docs);
-      return {
-        meta,
-        providers: docs,
-      };
-    });
-};
-
 module.exports = {
   storeType,
   moduleDb: Module,
@@ -188,10 +139,4 @@ module.exports = {
   findAllProviders,
   getProviderVersions,
   findProviderPackage,
-  publisherDb: Publisher,
-  savePublisher,
-  updatePublisher,
-  findPublishers,
-  findAllPublishers,
-  findOnePublisher,
 };

@@ -311,80 +311,6 @@ const findProviderPackage = async ({
   return result;
 };
 
-// publishers
-// TODO: add tests and check if it needed
-const publisherDb = () => store.publisherDb;
-
-const savePublisher = async (data) => {
-  const {
-    name,
-    url,
-    trustSignature,
-    gpgKeys,
-  } = data;
-
-  if (!name) { throw new Error('name required.'); }
-  if (!gpgKeys) { throw new Error('gpgKeys required.'); }
-
-  for (let i = 0; i < gpgKeys.length; i += 1) {
-    if (!gpgKeys[i].keyId) {
-      throw new Error(`gpgKeys[${i}].keyId required.`);
-    }
-    if (!gpgKeys[i].asciiArmor) {
-      throw new Error(`gpgKeys[${i}].asciiArmor required.`);
-    }
-  }
-
-  const p = {
-    name,
-    url,
-    trustSignature,
-    gpgKeys,
-  };
-
-  const result = await store.savePublisher(p);
-  return result;
-};
-
-const updatePublisher = async (data) => {
-  debug('update a publisher with %o', data);
-  const result = await store.updatePublisher(data);
-  return result;
-};
-
-const findAllPublishers = async ({
-  selector = {},
-  offset = 0,
-  limit = 15,
-} = {}) => {
-  const options = selector;
-
-  debug('search store with %o', options);
-
-  const publishers = await store.findPublishers(options);
-  const totalRows = publishers.length;
-  const meta = {
-    limit: +limit,
-    currentOffset: +offset,
-    nextOffset: +offset + +limit,
-    prevOffset: +offset - +limit,
-  };
-  if (meta.prevOffset < 0) { meta.prevOffset = null; }
-  if (meta.nextOffset >= totalRows) { meta.nextOffset = null; }
-
-  const result = await store.findAllPublishers(options, meta, +offset, +limit);
-  return result;
-};
-
-const findOnePublisher = async ({ name } = {}) => {
-  if (!name) { throw new Error('name required.'); }
-
-  const options = { name };
-  debug('search a publisher in store with %o', options);
-  const result = await store.findOnePublisher(options);
-  return result;
-};
-
 init();
 
 module.exports = {
@@ -403,9 +329,4 @@ module.exports = {
   findAllProviders,
   getProviderVersions,
   findProviderPackage,
-  publisherDb,
-  savePublisher,
-  updatePublisher,
-  findAllPublishers,
-  findOnePublisher,
 };
