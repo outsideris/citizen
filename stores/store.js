@@ -168,6 +168,7 @@ const saveProvider = async (data) => {
     version: data.version,
     protocols: data.protocols,
     platforms: [],
+    gpgPublicKeys: [],
   };
 
   if (data.platforms && data.platforms.length > 0) {
@@ -177,6 +178,18 @@ const saveProvider = async (data) => {
         arch: platform.arch,
         filename: platform.filename,
         shasum: platform.shasum,
+      });
+    });
+  }
+
+  if (data.gpgPublicKeys && data.gpgPublicKeys.length > 0) {
+    data.gpgPublicKeys.forEach((key) => {
+      p.gpgPublicKeys.push({
+        keyId: key.keyId,
+        asciiArmor: key.asciiArmor,
+        trustSignature: key.trustSignature,
+        source: key.source,
+        sourceUrl: key.sourceUrl,
       });
     });
   }

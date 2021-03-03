@@ -77,6 +77,13 @@ const Provider = mongoose.model('Provider', {
     filename: { type: String },
     shasum: { type: String },
   })],
+  gpgPublicKeys: [new mongoose.Schema({
+    keyId: { type: String },
+    asciiArmor: { type: String },
+    trustSignature: { type: String },
+    source: { type: String },
+    sourceUrl: { type: String },
+  })],
   published_at: { type: Date, default: Date.now },
 });
 

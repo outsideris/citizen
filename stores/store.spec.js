@@ -296,6 +296,10 @@ storeTypes.forEach((storeType) => {
                 shasum: 'af9c7aa76b7c34d722fc9123208e26b22d60440cb47150dd04733b9b94f4541a',
               },
             ],
+            gpgPublicKeys: [{
+              keyId: 'asdf',
+              asciiArmor: '1234',
+            }],
           });
 
           expect(result._id).to.exist; // eslint-disable-line no-underscore-dangle
@@ -303,6 +307,8 @@ storeTypes.forEach((storeType) => {
           expect(result.type).to.equal('citizen');
           expect(result.published_at).to.exist;
           expect(result.platforms[0]).to.have.property('os').to.equal('linux');
+          expect(result.gpgPublicKeys[0]).to.have.property('keyId').to.equal('asdf');
+          expect(result.gpgPublicKeys[0]).to.have.property('asciiArmor').to.equal('1234');
         });
       });
 
