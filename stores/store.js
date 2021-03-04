@@ -281,7 +281,7 @@ const getProviderVersions = async ({ namespace, type } = {}) => {
     return result;
   }
 
-  return {};
+  return null;
 };
 
 // FIXME: return correct response format
