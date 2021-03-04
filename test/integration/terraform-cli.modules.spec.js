@@ -23,7 +23,7 @@ const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
 }));
 
 TERRAFORM_VERSIONS.forEach((terraform) => {
-  describe(`terraform CLI v${terraform.version}`, () => {
+  describe(`terraform CLI v${terraform.version} for module`, () => {
     let url;
     let server;
     const targetDir = join(__dirname, 'fixture');
