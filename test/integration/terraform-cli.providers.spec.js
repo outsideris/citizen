@@ -8,8 +8,8 @@ const rimraf = promisify(require('rimraf'));
 const semver = require('semver');
 
 const registry = require('./registry');
-const { moduleDb } = require('../../stores/store');
-const { deleteDbAll } = require('../helper');
+const { providerDb } = require('../../stores/store');
+const { deleteDbAll, generateProvider } = require('../helper');
 const { citizen } = require('../../package.json');
 
 const writeFile = promisify(fs.writeFile);
@@ -23,11 +23,12 @@ const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
 }));
 
 TERRAFORM_VERSIONS.forEach((terraform) => {
-  describe.only(`terraform CLI v${terraform.version} for provider`, () => {
+  describe(`terraform CLI v${terraform.version} for provider`, () => {
     let url;
     let server;
     const targetDir = join(__dirname, 'fixture');
     const definitonFile = join(targetDir, 'tf-test.tf');
+    const tfLockFile = join(targetDir, '.terraform.lock.hcl');
     const terraformCli = join(__dirname, '../', 'terraform-binaries', `terraform${terraform.release}`);
 
     before(async () => {
@@ -39,7 +40,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
 
     after(async () => {
       await registry.terminate(server);
-      await deleteDbAll(moduleDb());
+      await deleteDbAll(providerDb());
     });
 
     describe('basic setup', () => {
@@ -66,7 +67,6 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
 
       after(async () => {
         await unlink(definitonFile);
-
       });
 
       it('cli should connect the registry server', (done) => {
@@ -90,6 +90,66 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
 
         execFile(terraformCli, ['init'], { cwd }, (err, stdout, stderr) => {
           expect(stderr).to.include('Could not retrieve the list of available versions for provider');
+          return done();
+        });
+      });
+    });
+
+    describe('with private the registry', () => {
+      let tempDir;
+      let cleanupProvider;
+
+      before(async () => {
+        const client = join(__dirname, '../', '../', 'bin', 'citizen');
+
+        const result = await generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64', 'darwin_amd64']);
+        [tempDir, cleanupProvider] = result;
+
+        await new Promise((resolve, reject) => {
+          execFile(client, ['provider', 'citizen', 'null', '1.0.0', '4.1,5.0'], { cwd: tempDir }, (err, stdout, stderr) => {
+            if (err) { return reject(err); }
+            console.log(stdout); // eslint-disable-line no-console
+            console.log(stderr); // eslint-disable-line no-console
+            return resolve();
+          });
+        });
+
+        const definition = `provider "null" {
+        }
+
+        terraform {
+          required_providers {
+            null = {
+              source = "__PROVIDER_ADDRESS__"
+              version = "__PROVIDER_VERSION__"
+            }
+          }
+        }`;
+
+        const content = definition
+          .replace(/__PROVIDER_ADDRESS__/, `${url.host}/citizen/null`)
+          .replace(/__PROVIDER_VERSION__/, '1.0.0');
+
+        await writeFile(definitonFile, content, 'utf8');
+      });
+
+      after(async () => {
+        cleanupProvider();
+        await unlink(definitonFile);
+        await unlink(tfLockFile);
+        await rimraf(join(__dirname, 'fixture', '.terraform'));
+        await deleteDbAll(providerDb());
+        await rimraf(process.env.CITIZEN_STORAGE_PATH);
+      });
+
+      it('should download provider from registry', (done) => {
+        const cwd = join(__dirname, 'fixture');
+
+        execFile(terraformCli, ['init'], { cwd }, async (err, stdout) => {
+          if (err) { return done(err); }
+
+          expect(stdout).to.include('Terraform has been successfully initialized');
+          await access(join(cwd, '.terraform'));
           return done();
         });
       });

@@ -94,9 +94,9 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
         const moduleDir = join(__dirname, 'fixture', 'alb');
 
         const definition = `module "vpc" {
-        source = "__MODULE_ADDRESS__"
-        version = "__MODULE_VERSION__"
-      }`;
+          source = "__MODULE_ADDRESS__"
+          version = "__MODULE_VERSION__"
+        }`;
 
         execFile(
           client,
