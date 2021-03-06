@@ -94,12 +94,19 @@ module.exports = {
     tmp.dir({ unsafeCleanup: true }, (err, tempDir, cleanupCallback) => {
       if (err) { return reject(err); }
 
+      const tfProviderExcutable = `terraform-provider${prefix.substr(prefix.indexOf('-'))}`;
+      const content = 'echo provider';
+      fs.writeFileSync(tfProviderExcutable, content);
+      fs.chmodSync(tfProviderExcutable, 755);
+
       const zip = new AdmZip();
-      const content = 'resource "aws_alb" "main" {}';
-      zip.addFile('main.tf', Buffer.alloc(content.length, content));
+      zip.addFile(tfProviderExcutable, Buffer.alloc(content.length, content));
       platforms.forEach((p) => {
         zip.writeZip(`${tempDir}/${prefix}_${p}.zip`);
       });
+
+      fs.unlinkSync(tfProviderExcutable);
+
       return genShaSums(prefix, tempDir)
         .then(async (shaSumsFile) => {
           const sigFile = await sign(shaSumsFile, tempDir);
