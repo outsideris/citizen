@@ -136,10 +136,15 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
       after(async () => {
         cleanupProvider();
         await unlink(definitonFile);
-        await unlink(tfLockFile);
         await rimraf(join(__dirname, 'fixture', '.terraform'));
         await deleteDbAll(providerDb());
         await rimraf(process.env.CITIZEN_STORAGE_PATH);
+        try {
+          await access(tfLockFile);
+          await unlink(tfLockFile);
+        } catch (ignore) {
+          // ignored when there is no .terraform.lock.hcl under tf 0.13
+        }
       });
 
       it('should download provider from registry', (done) => {
