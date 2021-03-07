@@ -251,9 +251,9 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
           const downloadedFile = await got(`${host.substr(0, host.length - 1)}${downloadUrl}`).buffer();
 
           const directory = await unzipper.Open.buffer(downloadedFile);
-          const file = directory.files.find((f) => f.path === 'main.tf');
+          const file = directory.files.find((f) => f.path === 'terraform-provider-null_1.0.0');
           const content = await file.buffer();
-          expect(content.toString('utf8')).to.include('aws_alb');
+          expect(content.toString('utf8')).to.include('echo provider');
         });
     });
 
