@@ -17,10 +17,13 @@ const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
 
-const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
-  release: semver.parse(version).minor,
-  version,
-}));
+const TERRAFORM_VERSIONS = citizen.terraformVersions
+  .map((version) => ({
+    release: semver.parse(version).minor,
+    version,
+  }))
+  // third-party provider supported in terraform 0.13+
+  .filter((terraform) => terraform.release > 12);
 
 TERRAFORM_VERSIONS.forEach((terraform) => {
   describe(`terraform CLI v${terraform.version} for provider`, () => {
