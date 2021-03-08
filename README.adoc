@@ -10,7 +10,7 @@ A Private link:https://registry.terraform.io/[Terraform Module] and link:https:/
 
 == Requirements
 
-* Node.js 10+
+* Node.js 12+
 * HTTPS - Terraform module registry only support HTTPS.
 
 == Download
