@@ -4,7 +4,7 @@ image:https://github.com/outsideris/citizen/workflows/Unit%20tests/badge.svg["Un
 image:https://github.com/outsideris/citizen/workflows/Integration%20Tests/badge.svg["Integration Test Status", link="https://github.com/outsideris/citizen/actions?query=workflow%3A%22Integration+Tests%22+branch%3Amaster"]
 image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.svg?type=shield["FOSSA Status", link="https://app.fossa.io/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen?ref=badge_shield"]
 
-A Private link:https://registry.terraform.io/[Terraform Module] and link:https://www.terraform.io/docs/internals/provider-registry-protocol.html[Terraform Provider] registry in the early stages of development.
+A Private link:https://registry.terraform.io/[Terraform Module] and link:https://www.terraform.io/docs/internals/provider-registry-protocol.html[Terraform Provider] registry.
 
 == Requirements
 
@@ -58,7 +58,7 @@ $ ./citizen module <namespace> <name> <provider> <version>
 You should set `CITIZEN_ADDR` as citizen registry server address which you will publish your modules to. e.g. `https://registry.example.com`.
 
 === Examples
-If you have ALB module in `./alb` directory and your registry server is launched at `https://registry.example.com`, you run below command in `./alb` directory to publish ALB module.
+If you have ALB module in `./alb` directory, and your registry server is launched at `https://registry.example.com`, you run below command in `./alb` directory to publish ALB module.
 [source, sh]
 ....
 $ CITIZEN_ADDR=https://registry.example.com \
@@ -77,48 +77,47 @@ module "alb" {
 
 Citizen provides a special command to publish providers onto citizen.
 
-You must first build, package and gpg sign your provider, citizen
+- `-g, --gpg-key <gpgkey>`: GPG key to sign your SHA256SUMS.
+
+* You need to publish your provider with your GPG public key to terraform registry.
+Otherwise, terraform will refuse to install providers.
+Terraform official resistry manage partners' public keys,
+but, each provider version has own public key and signature in citizen registry.
+
+You must first link:https://www.terraform.io/docs/registry/providers/publishing.html[build and package], citizen
 expects following files in the provider location:
 
-- terraform-provider-<type>_<version>_<os>_<arch>.zip (one per os/arch combination)
-- terraform-provider-<type>_<version>_SHA256SUMS
-- terraform-provider-<type>_<version>_SHA256SUMS.sig
+- `<namespace>-<type>_<version>_<os>_<arch>.zip` (one per os/arch combination)
 
-Where <type> is a name of the provider and version is a provider
+Where `<namespace>` and `<type>` is a name of the provider and `<version>` is a provider
 version in the `MAJOR.MINOR.PATCH` version format.
 
-SHA256 sums file can be generated using following shell command (linux/macos):
+Citizen will generate a SHA256SUMS file and a GPG signature file automatically for you:
+Following files will be generated in your directory during publising provider.
+So, You don't need prepare theses files.
 
-```sh
-shasum -a *.zip > terraform-provider-<type>_<version>_SHA256SUMS
-```
+* `<namespace>-<type>_<version>_SHA256SUMS`
+* `<namespace>-<type>_<version>_SHA256SUMS.sig`
 
-SHA256.sig file is a GPG signature of the SHA256SUMS file, generate
-using following command:
-
-```sh
-gpg --detach-sign terraform-provider-<type>_<version>_SHA256SUMS
-```
-
-* You need to publish your GPG public key to terraform registry
-otherwise terraform will refuse to install providers. You can 
-publish the key using `citizen publish publisher` command
-documented below.
+Therefore, `shasum` and `gpg` commands should be available in your machine.
 
 In a provider directory, you can publish your terraform provider via a command below:
 [source, sh]
 ....
-$ ./citizen provider <namespace> <type> <version>
+$ ./citizen provider <namespace> <type> <version> [protocols]
 ....
+
+`[protocols]` is comma separated Terraform provider API versions, with `MAJOR.MINOR`.
 
 You should set `CITIZEN_ADDR` as citizen registry server address which you will publish your modules to. e.g. `https://registry.example.com`.
 
 === Examples
-If you have ALB provider in `./utilities` directory and your registry server is launched at `https://registry.example.com`, you run below command in `./utilities` directory to publish utilities provider.
+If you have ALB provider in `./utilities` directory, and your registry server is launched at `https://registry.example.com`,
+you run below command in `./utilities` directory to publish utilities provider.
 [source, sh]
 ....
 $ CITIZEN_ADDR=https://registry.example.com \
-  citizen provider dev-team utilities 0.1.0
+  citizen provider dev-team utilities 0.1.0 4.1,5.0
 ....
 
 Then, you can define it in your terraform file like this:
@@ -134,30 +133,6 @@ terraform {
     }
   }
 }
-....
-
-
-=== `citizen publisher <gpgKeyId>`
-
-Citizen provider registry requires to have at least one trusted provider publisher. `citizen publisher publisher` command uploads a public GPG key from local GPG store using `gpg` command.
-
-Find GPG key id you want to publish using `gpg --list-keys` command and extract public key (long text in hex format e.g. CE1E75EC86B9F2). Then run citizen command to publish the key:
-
-[source, sh]
-....
-$ ./citizen publisher CE1E75EC86B9F2
-....
-
-You should set `CITIZEN_ADDR` as citizen registry server address which you will publish your modules to. e.g. `https://registry.example.com`.
-
-
-== Docker
-You can use docker to launch the registry server.
-The docker image is in link:https://hub.docker.com/r/outsideris/citizen/[outsideris/citizen].
-
-[source, sh]
-....
-$ docker run -d -p "3000:3000" outsideris/citizen:latest
 ....
 
 == Development
