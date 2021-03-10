@@ -14,6 +14,15 @@ A Private link:https://registry.terraform.io/[Terraform Module] and link:https:/
 == Download
 link:https://github.com/outsideris/citizen/releases/latest[Download the latest release!]
 
+Also, you can use to launch the registry server.
+The docker image is in link:https://github.com/users/outsideris/packages/container/package/citizen[GitHub Container Registry
+].
+
+[source, sh]
+....
+$ docker run -d -p "3000:3000" ghcr.io/outsideris/citizen:latest
+....
+
 == Server Usage
 
 === `citizen server`
