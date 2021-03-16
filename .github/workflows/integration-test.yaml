@@ -49,8 +49,9 @@ jobs:
         with:
           path: |
             - test/terraform-binaries
-          key: ${{ runner.os }}-integration-terraform-2103-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }}-integration-terraform-210316-${{ hashFiles('**/package.json') }}
           restore-keys: |
-            ${{ runner.os }}-integration-terraform-2103-
+            ${{ runner.os }}-integration-terraform-210316-
       - run: npm ci
       - run: npm run test:integration -- --forbid-only
+      - run: ls -la test/terraform-binaries
