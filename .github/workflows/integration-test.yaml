@@ -39,19 +39,17 @@ jobs:
       - name: 'Cache node_modules'
         uses: actions/cache@v2
         with:
-          path: |
-            - ~/.npm
-          key: ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210320-${{ hashFiles('**/package-lock.json') }} }}
+          path: '~/.npm'
+          key: ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210321-${{ hashFiles('**/package-lock.json') }} }}
           restore-keys: |
-            ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210320-
+            ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210321-
       - name: 'Cache terraform binaries'
         uses: actions/cache@v2
         with:
-          path: |
-            - ${{ github.workspace }}/test/terraform-binaries
-          key: ${{ runner.os }}-integration-terraform-210320-${{ hashFiles('**/package.json') }}
+          path: 'test/terraform-binaries'
+          key: ${{ runner.os }}-integration-terraform-210321-${{ hashFiles('**/package.json') }}
           restore-keys: |
-            ${{ runner.os }}-integration-terraform-210320-
+            ${{ runner.os }}-integration-terraform-210321-
       - run: ls -la test
       - run: npm ci
       - run: npm run test:integration -- --forbid-only
