@@ -44,7 +44,6 @@ jobs:
           key: ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210320-${{ hashFiles('**/package-lock.json') }} }}
           restore-keys: |
             ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210320-
-      - run: ls -la test
       - name: 'Cache terraform binaries'
         uses: actions/cache@v2
         with:
