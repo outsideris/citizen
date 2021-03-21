@@ -51,10 +51,9 @@ jobs:
       - name: 'Cache node_modules'
         uses: actions/cache@v2
         with:
-          path: |
-            - ~/.npm
-          key: ${{ runner.os }}-node-v${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }} }}
+          path: '~/.npm'
+          key: ${{ runner.os }}-node-v${{ matrix.node }}-210321-${{ hashFiles('**/package-lock.json') }} }}
           restore-keys: |
-            ${{ runner.os }}-node-v${{ matrix.node }}-
+            ${{ runner.os }}-node-v${{ matrix.node }}-210321-
       - run: npm ci
       - run: npm run test:unit -- --forbid-only
