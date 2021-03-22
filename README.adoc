@@ -46,9 +46,7 @@ Environment variables:
 * `CITIZEN_DB_DIR`: A directory to save database file if using local backend storage. The default is `data` directory in a current working directory (absolute/relative path can be used).
 * `CITIZEN_STORAGE` : Storage type to store module files. You can use `file` or `s3` type.
 * `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
-* `CITIZEN_AWS_S3_BUCKET``: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.
-* `AWS_ACCESS_KEY_ID`: Your AWS access key only if `CITIZEN_STORAGE` is `s3`.
-* `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key only if `CITIZEN_STORAGE` is `s3`.
+* `CITIZEN_AWS_S3_BUCKET``: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.(And AWS credentials required.)
 
 == Client Usage
 
