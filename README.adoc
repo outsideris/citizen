@@ -85,6 +85,7 @@ module "alb" {
 Citizen provides a special command to publish providers onto citizen.
 
 - `-g, --gpg-key <gpgkey>`: GPG key to sign your SHA256SUMS.
+- `-p, --passphrase-file <file>`: File containing the passphrase for the secret key. Useful in the context of CI/CD.
 
 * You need to publish your provider with your GPG public key to terraform registry.
 Otherwise, terraform will refuse to install providers.
