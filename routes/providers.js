@@ -2,6 +2,7 @@
 const { Router } = require('express');
 const multiparty = require('multiparty');
 const { v4: uuid } = require('uuid');
+const openpgp = require('openpgp');
 
 const logger = require('../lib/logger');
 const { saveProvider: saveProviderStorage, getProvider } = require('../lib/storage');
@@ -88,11 +89,37 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
         return next(error);
       }
 
-      if (!files.some((f) => f.filename.endsWith('SHA256SUMS.sig'))) {
+      const signatureFile = files.filter((f) => f.filename.endsWith('SHA256SUMS.sig'))
+      if (signatureFile.length < 1) {
         const error = new Error('No signature file');
         error.status = 400;
         error.message = 'There is no signature file attached';
         return next(error);
+      }
+
+      const publicKey = await openpgp.readKey({ armoredKey: data.gpgPublicKeys[0].asciiArmor });
+      const signature = await openpgp.readSignature({
+          binarySignature: new Uint8Array(signatureFile[0].file) // parse detached signature
+      });
+      const message = await openpgp.createMessage({ text: shasumsFile[0].file.toString(), format: 'utf8' });
+      const verified = await openpgp.verify({
+          message: message, // Message object
+          signature,
+          verificationKeys: publicKey // for verification
+      });
+      const { valid } = verified.signatures[0];
+      if (valid) {
+          console.log('signed by key id ' + verified.signatures[0].keyID.toHex().toUpperCase());
+      } else {
+          return next(new Error('signature could not be verified'));
+      }
+
+      if (process.env.ALLOWED_PUBLIC_KEY_IDS) {
+        const allowedKeyIDs = process.env.ALLOWED_PUBLIC_KEY_IDS.split(`,`)
+        console.info(`allowedKeyIDs: ${allowedKeyIDs.toString()}`)
+        if (!allowedKeyIDs.some((i) => verified.signatures[0].keyID.toHex().toUpperCase() == i.toUpperCase())) {
+          return next(new Error('signature key ID not on ALLOWED_PUBLIC_KEY_IDS list'));
+        }
       }
 
       const providerFiles = files.filter((f) => f.filename.endsWith('.zip'));

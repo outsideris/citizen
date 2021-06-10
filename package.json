@@ -36,6 +36,7 @@
     "morgan": "^1.10.0",
     "multiparty": "^4.2.2",
     "nedb": "^1.8.0",
+    "openpgp": "^5.0.0-3",
     "ora": "^5.4.0",
     "pino": "^6.11.2",
     "recursive-readdir": "^2.2.1",
