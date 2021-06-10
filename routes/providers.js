@@ -114,11 +114,11 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
           return next(new Error('signature could not be verified'));
       }
 
-      if (process.env.ALLOWED_PUBLIC_KEY_IDS) {
-        const allowedKeyIDs = process.env.ALLOWED_PUBLIC_KEY_IDS.split(`,`)
+      if (process.env.CITIZEN_ALLOWED_PUBLIC_KEY_IDS) {
+        const allowedKeyIDs = process.env.CITIZEN_ALLOWED_PUBLIC_KEY_IDS.split(`,`)
         console.info(`allowedKeyIDs: ${allowedKeyIDs.toString()}`)
         if (!allowedKeyIDs.some((i) => verified.signatures[0].keyID.toHex().toUpperCase() == i.toUpperCase())) {
-          return next(new Error('signature key ID not on ALLOWED_PUBLIC_KEY_IDS list'));
+          return next(new Error('signature key ID not on CITIZEN_ALLOWED_PUBLIC_KEY_IDS list'));
         }
       }
 
