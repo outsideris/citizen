@@ -97,24 +97,24 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
         return next(error);
       }
 
-      const publicKey = await openpgp.readKey({ armoredKey: data.gpgPublicKeys[0].asciiArmor });
-      const signature = await openpgp.readSignature({
+      if (process.env.CITIZEN_ALLOWED_PUBLIC_KEY_IDS) {
+        const publicKey = await openpgp.readKey({ armoredKey: data.gpgPublicKeys[0].asciiArmor });
+        const signature = await openpgp.readSignature({
           binarySignature: new Uint8Array(signatureFile[0].file) // parse detached signature
-      });
-      const message = await openpgp.createMessage({ text: shasumsFile[0].file.toString(), format: 'utf8' });
-      const verified = await openpgp.verify({
+        });
+        const message = await openpgp.createMessage({ text: shasumsFile[0].file.toString(), format: 'utf8' });
+        const verified = await openpgp.verify({
           message: message, // Message object
           signature,
           verificationKeys: publicKey // for verification
-      });
-      const { valid } = verified.signatures[0];
-      if (valid) {
+        });
+        const { valid } = verified.signatures[0];
+        if (valid) {
           console.log('signed by key id ' + verified.signatures[0].keyID.toHex().toUpperCase());
-      } else {
+        } else {
           return next(new Error('signature could not be verified'));
-      }
+        }
 
-      if (process.env.CITIZEN_ALLOWED_PUBLIC_KEY_IDS) {
         const allowedKeyIDs = process.env.CITIZEN_ALLOWED_PUBLIC_KEY_IDS.split(`,`)
         console.info(`allowedKeyIDs: ${allowedKeyIDs.toString()}`)
         if (!allowedKeyIDs.some((i) => verified.signatures[0].keyID.toHex().toUpperCase() == i.toUpperCase())) {
