@@ -12,6 +12,7 @@ jobs:
         node:
           - 12
           - 14
+          - 16
 
     env:
       CITIZEN_STORAGE: file
