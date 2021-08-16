@@ -1,0 +1,19 @@
+{
+	"name": "Node.js & Mongo DB",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspace",
+
+	"settings": {},
+
+	"extensions": [
+		"dbaeumer.vscode-eslint",
+		"mongodb.mongodb-vscode" 
+	],
+
+	"forwardPorts": [3000, 27017],
+
+	"postCreateCommand": "npm install",
+
+	"remoteUser": "node"
+}
