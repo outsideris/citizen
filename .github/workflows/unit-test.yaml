@@ -57,4 +57,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-v${{ matrix.node }}-210321-
       - run: npm ci
-      - run: npm run test:unit -- --forbid-only
+      - name: linting
+        run: npm run lint
+      - name: unit test
+        run: npm run test:unit -- --forbid-only
