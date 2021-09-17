@@ -15,6 +15,10 @@ RUN curl -sSL "https://www.mongodb.org/static/pgp/server-${MONGO_TOOLS_VERSION}.
     && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
     && rm -rf *.deb
 
+COPY genkey ./
+RUN gpg --batch --gen-key genkey \
+    && rm genkey
+
 # Update args in docker-compose.yaml to set the UID/GID of the "node" user.
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
