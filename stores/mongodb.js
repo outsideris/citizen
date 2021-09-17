@@ -1,14 +1,8 @@
 const mongoose = require('mongoose');
 const debug = require('debug')('citizen:server:store:mongodb');
 
-const connectionOptions = {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useFindAndModify: false,
-};
-
 const dbUri = process.env.CITIZEN_MONGO_DB_URI || 'mongodb://localhost:27017/citizen';
-mongoose.connect(dbUri, connectionOptions);
+mongoose.connect(dbUri, {});
 
 const storeType = 'mongodb';
 
