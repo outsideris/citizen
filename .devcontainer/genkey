@@ -1,0 +1,8 @@
+Key-Type: 1
+Key-Length: 4096
+Subkey-Type: 1
+Subkey-Length: 4096
+Name-Real: Test User
+Name-Email: citizen@example.com
+Expire-Date: 0
+Passphrase: ""
