@@ -9,7 +9,8 @@
 	"extensions": [
 		"dbaeumer.vscode-eslint",
 		"mongodb.mongodb-vscode",
-		"asciidoctor.asciidoctor-vscode"
+		"asciidoctor.asciidoctor-vscode",
+		"vscodevim.vim"
 	],
 
 	"forwardPorts": [3000, 27017],
