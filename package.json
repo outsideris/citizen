@@ -36,7 +36,7 @@
     "morgan": "^1.10.0",
     "multiparty": "^4.2.2",
     "nedb": "^1.8.0",
-    "ora": "^6.0.0",
+    "ora": "^5.4.1",
     "pino": "^6.13.2",
     "recursive-readdir": "^2.2.1",
     "semver": "^7.3.4",
