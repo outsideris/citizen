@@ -27,7 +27,5 @@
 		"DEBUG": "citizen:*"
 	},
 
-	"postCreateCommand": "npm install",
-
 	"remoteUser": "node"
 }
