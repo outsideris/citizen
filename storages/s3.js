@@ -65,10 +65,10 @@ const s3 = {
     const content = await new Promise((resolve, reject) => {
       file.Body.on('data', (chunk) => chunks.push(chunk));
       file.Body.on('error', reject);
-      file.Body.on('end', () => resolve(chunks));
+      file.Body.on('end', () => resolve(Buffer.concat(chunks)));
     });
 
-    return content[0];
+    return content;
   },
   saveProvider: async (path, tarball) => {
     debug(`save the provider into ${path}.`);
