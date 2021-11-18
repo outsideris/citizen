@@ -3,6 +3,13 @@ const debug = require('debug')('citizen:server');
 
 const s3 = new S3Client({});
 
+const stream2buffer = (stream) => new Promise((resolve, reject) => {
+  const _buf = [];
+  stream.on('data', (chunk) => _buf.push(chunk));
+  stream.on('end', () => resolve(Buffer.concat(_buf)));
+  stream.on('error', (err) => reject(err));
+});
+
 const S3_BUCKET = process.env.CITIZEN_AWS_S3_BUCKET;
 if (process.env.CITIZEN_STORAGE === 's3' && !S3_BUCKET) {
   throw new Error('S3 storage requires CITIZEN_AWS_S3_BUCKET. Additionally, ensure that either '
@@ -81,7 +88,7 @@ module.exports = {
       Key: `providers/${path}`,
       Body: tarball,
     };
-    const result = await s3.save(params);
+    const result = await s3.send(new PutObjectCommand(params));
 
     if (result.ETag) {
       return true;
@@ -95,7 +102,7 @@ module.exports = {
     };
 
     try {
-      const module = await s3.get(params);
+      const module = await s3.send(new GetObjectCommand(params));
       if (module.Body) {
         debug(`the provider already exist: ${path}.`);
         return true;
@@ -118,7 +125,12 @@ module.exports = {
       Bucket: S3_BUCKET,
       Key: `providers/${path}`,
     };
-    const file = await s3.get(params);
-    return file.Body;
+    try {
+      const content = await s3.send(new GetObjectCommand(params));
+      return stream2buffer(content.Body);
+    } catch (err) {
+      debug(err);
+      return null;
+    }
   },
 };
