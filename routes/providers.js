@@ -236,7 +236,7 @@ router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) =
     const options = { ...req.params };
     const sigLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`;
     const sig = await getProvider(sigLocation);
-    if (!sig) { return next(); }
+    if (!sig) { return next(new Error('Unable to find the provider by location')); }
 
     const provider = await findOneProvider(options);
     const protocols = provider.protocols.map((prot) => Math.floor(prot));
