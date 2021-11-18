@@ -1,9 +1,9 @@
 name: Unit tests
 
-on: 
+on:
   push:
     branches:
-      - olx-master 
+      - olx-master
   pull_request:
     branches:
       - "*"
@@ -16,6 +16,8 @@ jobs:
     strategy:
       matrix:
         node:
+          - 12
+          - 14
           - 16
     services:
       mongodb:
