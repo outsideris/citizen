@@ -88,8 +88,7 @@ const saveProvider = (data) => {
 
 const findOneProvider = async (options) => {
   debug('search a provider in store with %o', options);
-  return Provider.find(options)
-    .then((docs) => (docs.length > 0 ? docs[0] : null));
+  return Provider.findOne(options).lean().exec();
 };
 
 const findProviders = (options) => Provider.find(options);
