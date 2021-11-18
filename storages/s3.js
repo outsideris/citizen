@@ -4,9 +4,9 @@ const debug = require('debug')('citizen:server');
 const s3 = new S3Client({});
 
 const stream2buffer = (stream) => new Promise((resolve, reject) => {
-  const _buf = [];
-  stream.on('data', (chunk) => _buf.push(chunk));
-  stream.on('end', () => resolve(Buffer.concat(_buf)));
+  const buffer = [];
+  stream.on('data', (chunk) => buffer.push(chunk));
+  stream.on('end', () => resolve(Buffer.concat(buffer)));
   stream.on('error', (err) => reject(err));
 });
 
