@@ -8,7 +8,7 @@ A Private link:https://registry.terraform.io/[Terraform Module] and link:https:/
 
 == Requirements
 
-* Node.js 12+
+* Node.js 16+
 * HTTPS - Terraform module registry only support HTTPS.
 
 == Download
@@ -48,6 +48,10 @@ Environment variables:
 * `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
 * `CITIZEN_AWS_S3_BUCKET``: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.(And AWS credentials required.)
 
+The project supports link:https://www.npmjs.com/package/dotenv-flow[dotenv-flow] and will load a `.env.test` file with the configs.
+
+More details about dotenv-flow can be found at the project link:https://github.com/kerimdzhanov/dotenv-flow#files-under-version-control[homepage].
+
 == Client Usage
 
 === `citizen module <namespace> <name> <provider> <version>`
@@ -80,7 +84,7 @@ module "alb" {
 }
 ....
 
-=== `citizen provider <namespace> <type> <version> [protocols]`
+=== `citizen provider <namespace> <type> <version> <protocols>`
 
 Citizen provides a special command to publish providers onto citizen.
 
@@ -101,7 +105,7 @@ version in the `MAJOR.MINOR.PATCH` version format.
 
 Citizen will generate a SHA256SUMS file and a GPG signature file automatically for you:
 Following files will be generated in your directory during publising provider.
-So, You don't need prepare theses files.
+So, you don't need to prepare these files.
 
 * `<namespace>-<type>_<version>_SHA256SUMS`
 * `<namespace>-<type>_<version>_SHA256SUMS.sig`
@@ -111,10 +115,10 @@ Therefore, `shasum` and `gpg` commands should be available in your machine.
 In a provider directory, you can publish your terraform provider via a command below:
 [source, sh]
 ....
-$ ./citizen provider <namespace> <type> <version> [protocols]
+$ ./citizen provider <namespace> <type> <version> <protocols>
 ....
 
-`[protocols]` is comma separated Terraform provider API versions, with `MAJOR.MINOR`.
+`<protocols>` is comma separated Terraform provider API versions, with `MAJOR.MINOR`. Although the spec says that _protocols_ is an option value, the *GET* fails if it is not set, as on _GET_ it is a required field. The list of current protobuf versions can be found link:https://github.com/hashicorp/terraform/tree/main/docs/plugin-protocol[here].
 
 You should set `CITIZEN_ADDR` as citizen registry server address which you will publish your modules to. e.g. `https://registry.example.com`.
 
@@ -124,7 +128,7 @@ you run below command in `./utilities` directory to publish utilities provider.
 [source, sh]
 ....
 $ CITIZEN_ADDR=https://registry.example.com \
-  citizen provider dev-team utilities 0.1.0 4.1,5.0
+  citizen provider dev-team utilities 0.1.0 5.2,6.1
 ....
 
 Then, you can define it in your terraform file like this:
@@ -154,6 +158,8 @@ $ ./bin/citizen module
 === Test
 Set at least a storage path and the s3 bucket name variables for the tests to succeed.
 You need to be able to access the bucket, so you probably want to have an active aws or aws-vault profile.
+
+IF you do not want verbose DEBUG logs, create a `.env.test.local` file with the content of `DEBUG=`.
 
 Run mongodb first like:
 [source, sh]

@@ -1,6 +1,6 @@
 {
   "name": "citizen",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "bin": {
     "citizen": "./bin/citizen"
@@ -9,12 +9,12 @@
     "start": "node ./bin/citizen server",
     "dev": "nodemon ./bin/citizen server",
     "lint": "eslint .",
-    "test:unit": "mocha --exit {lib,routes,storages,stores}/**/**/*.spec.js",
-    "test:integration": "mocha --exit -t 15000 --require test/download-terraform.js test/**/*.spec.js",
+    "test:unit": "NODE_ENV=test mocha --exit {lib,routes,storages,stores}/**/**/*.spec.js",
+    "test:integration": "NODE_ENV=test mocha --exit -t 15000 --require test/download-terraform.js test/**/*.spec.js",
     "test": "npm run test:unit && npm run test:integration",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "build": "pkg . --out-path dist --targets node14-linux-x64,node14-macos-x64,node14-win-x64"
+    "build": "pkg . --out-path dist --targets node16-linux-x64,node16-macos-x64,node16-win-x64"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.30.0",
@@ -23,12 +23,15 @@
     "chalk": "^4.1.2",
     "commander": "^8.2.0",
     "debug": "^4.3.2",
+    "dotenv": "^10.0.0",
+    "dotenv-flow": "^3.2.0",
     "express": "^4.17.1",
     "form-data": "^4.0.0",
     "glob-gitignore": "^1.0.14",
     "globby": "^11.0.4",
     "got": "^11.8.2",
     "helmet": "^4.6.0",
+    "jshint": "^2.13.1",
     "jten": "^0.2.0",
     "lodash": "^4.17.20",
     "mkdirp": "^1.0.4",
@@ -45,6 +48,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "semantic-release": "^18.0.0",
     "adm-zip": "^0.5.5",
     "chai": "^4.3.4",
     "eslint": "^7.32.0",
@@ -75,5 +79,8 @@
       "0.15.5",
       "1.0.7"
     ]
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

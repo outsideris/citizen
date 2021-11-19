@@ -1,6 +1,12 @@
 name: Integration Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - olx-master
+  pull_request:
+    branches:
+      - "*"
 
 jobs:
   unit-test:
@@ -13,11 +19,6 @@ jobs:
           - 12
           - 14
           - 16
-
-    env:
-      CITIZEN_STORAGE: file
-      CITIZEN_STORAGE_PATH: /tmp/citizen
-      DEBUG: 'citizen:*'
 
     steps:
       - uses: actions/checkout@v2
