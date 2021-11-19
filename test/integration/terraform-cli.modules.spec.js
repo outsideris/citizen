@@ -6,6 +6,7 @@ const { execFile } = require('child_process');
 const { join } = require('path');
 const rimraf = promisify(require('rimraf'));
 const semver = require('semver');
+const debug = require('debug');
 
 const registry = require('./registry');
 const { moduleDb } = require('../../stores/store');
@@ -48,6 +49,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
           await mkdir(targetDir);
         } catch (ignore) {
           // ignored when targetDir already exist
+          debug(`unable to create folder with reason : ${ignore}`);
         }
 
         const terraformDefinition = `module "vpc" {
@@ -82,6 +84,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
         const cwd = join(__dirname, 'fixture');
 
         execFile(terraformCli, ['get'], { cwd }, (err, stdout, stderr) => {
+          debug(`unable to connect terraform-cli to the api with error ${err} and output\n${stdout}`);
           expect(stderr).to.include('no versions');
           done();
         });

@@ -8,3 +8,4 @@ node_modules/
 dist/
 data/
 test/terraform-binaries/
+test/integration/fixture/.terraform/
