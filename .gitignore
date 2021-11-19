@@ -2,6 +2,9 @@
 node_modules/
 .idea/
 .envrc
+.env
+.env.local
+.env.*.local
 dist/
 data/
 test/terraform-binaries/

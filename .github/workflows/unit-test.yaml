@@ -25,18 +25,6 @@ jobs:
         ports:
           - 27017:27017
 
-    env:
-      CITIZEN_DB_DIR: ./data
-      CITIZEN_STORAGE: file
-      CITIZEN_STORAGE_PATH: /tmp/citizen
-      CITIZEN_ADDR: http://127.0.0.1:3000
-      CITIZEN_MOCK_ENABLED: true
-      CITIZEN_AWS_S3_BUCKET: kr.ne.outsider.test
-      AWS_ACCESS_KEY_ID: ooooo
-      AWS_SECRET_ACCESS_KEY: xxxxx
-      AWS_REGION: ap-northeast-1
-      DEBUG: 'citizen:*'
-
     steps:
       - uses: actions/checkout@v2
       - name: Import GPG key
