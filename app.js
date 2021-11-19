@@ -13,9 +13,13 @@ app.use(helmet());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jten');
+require('dotenv-flow').config({
+  node_env: process.env.NODE_ENV || 'development',
+});
 
 // uncomment after placing your favicon in /public
 app.use(morgan('dev'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
