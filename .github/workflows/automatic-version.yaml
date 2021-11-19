@@ -16,10 +16,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 16
-    - name: Build binaries
-      run: |
-        npm i
-        npm run build
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
       with:
@@ -28,5 +24,7 @@ jobs:
           @semantic-release/changelog
           @semantic-release/git
           @semantic-release/github
+          @semantic-release/npm
+          @semantic-release/exec
       env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

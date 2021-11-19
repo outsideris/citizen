@@ -50,7 +50,9 @@
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/exec": "^6.0.2",
     "@semantic-release/github": "^8.0.2",
+    "@semantic-release/npm": "^8.0.3",
     "adm-zip": "^0.5.5",
     "chai": "^4.3.4",
     "eslint": "^7.32.0",
@@ -94,6 +96,18 @@
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       [
+        "@semantic-release/exec",
+        {
+          "prepareCmd": "npm ci && npm run build"
+        }
+      ],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
+      [
         "@semantic-release/changelog",
         {
           "changelogFile": "docs/CHANGELOG.md"
@@ -103,9 +117,18 @@
         "@semantic-release/github",
         {
           "assets": [
-            {"path": "dist/citizen-linux", "label": "Citizen Linux client"},
-            {"path": "dist/citizen-macos*", "label": "Citizen MacOS client"},
-            {"path": "dist/citizen-win.exe", "label": "Citizen Windows client"}
+            {
+              "path": "dist/citizen-linux",
+              "label": "Citizen Linux client"
+            },
+            {
+              "path": "dist/citizen-macos*",
+              "label": "Citizen MacOS client"
+            },
+            {
+              "path": "dist/citizen-win.exe",
+              "label": "Citizen Windows client"
+            }
           ]
         }
       ],
@@ -116,7 +139,7 @@
             "docs/CHANGELOG.md",
             "package.json"
           ],
-          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+          "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
         }
       ]
     ]
