@@ -104,7 +104,7 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
       }
 
       const isFilesMatched = data.platforms
-        .every((p) => providerFiles.some((f) => f.filename === `${namespace}-${type}_${version}_${p.os}_${p.arch}.zip`));
+        .every((p) => providerFiles.some((f) => f.filename === `terraform-provider-${type}_${version}_${p.os}_${p.arch}.zip`));
       if (!isFilesMatched) {
         const error = new Error('Unmatched platform data and files');
         error.status = 400;
@@ -214,7 +214,7 @@ router.get('/:namespace/:type/:version/sha256sums', async (req, res, next) => {
   try {
     const options = { ...req.params };
 
-    const sumsLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS`;
+    const sumsLocation = `${options.namespace}/${options.type}/${options.version}/terraform-provider-${options.type}_${options.version}_SHA256SUMS`;
     const shasumsContent = await getProvider(sumsLocation);
     if (!shasumsContent) { return next(); }
 
@@ -234,7 +234,7 @@ router.get('/:namespace/:type/:version/sha256sums', async (req, res, next) => {
 router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) => {
   try {
     const options = { ...req.params };
-    const sigLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`;
+    const sigLocation = `${options.namespace}/${options.type}/${options.version}/terraform-provider-${options.type}_${options.version}_SHA256SUMS.sig`;
     const sig = await getProvider(sigLocation);
     if (!sig) { return next(); }
 
@@ -245,7 +245,7 @@ router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) =
 
     return res
       .set('Content-Type', 'application/octet-stream')
-      .set('Content-disposition', `attachment; filename=${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`)
+      .set('Content-disposition', `attachment; filename=terraform-provider-${options.type}_${options.version}_SHA256SUMS.sig`)
       .send(sig);
   } catch (e) {
     return next(e);

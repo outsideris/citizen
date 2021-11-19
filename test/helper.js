@@ -2,6 +2,7 @@ const nock = require('nock');
 const fs = require('fs');
 const tmp = require('tmp');
 const AdmZip = require('adm-zip');
+const debug = require('debug')('citizen:test:helper:generateProvider');
 
 const { genShaSums, sign } = require('../lib/provider/provider');
 
@@ -90,11 +91,13 @@ module.exports = {
       });
     }
   }),
+
   generateProvider: (prefix, platforms) => new Promise((resolve, reject) => {
     tmp.dir({ unsafeCleanup: true }, (err, tempDir, cleanupCallback) => {
       if (err) { return reject(err); }
 
-      const tfProviderExecutable = `terraform-provider${prefix.substr(prefix.indexOf('-'))}`;
+      const tfProviderExecutable = `terraform-provider-${prefix}`;
+      debug(`${tfProviderExecutable} in ${tempDir}`);
       const content = 'echo provider';
       fs.writeFileSync(tfProviderExecutable, content);
       fs.chmodSync(tfProviderExecutable, 755);
@@ -102,12 +105,12 @@ module.exports = {
       const zip = new AdmZip();
       zip.addFile(tfProviderExecutable, Buffer.alloc(content.length, content));
       platforms.forEach((p) => {
-        zip.writeZip(`${tempDir}/${prefix}_${p}.zip`);
+        zip.writeZip(`${tempDir}/${tfProviderExecutable}_${p}.zip`);
       });
 
       fs.unlinkSync(tfProviderExecutable);
 
-      return genShaSums(prefix, tempDir)
+      return genShaSums(`${tfProviderExecutable}`, tempDir)
         .then(async (shaSumsFile) => {
           const sigFile = await sign(shaSumsFile, tempDir);
           return [shaSumsFile, sigFile];
