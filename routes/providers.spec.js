@@ -35,7 +35,7 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
       ],
     };
     providerPath = 'citizen/null/1.0.0';
-    const result = await generateProvider('terraform-provider-null_1.0.0', ['linux_amd64', 'windows_amd64']);
+    const result = await generateProvider('null_1.0.0', ['linux_amd64', 'windows_amd64']);
     [targetDir, cleanupProvider] = result;
   });
 
@@ -196,7 +196,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
       ],
     };
     const providerPath = 'citizen/null/1.0.0';
-    const result = await generateProvider('terraform-provider-null_1.0.0', ['linux_amd64', 'windows_amd64']);
+    const result = await generateProvider('null_1.0.0', ['linux_amd64', 'windows_amd64']);
     [targetDir, cleanupProvider] = result;
 
     return request(app)
