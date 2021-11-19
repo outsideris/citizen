@@ -94,18 +94,18 @@ module.exports = {
     tmp.dir({ unsafeCleanup: true }, (err, tempDir, cleanupCallback) => {
       if (err) { return reject(err); }
 
-      const tfProviderExcutable = `terraform-provider${prefix.substr(prefix.indexOf('-'))}`;
+      const tfProviderExecutable = `terraform-provider${prefix.substr(prefix.indexOf('-'))}`;
       const content = 'echo provider';
-      fs.writeFileSync(tfProviderExcutable, content);
-      fs.chmodSync(tfProviderExcutable, 755);
+      fs.writeFileSync(tfProviderExecutable, content);
+      fs.chmodSync(tfProviderExecutable, 755);
 
       const zip = new AdmZip();
-      zip.addFile(tfProviderExcutable, Buffer.alloc(content.length, content));
+      zip.addFile(tfProviderExecutable, Buffer.alloc(content.length, content));
       platforms.forEach((p) => {
         zip.writeZip(`${tempDir}/${prefix}_${p}.zip`);
       });
 
-      fs.unlinkSync(tfProviderExcutable);
+      fs.unlinkSync(tfProviderExecutable);
 
       return genShaSums(prefix, tempDir)
         .then(async (shaSumsFile) => {
