@@ -64,10 +64,12 @@ const download = async (terraform) => {
 
 exports.mochaHooks = {
   beforeAll: async () => {
+    const log = debug('citizen:test:download:beforeAll');
     try {
       await mkdir(TARGET_DIR);
     } catch (ignore) {
       // ignored when targetDir already exist
+      log(ignore);
     }
 
     await Promise.all(TERRAFORM_VERSIONS.map(download));
