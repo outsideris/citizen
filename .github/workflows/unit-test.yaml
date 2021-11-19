@@ -3,7 +3,8 @@ name: Unit tests
 on:
   push:
     branches:
-      - olx-master
+      - "development"
+      - "main"
   pull_request:
     branches:
       - "*"
