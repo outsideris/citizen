@@ -16,6 +16,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 16
+    - name: Build binaries
       run: |
         npm run build
     - name: Semantic Release
