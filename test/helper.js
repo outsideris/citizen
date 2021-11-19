@@ -90,11 +90,12 @@ module.exports = {
       });
     }
   }),
+
   generateProvider: (prefix, platforms) => new Promise((resolve, reject) => {
-    tmp.dir({ unsafeCleanup: true }, (err, tempDir, cleanupCallback) => {
+    tmp.dir({ unsafeCleanup: !(process.env.CLEANUP) }, (err, tempDir, cleanupCallback) => {
       if (err) { return reject(err); }
 
-      const tfProviderExecutable = `terraform-provider${prefix.substr(prefix.indexOf('-'))}`;
+      const tfProviderExecutable = `terraform-provider-${prefix.substr(prefix.indexOf('-'))}`;
       const content = 'echo provider';
       fs.writeFileSync(tfProviderExecutable, content);
       fs.chmodSync(tfProviderExecutable, 755);
@@ -102,7 +103,7 @@ module.exports = {
       const zip = new AdmZip();
       zip.addFile(tfProviderExecutable, Buffer.alloc(content.length, content));
       platforms.forEach((p) => {
-        zip.writeZip(`${tempDir}/${prefix}_${p}.zip`);
+        zip.writeZip(`${tempDir}/terraform-provider-${prefix}_${p}.zip`);
       });
 
       fs.unlinkSync(tfProviderExecutable);
