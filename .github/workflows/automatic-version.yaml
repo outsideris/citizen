@@ -18,6 +18,7 @@ jobs:
         node-version: 16
     - name: Build binaries
       run: |
+        npm i
         npm run build
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
