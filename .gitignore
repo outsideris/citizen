@@ -9,3 +9,4 @@ dist/
 data/
 test/terraform-binaries/
 test/integration/fixture/.terraform/
+.secrets
