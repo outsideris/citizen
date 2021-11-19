@@ -23,19 +23,19 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
       protocols: ['4.1', '5.0'],
       platforms: [
         {
-          filename: 'terrafrom-provider-null_1.0.0_linux_amd64.zip',
+          filename: 'terraform-provider-null_1.0.0_linux_amd64.zip',
           os: 'linux',
           arch: 'amd64',
         },
         {
-          filename: 'terrafrom-provider-null_1.0.0_windows_amd64.zip',
+          filename: 'terraform-provider-null_1.0.0_windows_amd64.zip',
           os: 'windows',
           arch: 'amd64',
         },
       ],
     };
     providerPath = 'citizen/null/1.0.0';
-    const result = await generateProvider('terrafrom-provider-null_1.0.0', ['linux_amd64', 'windows_amd64']);
+    const result = await generateProvider('terraform-provider-null_1.0.0', ['linux_amd64', 'windows_amd64']);
     [targetDir, cleanupProvider] = result;
   });
 
@@ -47,10 +47,10 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
 
   it('should register new provider', () => request(app)
     .post(`/v1/providers/${providerPath}`)
-    .attach('file1', `${targetDir}/terrafrom-provider-null_1.0.0_linux_amd64.zip`)
-    .attach('file2', `${targetDir}/terrafrom-provider-null_1.0.0_windows_amd64.zip`)
-    .attach('file3', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS`)
-    .attach('file4', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS.sig`)
+    .attach('file1', `${targetDir}/terraform-provider-null_1.0.0_linux_amd64.zip`)
+    .attach('file2', `${targetDir}/terraform-provider-null_1.0.0_windows_amd64.zip`)
+    .attach('file3', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS`)
+    .attach('file4', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS.sig`)
     .field('data', JSON.stringify(providerData))
     .expect('Content-Type', /application\/json/)
     .expect(201)
@@ -77,9 +77,9 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
 
   it('should return error if no sums file attached', () => request(app)
     .post(`/v1/providers/${providerPath}`)
-    .attach('file1', `${targetDir}/terrafrom-provider-null_1.0.0_linux_amd64.zip`)
-    .attach('file2', `${targetDir}/terrafrom-provider-null_1.0.0_windows_amd64.zip`)
-    .attach('file3', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS.sig`)
+    .attach('file1', `${targetDir}/terraform-provider-null_1.0.0_linux_amd64.zip`)
+    .attach('file2', `${targetDir}/terraform-provider-null_1.0.0_windows_amd64.zip`)
+    .attach('file3', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS.sig`)
     .field('data', JSON.stringify(providerData))
     .expect('Content-Type', /application\/json/)
     .expect(400)
@@ -90,9 +90,9 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
 
   it('should return error if no signature file attached', () => request(app)
     .post(`/v1/providers/${providerPath}`)
-    .attach('file1', `${targetDir}/terrafrom-provider-null_1.0.0_linux_amd64.zip`)
-    .attach('file2', `${targetDir}/terrafrom-provider-null_1.0.0_windows_amd64.zip`)
-    .attach('file3', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS`)
+    .attach('file1', `${targetDir}/terraform-provider-null_1.0.0_linux_amd64.zip`)
+    .attach('file2', `${targetDir}/terraform-provider-null_1.0.0_windows_amd64.zip`)
+    .attach('file3', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS`)
     .field('data', JSON.stringify(providerData))
     .expect('Content-Type', /application\/json/)
     .expect(400)
@@ -107,10 +107,10 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
 
     return request(app)
       .post(`/v1/providers/${providerPath}`)
-      .attach('file1', `${targetDir}/terrafrom-provider-null_1.0.0_linux_amd64.zip`)
-      .attach('file2', `${targetDir}/terrafrom-provider-null_1.0.0_windows_amd64.zip`)
-      .attach('file3', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS`)
-      .attach('file4', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS.sig`)
+      .attach('file1', `${targetDir}/terraform-provider-null_1.0.0_linux_amd64.zip`)
+      .attach('file2', `${targetDir}/terraform-provider-null_1.0.0_windows_amd64.zip`)
+      .attach('file3', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS`)
+      .attach('file4', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS.sig`)
       .field('data', JSON.stringify(data))
       .expect('Content-Type', /application\/json/)
       .expect(400)
@@ -127,10 +127,10 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
 
     return request(app)
       .post(`/v1/providers/${providerPath}`)
-      .attach('file1', `${targetDir}/terrafrom-provider-null_1.0.0_linux_amd64.zip`)
-      .attach('file2', `${targetDir}/terrafrom-provider-null_1.0.0_windows_amd64.zip`)
-      .attach('file3', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS`)
-      .attach('file4', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS.sig`)
+      .attach('file1', `${targetDir}/terraform-provider-null_1.0.0_linux_amd64.zip`)
+      .attach('file2', `${targetDir}/terraform-provider-null_1.0.0_windows_amd64.zip`)
+      .attach('file3', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS`)
+      .attach('file4', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS.sig`)
       .field('data', JSON.stringify(providerData))
       .expect('Content-Type', /application\/json/)
       .expect(409)
@@ -184,27 +184,27 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
       protocols: ['4.1', '5.0'],
       platforms: [
         {
-          filename: 'terrafrom-provider-null_1.0.0_linux_amd64.zip',
+          filename: 'terraform-provider-null_1.0.0_linux_amd64.zip',
           os: 'linux',
           arch: 'amd64',
         },
         {
-          filename: 'terrafrom-provider-null_1.0.0_windows_amd64.zip',
+          filename: 'terraform-provider-null_1.0.0_windows_amd64.zip',
           os: 'windows',
           arch: 'amd64',
         },
       ],
     };
     const providerPath = 'citizen/null/1.0.0';
-    const result = await generateProvider('terrafrom-provider-null_1.0.0', ['linux_amd64', 'windows_amd64']);
+    const result = await generateProvider('terraform-provider-null_1.0.0', ['linux_amd64', 'windows_amd64']);
     [targetDir, cleanupProvider] = result;
 
     return request(app)
       .post(`/v1/providers/${providerPath}`)
-      .attach('file1', `${targetDir}/terrafrom-provider-null_1.0.0_linux_amd64.zip`)
-      .attach('file2', `${targetDir}/terrafrom-provider-null_1.0.0_windows_amd64.zip`)
-      .attach('file3', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS`)
-      .attach('file4', `${targetDir}/terrafrom-provider-null_1.0.0_SHA256SUMS.sig`)
+      .attach('file1', `${targetDir}/terraform-provider-null_1.0.0_linux_amd64.zip`)
+      .attach('file2', `${targetDir}/terraform-provider-null_1.0.0_windows_amd64.zip`)
+      .attach('file3', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS`)
+      .attach('file4', `${targetDir}/terraform-provider-null_1.0.0_SHA256SUMS.sig`)
       .field('data', JSON.stringify(providerData))
       .expect('Content-Type', /application\/json/)
       .expect(201);
@@ -225,7 +225,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
       expect(res.body).to.have.property('arch').to.equal('amd64');
       expect(res.body).to.have.property('protocols').to.include('4.1');
       expect(res.body).to.have.property('protocols').to.include('5.0');
-      expect(res.body).to.have.property('filename').to.equal('terrafrom-provider-null_1.0.0_linux_amd64.zip');
+      expect(res.body).to.have.property('filename').to.equal('terraform-provider-null_1.0.0_linux_amd64.zip');
       expect(res.body).to.have.property('download_url');
       expect(res.body).to.have.property('shasums_url');
       expect(res.body).to.have.property('shasums_signature_url');
@@ -244,7 +244,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
           await server
             .get(downloadUrl)
             .expect('Content-Type', /application\/zip/)
-            .expect('Content-Disposition', /terrafrom-provider-null_1\.0\.0_linux_amd64\.zip/)
+            .expect('Content-Disposition', /terraform-provider-null_1\.0\.0_linux_amd64\.zip/)
             .expect(200);
 
           const host = await server.get('/').url;
@@ -289,8 +289,8 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
           .expect('Content-Type', /text\/plain/)
           .expect(200)
           .then((res) => {
-            expect(res.text).to.include('terrafrom-provider-null_1.0.0_linux_amd64.zip');
-            expect(res.text).to.include('terrafrom-provider-null_1.0.0_windows_amd64.zip');
+            expect(res.text).to.include('terraform-provider-null_1.0.0_linux_amd64.zip');
+            expect(res.text).to.include('terraform-provider-null_1.0.0_windows_amd64.zip');
           }));
     });
 
