@@ -11,11 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v1
     - name: Use Node.js 16
       uses: actions/setup-node@v1
       with:
         node-version: 16
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
       with:
@@ -26,5 +34,6 @@ jobs:
           @semantic-release/github
           @semantic-release/npm
           @semantic-release/exec
+          @eclass/semantic-release-docker
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -98,7 +98,7 @@
       [
         "@semantic-release/exec",
         {
-          "prepareCmd": "npm ci && npm run build"
+          "prepareCmd": "npm ci && npm run build && docker build -t citizen ."
         }
       ],
       [
@@ -140,6 +140,18 @@
             "package.json"
           ],
           "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
+        }
+      ],
+      [
+        "@eclass/semantic-release-docker",
+        {
+          "baseImageName": "citizen",
+          "registries": [
+            {
+              "url": "ghcr.io",
+              "imageName": "ghcr.io/olxgroup-oss/citizen"
+            }
+          ]
         }
       ]
     ]
