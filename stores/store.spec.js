@@ -310,6 +310,7 @@ storeTypes.forEach((storeType) => {
           expect(result.type).to.equal('citizen');
           expect(result.published_at).to.exist;
           expect(result.downloads).to.equal(0);
+          expect(result.last_downloaded_at).to.be.undefined;
           expect(result.platforms[0]).to.have.property('os').to.equal('linux');
           expect(result.gpgPublicKeys[0]).to.have.property('keyId').to.equal('asdf');
           expect(result.gpgPublicKeys[0]).to.have.property('asciiArmor').to.equal('1234');

@@ -8,6 +8,7 @@ module.exports = (data) => ({
       version: data.version,
       provider: data.provider,
       published_at: data.published_at,
+      downloads: data.downloads,
     },
   ],
 });

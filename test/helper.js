@@ -2,7 +2,6 @@ const nock = require('nock');
 const fs = require('fs');
 const tmp = require('tmp');
 const AdmZip = require('adm-zip');
-const debug = require('debug')('citizen:test:helper:generateProvider');
 
 const { genShaSums, sign } = require('../lib/provider/provider');
 
@@ -97,7 +96,6 @@ module.exports = {
       if (err) { return reject(err); }
 
       const tfProviderExecutable = `terraform-provider-${prefix}`;
-      debug(`${tfProviderExecutable} in ${tempDir}`);
       const content = 'echo provider';
       fs.writeFileSync(tfProviderExecutable, content);
       fs.chmodSync(tfProviderExecutable, 755);
