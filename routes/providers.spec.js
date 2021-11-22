@@ -163,6 +163,8 @@ describe('GET /v1/providers/:namespace/:type/versions', () => {
       expect(res.body).to.have.property('versions');
       expect(res.body.versions[0]).to.have.property('version').to.equal('1.1.2');
       expect(res.body.versions[1]).to.have.property('version').to.equal('1.1.3');
+      expect(res.body.versions[0]).to.have.property('downloads');
+      expect(res.body.versions[1]).to.have.property('last_downloaded_at');
     }));
 
   it('should return 404 if given provider does not exist', () => request(app)
@@ -230,14 +232,15 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
       expect(res.body).to.have.property('shasums_url');
       expect(res.body).to.have.property('shasums_signature_url');
       expect(res.body).to.have.property('shasum');
-      expect(res.body).to.have.property('downloads');
+      expect(res.body).to.have.property('downloads').to.equal(0);
     }));
 
   describe('GET /:namespace/:type/:version/download/:os/:arch/zip', () => {
     it('should return downloadable download_url for provider', () => {
+      const providerUri = '/v1/providers/citizen/null/1.0.0/download/linux/amd64';
       const server = request(app);
       return server
-        .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+        .get(providerUri)
         .expect('Content-Type', /application\/json/)
         .expect(200)
         .then((res) => res.body.download_url)
@@ -247,10 +250,25 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
             .expect('Content-Type', /application\/zip/)
             .expect('Content-Disposition', /terraform-provider-null_1\.0\.0_linux_amd64\.zip/)
             .expect(200);
+          // Use the database to validate the download count increase
+          await providerDb().find({
+            namespace: 'citizen',
+            type: 'null',
+            version: '1.0.0',
+          }, (_err, docs) => {
+            expect(docs[0]).to.have.property('downloads').to.equal(1); // number of tests in the suite
+            expect(docs[0]).to.have.property('last_downloaded_at').to.be.instanceOf(Date);
+          });
+          // Use a server request to validate the download count increase
+          await server
+            .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+            .expect(200)
+            .then((res) => {
+              expect(res.body).to.have.property('downloads').to.equal(1);
+            });
 
           const host = await server.get('/').url;
           const downloadedFile = await got(`${host.substr(0, host.length - 1)}${downloadUrl}`).buffer();
-
           const directory = await unzipper.Open.buffer(downloadedFile);
           const file = directory.files.find((f) => f.path === 'terraform-provider-null_1.0.0');
           const content = await file.buffer();
@@ -275,6 +293,17 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
       .get('/v1/providers/citizen/null/2.0.0/download/linux/amd64/zip')
       .expect('Content-Type', /application\/json/)
       .expect(404));
+
+    it('should show increased provider download count', () => request(app)
+      .get('/v1/providers/citizen/null/1.0.0/download/linux/amd64')
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.have.property('downloads').to.equal(3);
+        // FIXME - how do we test these dates?
+        // AssertionError: expected '2021-11-22T21:14:59.004Z' to be an instance of Date
+        // expect(res.body).to.have.property('published_at').to.be.instanceOf(Date);
+        // expect(res.body).to.have.property('last_downloaded_at');
+      }));
   });
 
   describe('GET /:namespace/:type/:version/sha256sums', () => {

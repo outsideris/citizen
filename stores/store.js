@@ -294,6 +294,8 @@ const getProviderVersions = async ({ namespace, type } = {}) => {
         os: p.os,
         arch: p.arch,
       })),
+      downloads: d.downloads,
+      last_downloaded_at: d.last_downloaded_at,
     }));
     debug('search provider versions result from store: %o', result);
 

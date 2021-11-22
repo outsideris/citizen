@@ -18,5 +18,5 @@ module.exports = (data) => ({
   },
   downloads: data.downloads,
   published_at: data.published_at,
-  last_downloaded_at: data.last_donwloaded_at,
+  last_downloaded_at: data.last_downloaded_at,
 });

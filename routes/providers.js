@@ -8,6 +8,7 @@ const { saveProvider: saveProviderStorage, getProvider } = require('../lib/stora
 const {
   saveProvider,
   findOneProvider,
+  increaseProviderDownload,
   getProviderVersions,
   findProviderPackage,
 } = require('../stores/store');
@@ -207,6 +208,7 @@ router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res,
     res.header('x-terraform-protocol-versions', provider.protocols.join(', '));
 
     const file = await getProvider(`${options.namespace}/${options.type}/${options.version}/${platform.filename}`);
+    await increaseProviderDownload(options);
     return res.attachment(platform.filename).send(file);
   } catch (e) {
     return next(e);
