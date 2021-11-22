@@ -182,6 +182,9 @@ router.get('/:namespace/:type/:version/download/:os/:arch', async (req, res, nex
     shaSumsSignatureUrl: `/v1/providers/${options.namespace}/${options.type}/${options.version}/sha256sums.sig`,
     shasum: platform.shasum,
     gpgPublicKeys: providerPackage.gpgPublicKeys,
+    published_at: providerPackage.published_at,
+    downloads: providerPackage.downloads,
+    last_downloaded_at: providerPackage.last_downloaded_at,
   };
 
   return res.render('providers/providerPackage', viewModel);

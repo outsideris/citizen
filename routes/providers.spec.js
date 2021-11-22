@@ -230,6 +230,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
       expect(res.body).to.have.property('shasums_url');
       expect(res.body).to.have.property('shasums_signature_url');
       expect(res.body).to.have.property('shasum');
+      expect(res.body).to.have.property('downloads');
     }));
 
   describe('GET /:namespace/:type/:version/download/:os/:arch/zip', () => {
