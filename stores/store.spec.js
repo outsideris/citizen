@@ -14,6 +14,7 @@ const {
   providerDb,
   saveProvider,
   findOneProvider,
+  increaseProviderDownload,
   findAllProviders,
   getProviderVersions,
   findProviderPackage,
@@ -55,6 +56,7 @@ storeTypes.forEach((storeType) => {
           expect(result.name).to.equal('store-consul');
           expect(result.published_at).to.exist;
           expect(result.downloads).to.equal(0);
+          expect(result.last_downloaded_at).to.be.undefined;
         });
       });
 
@@ -266,6 +268,7 @@ storeTypes.forEach((storeType) => {
           });
 
           expect(result).to.have.property('downloads').to.equal(1);
+          // expect(result.last_downloaded_at).to.be.instanceOf(Date);
         });
       });
     });
@@ -306,6 +309,8 @@ storeTypes.forEach((storeType) => {
           expect(result.namespace).to.equal('outsider');
           expect(result.type).to.equal('citizen');
           expect(result.published_at).to.exist;
+          expect(result.downloads).to.equal(0);
+          expect(result.last_downloaded_at).to.be.undefined;
           expect(result.platforms[0]).to.have.property('os').to.equal('linux');
           expect(result.gpgPublicKeys[0]).to.have.property('keyId').to.equal('asdf');
           expect(result.gpgPublicKeys[0]).to.have.property('asciiArmor').to.equal('1234');
@@ -546,6 +551,36 @@ storeTypes.forEach((storeType) => {
           });
 
           expect(result).to.have.property('version').to.equal('1.1.0');
+        });
+      });
+
+      describe('increaseProviderDownload()', () => {
+        before(async () => {
+          await saveProvider({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.0.4',
+            platforms: [{
+              os: 'linux', arch: 'amd64', filename: '', shasum: '',
+            }],
+          });
+        });
+
+        after(async () => {
+          await deleteDbAll(providerDb(), storeType);
+        });
+
+        it('should increase download count of the provider', async () => {
+          const result = await increaseProviderDownload({
+            namespace: 'outsider',
+            type: 'citizen',
+            version: '1.0.4',
+            platforms: [{
+              os: 'linux', arch: 'amd64', filename: '', shasum: '',
+            }],
+          });
+          expect(result).to.have.property('downloads').to.equal(1);
+          expect(result).to.have.property('last_downloaded_at').to.be.instanceOf(Date);
         });
       });
     });

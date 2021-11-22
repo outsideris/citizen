@@ -16,4 +16,7 @@ module.exports = (data) => ({
       source_url: key.sourceUrl,
     })),
   },
+  downloads: data.downloads,
+  published_at: data.published_at,
+  last_downloaded_at: data.last_donwloaded_at,
 });

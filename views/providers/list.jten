@@ -1,0 +1,21 @@
+module.exports = (data) => ({
+  meta: {
+    limit: data.meta.limit,
+    current_offset: data.meta.currentOffset,
+    next_offset: data.meta.nextOffset,
+    next_url: data.meta.nextUrl,
+  },
+  providers: data.providers.map(p =>
+    ({
+      id: `${p.namespace}/${p.type}/${p.version}`,
+      namespace: p.namespace,
+      name: p.type,
+      version: p.version,
+      protocols: p.protocols,
+      platforms: p.platforms,
+      published_at: p.published_at,
+      downloads: p.downloads,
+      last_downloaded_at: p.last_downloaded_at,
+    })
+  ),
+});

@@ -59,8 +59,8 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
         terraform {
           required_providers {
             null = {
-              source  = "${url.host}/citizen-test/null"
-              version = "0.1.0"
+              source  = "${url.host}/citizen/null"
+              version = "1.0.0"
             }
           }
         }`;
@@ -105,7 +105,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
       before(async () => {
         const client = join(__dirname, '../', '../', 'bin', 'citizen');
 
-        const result = await generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64', 'darwin_amd64']);
+        const result = await generateProvider('null_1.0.0', ['linux_amd64', 'windows_amd64', 'darwin_amd64']);
         [tempDir, cleanupProvider] = result;
 
         await new Promise((resolve, reject) => {

@@ -17,6 +17,7 @@ const Module = mongoose.model('Module', {
   definition: mongoose.Schema.Types.Mixed,
   downloads: { type: Number, default: 0 },
   published_at: { type: Date, default: Date.now },
+  last_downloaded_at: { type: Date, default: undefined },
 });
 
 const saveModule = (data) => {
@@ -57,7 +58,10 @@ const findOneModule = async (options) => {
 };
 
 const increaseModuleDownload = (options) => Module
-  .findOneAndUpdate(options, { $inc: { downloads: 1 } }, { new: true });
+  .findOneAndUpdate(options, {
+    $inc: { downloads: 1 },
+    $set: { last_downloaded_at: new Date() },
+  }, { new: true });
 
 // providers
 const Provider = mongoose.model('Provider', {
@@ -78,7 +82,9 @@ const Provider = mongoose.model('Provider', {
     source: { type: String },
     sourceUrl: { type: String },
   })],
+  downloads: { type: Number, default: 0 },
   published_at: { type: Date, default: Date.now },
+  last_downloaded_at: { type: Date, default: undefined },
 });
 
 const saveProvider = (data) => {
@@ -90,6 +96,12 @@ const findOneProvider = async (options) => {
   debug('search a provider in store with %o', options);
   return Provider.findOne(options).lean().exec();
 };
+
+const increaseProviderDownload = (options) => Provider
+  .findOneAndUpdate(options, {
+    $inc: { downloads: 1 },
+    $set: { last_downloaded_at: new Date() },
+  }, { new: true });
 
 const findProviders = (options) => Provider.find(options);
 
@@ -128,6 +140,7 @@ module.exports = {
   providerDb: Provider,
   saveProvider,
   findOneProvider,
+  increaseProviderDownload,
   findProviders,
   findAllProviders,
   getProviderVersions,
