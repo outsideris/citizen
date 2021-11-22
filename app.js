@@ -18,7 +18,17 @@ require('dotenv-flow').config({
 });
 
 // uncomment after placing your favicon in /public
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'production') {
+  const json = require('morgan-json');
+  const format = json({
+    short: ':date[web] :method :url :status',
+    length: ':res[content-length]',
+    'response-time': ':response-time ms',
+  });
+  app.use(morgan(format, { skip: function (req, res) { return req.path === '/health' || req.path === '/metrics' }}));
+} else {
+  app.use(morgan(':date[web] :method :url :status'));
+}
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -57,20 +67,20 @@ if (app.get('env') === 'development') {
       error: err,
     });
   });
-}
+} else {
+  // production error handler
+  // no stacktraces leaked to user
+  app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+    if (!err.status || err.status >= 500) {
+      logger.error(err.stack);
+    }
 
-// production error handler
-// no stacktraces leaked to user
-app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-  if (!err.status || err.status >= 500) {
-    logger.error(err.stack);
-  }
-
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {},
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: {},
+    });
   });
-});
+}
 
 module.exports = app;

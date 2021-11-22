@@ -37,6 +37,7 @@
     "mkdirp": "1.0.4",
     "mongoose": "6.0.5",
     "morgan": "1.10.0",
+    "morgan-json": "^1.1.0",
     "multiparty": "4.2.2",
     "nedb": "1.8.0",
     "npm": "^6.14.15",
