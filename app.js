@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const json = require('morgan-json');
 
 const app = express();
 
@@ -19,13 +20,15 @@ require('dotenv-flow').config({
 
 // uncomment after placing your favicon in /public
 if (process.env.NODE_ENV === 'production') {
-  const json = require('morgan-json');
   const format = json({
-    short: ':date[web] :method :url :status',
+    timestamp: ':date[web]',
+    method: ':method',
+    url: ':url',
+    status: ':status',
     length: ':res[content-length]',
     'response-time': ':response-time ms',
   });
-  app.use(morgan(format, { skip: function (req, res) { return req.path === '/health' || req.path === '/metrics' }}));
+  app.use(morgan(format, { skip(req, res) { return req.path === '/health' || req.path === '/favicon.ico' || req.path === '/.well-known/terraform.json'; } }));
 } else {
   app.use(morgan(':date[web] :method :url :status'));
 }
