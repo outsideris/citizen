@@ -39,7 +39,7 @@
     "morgan": "^1.10.0",
     "multiparty": "^4.2.2",
     "nedb": "^1.8.0",
-    "npm": "^8.1.4",
+    "npm": "^7.0.0",
     "ora": "^5.4.1",
     "pino": "^6.13.2",
     "recursive-readdir": "^2.2.1",
@@ -49,6 +49,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@eclass/semantic-release-docker": "^2.0.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/exec": "^6.0.2",
     "@semantic-release/github": "^8.0.2",
