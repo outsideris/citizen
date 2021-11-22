@@ -97,12 +97,6 @@
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       [
-        "@semantic-release/exec",
-        {
-          "prepareCmd": "npm ci && npm run build && docker build -t citizen ."
-        }
-      ],
-      [
         "@semantic-release/npm",
         {
           "npmPublish": false
@@ -112,6 +106,12 @@
         "@semantic-release/changelog",
         {
           "changelogFile": "docs/CHANGELOG.md"
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "prepareCmd": "npm ci && npm run build && docker build -t citizen ."
         }
       ],
       [
