@@ -150,7 +150,9 @@
           "registries": [
             {
               "url": "ghcr.io",
-              "imageName": "ghcr.io/olxgroup-oss/citizen"
+              "imageName": "ghcr.io/olxgroup-oss/citizen",
+              "user": "GITHUB_USER",
+              "password": "GITHUB_TOKEN"
             }
           ]
         }
