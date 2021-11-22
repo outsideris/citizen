@@ -30,6 +30,7 @@ jobs:
         DOCKER_USER: ${{ github.repository_owner }}
         DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_USER: ${{ github.repository_owner }}
       with:
         dry_run: false
         extra_plugins: |
