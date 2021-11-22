@@ -6,5 +6,6 @@ module.exports = (data) => (
     protocols: data.protocols,
     platforms: data.platforms,
     published_at: data.published_at,
+    downloads: data.downloads,
   }
 );

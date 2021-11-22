@@ -16,7 +16,8 @@ module.exports = (data) => ({
       description: '',
       source: '',
       published_at: m.published_at,
-      downloads: 0,
+      downloads: m.downloads,
+      last_downloaded_at: data.last_downloaded_at,
       verified: false,
     })
   ),
