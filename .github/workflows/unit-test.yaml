@@ -13,6 +13,7 @@ jobs:
           - 12
           - 14
           - 16
+          - 17
     services:
       mongodb:
         image: mongo
