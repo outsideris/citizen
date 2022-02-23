@@ -81,7 +81,7 @@ module.exports = {
       Key: `providers/${path}`,
       Body: tarball,
     };
-    const result = await s3.save(params);
+    const result = await s3.send(new PutObjectCommand(params));
 
     if (result.ETag) {
       return true;
@@ -95,8 +95,8 @@ module.exports = {
     };
 
     try {
-      const module = await s3.get(params);
-      if (module.Body) {
+      const provider = await s3.send(new GetObjectCommand(params));
+      if (provider.Body) {
         debug(`the provider already exist: ${path}.`);
         return true;
       }
@@ -118,7 +118,14 @@ module.exports = {
       Bucket: S3_BUCKET,
       Key: `providers/${path}`,
     };
-    const file = await s3.get(params);
-    return file.Body;
+    const chunks = [];
+    const file = await s3.send(new GetObjectCommand(params));
+    const content = await new Promise((resolve, reject) => {
+      file.Body.on('data', (chunk) => chunks.push(chunk));
+      file.Body.on('error', reject);
+      file.Body.on('end', () => resolve(chunks));
+    });
+
+    return content[0];
   },
 };
