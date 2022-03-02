@@ -18,18 +18,18 @@ import {
   getProviderVersions,
   findProviderPackage,
 } from './store.js';
-import { deleteDbAll } from '../test/helper.js';
+import helper from '../test/helper.js';
 
 const storeTypes = ['mongodb', 'nedb'];
 
 storeTypes.forEach((storeType) => {
   describe(`${storeType} store`, async () => {
-    before(() => {
-      init(storeType);
+    before(async () => {
+      await init(storeType);
     });
 
     after(async () => {
-      await deleteDbAll(moduleDb(), storeType);
+      await helper.deleteDbAll(moduleDb(), storeType);
     });
 
     it(`should use ${storeType}`, () => {
@@ -39,7 +39,7 @@ storeTypes.forEach((storeType) => {
     describe('module', () => {
       describe('saveModule()', () => {
         after(async () => {
-          await deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(moduleDb(), storeType);
         });
 
         it('should store module meta', async () => {
@@ -75,7 +75,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(moduleDb(), storeType);
         });
 
         it('should return all modules', async () => {
@@ -151,7 +151,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(moduleDb(), storeType);
         });
 
         it('should return available versions', async () => {
@@ -188,7 +188,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(moduleDb(), storeType);
         });
 
         it('should return latest versions for a specific module', async () => {
@@ -220,7 +220,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(moduleDb(), storeType);
         });
 
         it('should return the specific module', async () => {
@@ -254,7 +254,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(moduleDb(), storeType);
         });
 
         it('should increase download count of the module', async () => {
@@ -273,7 +273,7 @@ storeTypes.forEach((storeType) => {
     describe('provider', () => {
       describe('saveProvider()', () => {
         after(async () => {
-          await deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(providerDb(), storeType);
         });
 
         it('should store provider meta', async () => {
@@ -325,7 +325,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(providerDb(), storeType);
         });
 
         it('should find the provider', async () => {
@@ -391,7 +391,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(providerDb(), storeType);
         });
 
         it('should return all providers', async () => {
@@ -484,7 +484,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(providerDb(), storeType);
         });
 
         it('should return available versions', async () => {
@@ -533,7 +533,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(providerDb(), storeType);
         });
 
         it('should return provider that matched', async () => {

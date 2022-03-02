@@ -2,8 +2,13 @@ import nock from 'nock';
 import fs from 'fs';
 import tmp from 'tmp';
 import AdmZip from 'adm-zip';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { genShaSums, sign } from '../lib/provider/provider.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const helper = {
   enableMock: ({ modulePath }) => {

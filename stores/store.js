@@ -8,9 +8,9 @@ let store;
 const init = async (dbType) => {
   const t = dbType || process.env.CITIZEN_DATABASE;
   if (t === 'mongodb') {
-    await import('./mongodb').then(m => store = m);
+    store = await import('./mongodb.js');
   } else {
-    await import('./nedb').then(m => store = m);
+    store = await import('./nedb.js');
   }
 };
 

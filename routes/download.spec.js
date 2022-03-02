@@ -4,12 +4,15 @@ import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
 import rmrf from 'rimraf';
+import { fileURLToPath } from 'url';
 
 import app from '../app.js';
 import helper from '../test/helper.js';
 import { moduleDb, saveModule } from '../stores/store.js';
 
 const rimraf = promisify(rmrf);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
   before(async () => {
