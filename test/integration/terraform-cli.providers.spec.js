@@ -1,17 +1,18 @@
-const https = require('https');
-const fs = require('fs');
-const { promisify } = require('util');
-const { expect } = require('chai');
-const { execFile } = require('child_process');
-const { join } = require('path');
-const rimraf = promisify(require('rimraf'));
-const semver = require('semver');
+import https from 'https';
+import fs from 'fs';
+import { promisify } from 'util';
+import { expect } from 'chai';
+import { execFile } from 'child_process';
+import { join } from 'path';
+import rmrf from 'rimraf';
+import semver from 'semver';
 
-const registry = require('./registry');
-const { providerDb } = require('../../stores/store');
-const { deleteDbAll, generateProvider } = require('../helper');
-const { citizen } = require('../../package.json');
+import registry from './registry.js';
+import { providerDb } from '../../stores/store.js';
+import { deleteDbAll, generateProvider } from '../helper.js';
+import { citizen } from '../../package.json';
 
+const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);

@@ -1,13 +1,15 @@
-const request = require('supertest');
-const got = require('got');
-const { expect } = require('chai');
-const { promisify } = require('util');
-const rimraf = promisify(require('rimraf'));
-const unzipper = require('unzipper');
+import request from 'supertest';
+import got from 'got';
+import { expect } from 'chai';
+import { promisify } from 'util';
+import rmrf from 'rimraf';
+import unzipper from 'unzipper';
 
-const app = require('../app');
-const { deleteDbAll, generateProvider } = require('../test/helper');
-const { providerDb, saveProvider } = require('../stores/store');
+import app from '../app.js';
+import helper from '../test/helper.js';
+import { providerDb, saveProvider } from '../stores/store.js';
+
+const rimraf = promisify(rmrf);
 
 describe('POST /v1/providers/:namespace/:type/:version', () => {
   let providerPath;
@@ -35,13 +37,13 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
       ],
     };
     providerPath = 'citizen/null/1.0.0';
-    const result = await generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64']);
+    const result = await helper.generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64']);
     [targetDir, cleanupProvider] = result;
   });
 
   afterEach(async () => {
     cleanupProvider();
-    await deleteDbAll(providerDb());
+    await helper.deleteDbAll(providerDb());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
@@ -152,7 +154,7 @@ describe('GET /v1/providers/:namespace/:type/versions', () => {
   });
 
   after(async () => {
-    await deleteDbAll(providerDb());
+    await helper.deleteDbAll(providerDb());
   });
 
   it('should return provider versions', () => request(app)
@@ -196,7 +198,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
       ],
     };
     const providerPath = 'citizen/null/1.0.0';
-    const result = await generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64']);
+    const result = await helper.generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64']);
     [targetDir, cleanupProvider] = result;
 
     return request(app)
@@ -212,7 +214,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
 
   after(async () => {
     cleanupProvider();
-    await deleteDbAll(providerDb());
+    await helper.deleteDbAll(providerDb());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 

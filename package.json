@@ -5,6 +5,7 @@
   "bin": {
     "citizen": "./bin/citizen"
   },
+  "type": "module",
   "scripts": {
     "start": "node ./bin/citizen server",
     "dev": "nodemon ./bin/citizen server",

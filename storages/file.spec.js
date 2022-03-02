@@ -1,17 +1,21 @@
-const path = require('path');
-const fs = require('fs');
-const { promisify } = require('util');
-const { expect } = require('chai');
-const mkdirp = require('mkdirp');
-const rimraf = promisify(require('rimraf'));
+import path from 'path';
+import fs from 'fs';
+import { promisify } from 'util';
+import { expect } from 'chai';
+import mkdirp from 'mkdirp';
+import rmrf from 'rimraf';
+import { fileURLToPath } from 'url';
 
-const { saveModule, hasModule, getModule } = require('./file');
+import file from './file.js';
 
+const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 
 describe('file storage\'s', async () => {
   let modulePath;
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
   const tarballPath = path.join(__dirname, '..', 'test', 'fixture', 'module.tar.gz');
   let moduleBuf;
 
@@ -29,7 +33,7 @@ describe('file storage\'s', async () => {
 
   describe('saveModule()', () => {
     it('should save the module onto disk with relative path', async () => {
-      const result = await saveModule(modulePath, moduleBuf);
+      const result = await file.saveModule(modulePath, moduleBuf);
       expect(result).to.be.true;
     });
 
@@ -37,7 +41,7 @@ describe('file storage\'s', async () => {
       const oldPath = process.env.CITIZEN_STORAGE_PATH;
       process.env.CITIZEN_STORAGE_PATH = '/tmp/citizen-test';
 
-      const result = await saveModule(modulePath, moduleBuf);
+      const result = await file.saveModule(modulePath, moduleBuf);
       expect(result).to.be.true;
 
       await rimraf(process.env.CITIZEN_STORAGE_PATH);
@@ -52,12 +56,12 @@ describe('file storage\'s', async () => {
       await mkdirp(parsedPath.dir);
       await writeFile(pathToStore, moduleBuf);
 
-      const exist = await hasModule(modulePath);
+      const exist = await file.hasModule(modulePath);
       expect(exist).to.be.true;
     });
 
     it('should return false if the module is not already exist', async () => {
-      const exist = await hasModule(`${modulePath}/wrong`);
+      const exist = await file.hasModule(`${modulePath}/wrong`);
       expect(exist).to.be.false;
     });
   });
@@ -69,7 +73,7 @@ describe('file storage\'s', async () => {
       await mkdirp(parsedPath.dir);
       await writeFile(pathToStore, moduleBuf);
 
-      const result = await getModule(modulePath);
+      const result = await file.getModule(modulePath);
       expect(result).to.be.an.instanceof(Buffer);
     });
   });

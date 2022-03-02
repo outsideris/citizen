@@ -1,10 +1,10 @@
-const { Router } = require('express');
-const multiparty = require('multiparty');
+import { Router } from 'express';
+import multiparty from 'multiparty';
 
-const logger = require('../lib/logger');
-const { parseHcl } = require('../lib/util');
-const storage = require('../lib/storage');
-const { saveModule, getModuleLatestVersion, findOneModule } = require('../stores/store');
+import logger from '../lib/logger.js';
+import { parseHcl } from '../lib/util.js';
+import { hasModule, saveModule as saveModuleOnStorage } from '../lib/storage.js';
+import { saveModule, getModuleLatestVersion, findOneModule } from '../stores/store.js';
 
 const router = Router();
 
@@ -57,7 +57,7 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
 
   form.on('close', async () => {
     try {
-      const exist = await storage.hasModule(`${destPath}/${filename}`);
+      const exist = await hasModule(`${destPath}/${filename}`);
       if (exist) {
         const error = new Error('Module exist');
         error.status = 409;
@@ -65,7 +65,7 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
         return next(error);
       }
 
-      const fileResult = await storage.saveModule(`${destPath}/${filename}`, tarball);
+      const fileResult = await saveModuleOnStorage(`${destPath}/${filename}`, tarball);
       const definition = await parseHcl(name, tarball);
       const metaResult = await saveModule({
         namespace,
@@ -125,4 +125,4 @@ router.get('/:namespace/:name/:provider', async (req, res, next) => {
   return res.render('modules/latest-version', module);
 });
 
-module.exports = router;
+export default router;

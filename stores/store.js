@@ -1,14 +1,16 @@
 /* eslint-disable global-require */
-const debug = require('debug')('citizen:server:store');
+import Debug from 'debug';
+
+const debug = Debug('citizen:server:store');
 
 let store;
 
-const init = (dbType) => {
+const init = async (dbType) => {
   const t = dbType || process.env.CITIZEN_DATABASE;
   if (t === 'mongodb') {
-    store = require('./mongodb');
+    await import('./mongodb').then(m => store = m);
   } else {
-    store = require('./nedb');
+    await import('./nedb').then(m => store = m);
   }
 };
 
@@ -311,9 +313,9 @@ const findProviderPackage = async ({
   return result;
 };
 
-init();
+await init();
 
-module.exports = {
+export {
   init,
   getStoreType,
   moduleDb,

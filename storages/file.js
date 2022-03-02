@@ -1,9 +1,10 @@
-const fs = require('fs');
-const { join, parse } = require('path');
-const { promisify } = require('util');
-const debug = require('debug')('citizen:server');
-const mkdirp = require('mkdirp');
+import fs from 'fs';
+import { join, parse } from 'path';
+import { promisify } from 'util';
+import Debug from 'debug';
+import mkdirp from 'mkdirp';
 
+const debug = Debug('citizen:server');
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 const access = promisify(fs.access);
@@ -11,7 +12,7 @@ const access = promisify(fs.access);
 const getModulePath = (path) => join(process.env.CITIZEN_STORAGE_PATH, 'modules', path);
 const getProviderPath = (path) => join(process.env.CITIZEN_STORAGE_PATH, 'providers', path);
 
-module.exports = {
+const file = {
   type: () => 'file',
   saveModule: async (path, tarball) => {
     if (!path) { throw new Error('path is required.'); }
@@ -79,5 +80,6 @@ module.exports = {
       return null;
     }
   },
-
 };
+
+export default file;

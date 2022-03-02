@@ -1,9 +1,9 @@
-const request = require('supertest');
-const { expect } = require('chai');
+import request from 'supertest';
+import { expect } from 'chai';
 
-const app = require('../app');
-const { moduleDb, saveModule } = require('../stores/store');
-const { deleteDbAll } = require('../test/helper');
+import app from '../app.js';
+import { moduleDb, saveModule } from '../stores/store.js';
+import helper from '../test/helper.js';
 
 describe('GET /v1/modules', () => {
   before(async () => {
@@ -22,7 +22,7 @@ describe('GET /v1/modules', () => {
   });
 
   after(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
   });
 
   it('should return all modules', () => request(app)
@@ -85,7 +85,7 @@ describe('GET /v1/modules/:namespace', () => {
   });
 
   after(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
   });
 
   it('should return all modules of namespace', () => request(app)
@@ -126,7 +126,7 @@ describe('GET /v1/modules/search', () => {
   });
 
   after(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
   });
 
   it('should return all modules which matched by q', () => request(app)
@@ -175,7 +175,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
   });
 
   after(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
   });
 
   it('should return available versions for a specific module', () => request(app)
@@ -224,7 +224,7 @@ describe('GET /v1/modules/:namespace/:name', () => {
   });
 
   after(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
   });
 
   it('should return all latest version of module for all providers', () => request(app)

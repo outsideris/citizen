@@ -1,16 +1,19 @@
-const path = require('path');
-const express = require('express');
-const morgan = require('morgan');
-const bodyParser = require('body-parser');
-const helmet = require('helmet');
+import path from 'path';
+import express from 'express';
+import morgan from 'morgan';
+import bodyParser from 'body-parser';
+import helmet from 'helmet';
+import { fileURLToPath } from 'url';
 
 const app = express();
 
-const logger = require('./lib/logger');
+import logger from './lib/logger.js';
 
 app.use(helmet());
 
 // view engine setup
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jten');
 
@@ -19,16 +22,24 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/', require('./routes/index'));
-app.use('/', require('./routes/service-discovery'));
+import index from './routes/index.js';
+import serviceDiscovery from './routes/service-discovery.js';
+app.use('/', index);
+app.use('/', serviceDiscovery);
 
-app.use('/v1/providers', require('./routes/providers'));
-app.use('/v1/providers', require('./routes/download'));
-app.use('/v1/providers', require('./routes/list'));
+import providers from './routes/providers.js';
+import providerDownload from './routes/download.js';
+import providerList from './routes/list.js';
+app.use('/v1/providers', providers);
+app.use('/v1/providers', providerDownload);
+app.use('/v1/providers', providerList);
 
-app.use('/v1/modules', require('./routes/list'));
-app.use('/v1/modules', require('./routes/modules'));
-app.use('/v1/modules', require('./routes/download'));
+import moduleList from './routes/list.js';
+import modules from './routes/modules.js';
+import moduleDownload from './routes/download.js';
+app.use('/v1/modules', moduleList);
+app.use('/v1/modules', modules);
+app.use('/v1/modules', moduleDownload);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -69,4 +80,4 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   });
 });
 
-module.exports = app;
+export default app;

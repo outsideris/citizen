@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
-const debug = require('debug')('citizen:server:store:mongodb');
+import mongoose from 'mongoose';
+import Debug from 'debug';
 
+const debug = Debug('citizen:server:store:mongodb');
 const dbUri = process.env.CITIZEN_MONGO_DB_URI || 'mongodb://localhost:27017/citizen';
 mongoose.connect(dbUri, {});
 
@@ -116,9 +117,9 @@ const findProviderPackage = (options) => Provider
   .find(options, null, { sort: '-version' })
   .then((docs) => (docs.length > 0 ? docs[0] : null));
 
-module.exports = {
+export {
   storeType,
-  moduleDb: Module,
+  Module as moduleDb,
   saveModule,
   findModules,
   findAllModules,
@@ -126,7 +127,7 @@ module.exports = {
   getModuleLatestVersion,
   findOneModule,
   increaseModuleDownload,
-  providerDb: Provider,
+  Provider as providerDb,
   saveProvider,
   findOneProvider,
   findProviders,

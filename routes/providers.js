@@ -1,17 +1,17 @@
 // https://www.terraform.io/docs/internals/provider-registry-protocol.html
-const { Router } = require('express');
-const multiparty = require('multiparty');
-const { v4: uuid } = require('uuid');
+import { Router } from 'express';
+import multiparty from 'multiparty';
+import { v4 as uuid } from 'uuid';
 
-const logger = require('../lib/logger');
-const { saveProvider: saveProviderStorage, getProvider } = require('../lib/storage');
-const {
+import logger from '../lib/logger.js';
+import { saveProvider as saveProviderStorage, getProvider } from '../lib/storage.js';
+import {
   saveProvider,
   findOneProvider,
   getProviderVersions,
   findProviderPackage,
-} = require('../stores/store');
-const { extractShasum } = require('../lib/util');
+} from '../stores/store.js';
+import { extractShasum } from '../lib/util.js';
 
 const router = Router();
 
@@ -252,4 +252,4 @@ router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) =
   }
 });
 
-module.exports = router;
+export default router;

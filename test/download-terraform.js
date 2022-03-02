@@ -1,12 +1,12 @@
-const got = require('got');
-const { join } = require('path');
-const fs = require('fs');
-const { promisify } = require('util');
-const unzipper = require('unzipper');
-const semver = require('semver');
-const debug = require('debug');
+import got from 'got';
+import { join } from 'path';
+import fs from 'fs';
+import { promisify } from 'util';
+import unzipper from 'unzipper';
+import semver from 'semver';
+import debug from 'debug';
 
-const { citizen } = require('../package.json');
+import { citizen } from '../package.json';
 
 const chmod = promisify(fs.chmod);
 const mkdir = promisify(fs.mkdir);
@@ -62,7 +62,7 @@ const download = async (terraform) => {
   });
 };
 
-exports.mochaHooks = {
+export const mochaHooks = {
   beforeAll: async () => {
     try {
       await mkdir(TARGET_DIR);
