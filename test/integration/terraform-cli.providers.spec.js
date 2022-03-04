@@ -7,9 +7,9 @@ import { join } from 'path';
 import rmrf from 'rimraf';
 import semver from 'semver';
 
-import registry from './registry.js';
+import { run, terminate } from './registry.js';
 import { providerDb } from '../../stores/store.js';
-import { deleteDbAll, generateProvider } from '../helper.js';
+import helper from '../helper.js';
 import { citizen } from '../../package.json';
 
 const rimraf = promisify(rmrf);
@@ -36,15 +36,15 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
     const terraformCli = join(__dirname, '../', 'terraform-binaries', `terraform${terraform.release}`);
 
     before(async () => {
-      const serverInfo = await registry.run();
+      const serverInfo = await run();
       server = serverInfo.server;
       url = serverInfo.url;
       process.env.CITIZEN_ADDR = `http://127.0.0.1:${server.address().port}`;
     });
 
     after(async () => {
-      await registry.terminate(server);
-      await deleteDbAll(providerDb());
+      await terminate(server);
+      await helper.deleteDbAll(providerDb());
     });
 
     describe('basic setup', () => {
@@ -106,7 +106,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
       before(async () => {
         const client = join(__dirname, '../', '../', 'bin', 'citizen');
 
-        const result = await generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64', 'darwin_amd64']);
+        const result = await helper.generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64', 'darwin_amd64']);
         [tempDir, cleanupProvider] = result;
 
         await new Promise((resolve, reject) => {
@@ -141,7 +141,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
         cleanupProvider();
         await unlink(definitonFile);
         await rimraf(join(__dirname, 'fixture', '.terraform'));
-        await deleteDbAll(providerDb());
+        await helper.deleteDbAll(providerDb());
         await rimraf(process.env.CITIZEN_STORAGE_PATH);
         try {
           await access(tfLockFile);

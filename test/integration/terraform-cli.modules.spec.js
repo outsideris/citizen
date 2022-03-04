@@ -7,9 +7,9 @@ import { join } from 'path';
 import rmrf from 'rimraf';
 import semver from 'semver';
 
-import registry from './registry.js';
+import { run, terminate } from './registry.js';
 import { moduleDb } from '../../stores/store.js';
-import { deleteDbAll } from '../helper.js';
+import helper from '../helper.js';
 import { citizen } from '../../package.json';
 
 const rimraf = promisify(rmrf);
@@ -32,15 +32,15 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
     const terraformCli = join(__dirname, '../', 'terraform-binaries', `terraform${terraform.release}`);
 
     before(async () => {
-      const serverInfo = await registry.run();
+      const serverInfo = await run();
       server = serverInfo.server;
       url = serverInfo.url;
       process.env.CITIZEN_ADDR = `http://127.0.0.1:${server.address().port}`;
     });
 
     after(async () => {
-      await registry.terminate(server);
-      await deleteDbAll(moduleDb());
+      await terminate(server);
+      await helper.deleteDbAll(moduleDb());
     });
 
     describe('basic setup', () => {
@@ -118,7 +118,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
       after(async () => {
         await unlink(definitonFile);
         await rimraf(join(__dirname, 'fixture', '.terraform'));
-        await deleteDbAll(moduleDb());
+        await helper.deleteDbAll(moduleDb());
         await rimraf(process.env.CITIZEN_STORAGE_PATH);
       });
 

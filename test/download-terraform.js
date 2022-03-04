@@ -36,7 +36,7 @@ const download = async (terraform) => {
   return new Promise((resolve, reject) => {
     if (notExist) {
       log('Start to download terraform');
-      return got.stream(DOWNLOAD_URL)
+      got.stream(DOWNLOAD_URL)
         .pipe(unzipper.Parse())
         .on('entry', (entry) => {
           log('download completed');
@@ -55,14 +55,15 @@ const download = async (terraform) => {
             reject(new Error(`Wrong terraform file for ${terraform.version}`));
           }
         });
+      return;
     }
 
     log('skip to download terraform');
-    return resolve(terraform.release);
+    resolve(terraform.release);
   });
 };
 
-export const mochaHooks = {
+const mochaHooks = {
   beforeAll: async () => {
     try {
       await mkdir(TARGET_DIR);
@@ -73,3 +74,5 @@ export const mochaHooks = {
     await Promise.all(TERRAFORM_VERSIONS.map(download));
   },
 };
+
+export default mochaHooks;

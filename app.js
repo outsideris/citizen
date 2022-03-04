@@ -5,9 +5,15 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import { fileURLToPath } from 'url';
 
-const app = express();
-
 import logger from './lib/logger.js';
+import index from './routes/index.js';
+import serviceDiscovery from './routes/service-discovery.js';
+import providers from './routes/providers.js';
+import moduleList from './routes/list.js';
+import modules from './routes/modules.js';
+import moduleDownload from './routes/download.js';
+
+const app = express();
 
 app.use(helmet());
 
@@ -22,21 +28,11 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-import index from './routes/index.js';
-import serviceDiscovery from './routes/service-discovery.js';
 app.use('/', index);
 app.use('/', serviceDiscovery);
 
-import providers from './routes/providers.js';
-import providerDownload from './routes/download.js';
-import providerList from './routes/list.js';
 app.use('/v1/providers', providers);
-app.use('/v1/providers', providerDownload);
-app.use('/v1/providers', providerList);
 
-import moduleList from './routes/list.js';
-import modules from './routes/modules.js';
-import moduleDownload from './routes/download.js';
 app.use('/v1/modules', moduleList);
 app.use('/v1/modules', modules);
 app.use('/v1/modules', moduleDownload);

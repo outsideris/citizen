@@ -4,9 +4,9 @@ import { parse } from 'url';
 const connect = async (port) => {
   const url = await ngrok.connect({
     addr: port,
-    onLogEvent: data => {
-      console.log(data)
-    }
+    onLogEvent: (data) => {
+      console.log(data); // eslint-disable-line no-console
+    },
   });
   return parse(url);
 };

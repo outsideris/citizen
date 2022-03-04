@@ -313,7 +313,9 @@ const findProviderPackage = async ({
   return result;
 };
 
-await init();
+(async () => {
+  await init();
+})();
 
 export {
   init,
