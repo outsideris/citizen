@@ -1,4 +1,4 @@
-import got from 'got';
+import got from 'got'; // eslint-disable-line import/no-unresolved
 import { join } from 'path';
 import fs from 'fs';
 import { promisify } from 'util';

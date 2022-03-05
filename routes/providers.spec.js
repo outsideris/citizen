@@ -1,5 +1,5 @@
 import request from 'supertest';
-import got from 'got';
+import got from 'got'; // eslint-disable-line import/no-unresolved
 import { expect } from 'chai';
 import { promisify } from 'util';
 import rmrf from 'rimraf';
