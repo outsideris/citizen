@@ -10,7 +10,8 @@ import semver from 'semver';
 import { run, terminate } from './registry.js';
 import { moduleDb } from '../../stores/store.js';
 import helper from '../helper.js';
-import { citizen } from '../../package.json';
+
+const { citizen } = JSON.parse(fs.readFileSync('../../package.json'));
 
 const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);

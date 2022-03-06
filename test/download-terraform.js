@@ -6,7 +6,7 @@ import unzipper from 'unzipper';
 import semver from 'semver';
 import debug from 'debug';
 
-import { citizen } from '../package.json';
+const { citizen } = JSON.parse(fs.readFileSync('../package.json'));
 
 const chmod = promisify(fs.chmod);
 const mkdir = promisify(fs.mkdir);
