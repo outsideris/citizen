@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { findOneModule, getModuleLatestVersion, increaseModuleDownload } from '../stores/store.js';
-import { getModule } from '../lib/storage.js';
+import storage from '../lib/storage.js';
 
 const router = Router();
 
@@ -43,7 +43,7 @@ router.get('/tarball/:namespace/:name/:provider/:version/*.tar.gz', async (req, 
     return next();
   }
 
-  const file = await getModule(module.location);
+  const file = await storage.getModule(module.location);
   await increaseModuleDownload(options);
   return res.attachment('module.tar.gz').type('gz').send(file);
 });

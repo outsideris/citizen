@@ -3,7 +3,7 @@ import multiparty from 'multiparty';
 
 import logger from '../lib/logger.js';
 import { parseHcl } from '../lib/util.js';
-import { hasModule, saveModule as saveModuleOnStorage } from '../lib/storage.js';
+import storage from '../lib/storage.js';
 import { saveModule, getModuleLatestVersion, findOneModule } from '../stores/store.js';
 
 const router = Router();
@@ -57,7 +57,7 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
 
   form.on('close', async () => {
     try {
-      const exist = await hasModule(`${destPath}/${filename}`);
+      const exist = await storage.hasModule(`${destPath}/${filename}`);
       if (exist) {
         const error = new Error('Module exist');
         error.status = 409;
@@ -65,7 +65,7 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
         return next(error);
       }
 
-      const fileResult = await saveModuleOnStorage(`${destPath}/${filename}`, tarball);
+      const fileResult = await storage.saveModule(`${destPath}/${filename}`, tarball);
       const definition = await parseHcl(name, tarball);
       const metaResult = await saveModule({
         namespace,

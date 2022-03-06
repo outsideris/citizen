@@ -4,7 +4,7 @@ import multiparty from 'multiparty';
 import { v4 as uuid } from 'uuid';
 
 import logger from '../lib/logger.js';
-import { saveProvider as saveProviderStorage, getProvider } from '../lib/storage.js';
+import storage from '../lib/storage.js';
 import {
   saveProvider,
   findOneProvider,
@@ -133,7 +133,7 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
       // save files
       const promises = files.map(async (archive) => {
         const location = `${destPath}/${archive.filename}`;
-        await saveProviderStorage(location, archive.file);
+        await storage.saveProvider(location, archive.file);
       });
       await Promise.all(promises);
 
@@ -203,7 +203,7 @@ router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res,
     res.header('x-terraform-protocol-version', Math.min(...protocols));
     res.header('x-terraform-protocol-versions', provider.protocols.join(', '));
 
-    const file = await getProvider(`${options.namespace}/${options.type}/${options.version}/${platform.filename}`);
+    const file = await storage.getProvider(`${options.namespace}/${options.type}/${options.version}/${platform.filename}`);
     return res.attachment(platform.filename).send(file);
   } catch (e) {
     return next(e);
@@ -215,7 +215,7 @@ router.get('/:namespace/:type/:version/sha256sums', async (req, res, next) => {
     const options = { ...req.params };
 
     const sumsLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS`;
-    const shasumsContent = await getProvider(sumsLocation);
+    const shasumsContent = await storage.getProvider(sumsLocation);
     if (!shasumsContent) { return next(); }
 
     const provider = await findOneProvider(options);
@@ -235,7 +235,7 @@ router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) =
   try {
     const options = { ...req.params };
     const sigLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`;
-    const sig = await getProvider(sigLocation);
+    const sig = await storage.getProvider(sigLocation);
     if (!sig) { return next(); }
 
     const provider = await findOneProvider(options);

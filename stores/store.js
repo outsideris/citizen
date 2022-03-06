@@ -1,4 +1,3 @@
-/* eslint-disable global-require */
 import Debug from 'debug';
 
 const debug = Debug('citizen:server:store');
