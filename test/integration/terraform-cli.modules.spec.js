@@ -3,21 +3,25 @@ import fs from 'fs';
 import { promisify } from 'util';
 import { expect } from 'chai';
 import { execFile } from 'child_process';
-import { join } from 'path';
+import { dirname, join } from 'path';
 import rmrf from 'rimraf';
 import semver from 'semver';
+import { fileURLToPath } from 'url';
 
 import { run, terminate } from './registry.js';
 import { moduleDb } from '../../stores/store.js';
 import helper from '../helper.js';
 
-const { citizen } = JSON.parse(fs.readFileSync('../../package.json'));
+const { citizen } = JSON.parse(fs.readFileSync('./package.json'));
 
 const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
   release: semver.parse(version).minor,
