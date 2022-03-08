@@ -1,11 +1,10 @@
 import ngrok from 'ngrok';
-import { parse } from 'url';
 
 const connect = async (port) => {
   const url = await ngrok.connect({
     addr: port,
   });
-  return parse(url);
+  return new URL(url);
 };
 
 const disconnect = async () => {
