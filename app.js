@@ -3,12 +3,14 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const cors = require('cors');
 
 const app = express();
 
 const logger = require('./lib/logger');
 
 app.use(helmet());
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
