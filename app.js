@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const cors = require('cors');
 
 const logger = require('./lib/logger');
 const index = require('./routes/index');
@@ -15,6 +16,7 @@ const moduleDownload = require('./routes/download');
 const app = express();
 
 app.use(helmet());
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
