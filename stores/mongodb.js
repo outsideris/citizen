@@ -27,7 +27,7 @@ const saveModule = (data) => {
 const findModules = (options) => Module.find(options);
 
 const findAllModules = (options, meta, offset, limit) => {
-  group = {
+  grouping = {
     "$group": {
       _id: {
         namespace: "$namespace",
@@ -46,17 +46,16 @@ const findAllModules = (options, meta, offset, limit) => {
       verified: { "$first": "$verified"}
     }
   }
-  if (options.namespace) {
-    match = {
-      "$match": {
-        namespace: options.namespace
-      }
+  params = [grouping, {$sort: { published_at: -1}}, {$skip: offset}, {$limit: limit}]
+  if (Object.keys(options).length != 0) {
+    match = {"$match": {}}
+    for (const property in options) {
+      match.$match[property] = options[property]
     }
+    params.push(match)
   }
-  debug('search store with %o', options);
-  debug('group documents with %o', group);
-  debug('match documents with %o', match);
-  return Module.aggregate([group, match, {$sort: { published_at: -1}}, {$skip: offset}, {$limit: limit}])
+  debug('search store with %o', params);
+  return Module.aggregate(params)
     .then((docs) => {
       debug('search result from store: %o', docs);
       return {
