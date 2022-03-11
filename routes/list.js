@@ -20,7 +20,7 @@ router.get('/search', async (req, res) => {
     ...req.query,
     selector: {
       name: {
-        $regex: new RegExp(req.query.q),
+        $regex: req.query.q,
       },
     },
     q: null,
