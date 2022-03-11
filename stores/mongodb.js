@@ -28,15 +28,37 @@ const findModules = (options) => Module.find(options);
 
 const findAllModules = (options, meta, offset, limit) => {
   debug('search store with %o', options);
-
-  return Module.find(options, null, { sort: '_id', skip: offset, limit })
+  group = {
+    "$group": {
+      _id: {
+        namespace: "$namespace",
+        name: "$name"
+      },
+      id: { "$first": "$id" },
+      owner: { "$first": "$owner"},
+      namespace : { "$first": "$namespace"},
+      name: { "$first": "$name"},
+      version: { "$first": "$version"},
+      provider: { "$first": "$provider"},
+      description: { "$first": "$description"},
+      source: { "$first": "$source"},
+      published_at: { "$first": "$published_at"},
+      downloads: { "$first": "$downloads"},
+      verified: { "$first": "$verified"}
+    }
+  }
+  if (options.namespace) {
+    match = {$match: {namespace: options.namespace}}
+  }
+  console.log(group)
+  return Module.aggregate([group, match, {$sort: { published_at: -1}}, {$skip: offset}, {$limit: limit}])
     .then((docs) => {
       debug('search result from store: %o', docs);
       return {
         meta,
         modules: docs,
       };
-    });
+  });
 };
 
 const getModuleVersions = (options) => {
