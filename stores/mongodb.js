@@ -46,13 +46,13 @@ const findAllModules = (options, meta, offset, limit) => {
       verified: { "$first": "$verified"}
     }
   }
-  params = [grouping, {$sort: { published_at: -1}}, {$skip: offset}, {$limit: limit}]
+  params = [grouping, {$sort: { published_at: -1}}, {$limit: limit}, {$skip: offset}]
   if (Object.keys(options).length != 0) {
     match = {"$match": {}}
     for (const property in options) {
       match.$match[property] = options[property]
     }
-    params.push(match)
+    params.unshift(match)
   }
   debug('search store with %o', params);
   return Module.aggregate(params)
