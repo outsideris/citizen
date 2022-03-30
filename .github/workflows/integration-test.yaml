@@ -1,6 +1,6 @@
 name: Integration Tests
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   unit-test:
@@ -52,3 +52,5 @@ jobs:
             ${{ runner.os }}-integration-terraform-210321-
       - run: npm ci
       - run: npm run test:integration -- --forbid-only
+        env:
+          NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
