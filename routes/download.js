@@ -16,7 +16,7 @@ router.get('/:namespace/:name/:provider/:version/download', async (req, res, nex
   }
 
   res.set('X-Terraform-Get', `/v1/modules/tarball/${module.location}`);
-  return res.status(204).send();
+  return res.sendStatus(204);
 });
 
 // https://www.terraform.io/docs/registry/api.html#download-the-latest-version-of-a-module
