@@ -13,6 +13,8 @@ const Module = mongoose.model('Module', {
   provider: String,
   version: String,
   owner: { type: String, default: '' },
+  source: { type: String, default: '' },
+  description: { type: String, default: '' },
   location: String,
   definition: mongoose.Schema.Types.Mixed,
   downloads: { type: Number, default: 0 },

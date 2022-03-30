@@ -3,6 +3,8 @@ module.exports = (data) => ({
     {
       id: data.id,
       owner: data.owner,
+      source: data.source,
+      description: data.description,
       namespace: data.namespace,
       name: data.name,
       version: data.version,
