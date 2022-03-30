@@ -24,12 +24,16 @@ const saveModule = async (data) => {
     provider,
     version,
     owner,
+    source,
+    description,
     location,
     definition = {},
   } = data;
 
   const module = {
     owner: owner || '',
+    source: source || '',
+    description: description || '',
     namespace,
     name,
     provider,
