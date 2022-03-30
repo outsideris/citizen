@@ -12,16 +12,15 @@ import { run, terminate } from './registry.js';
 import { providerDb } from '../../stores/store.js';
 import helper from '../helper.js';
 
-const { citizen } = JSON.parse(fs.readFileSync('./package.json'));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const { citizen } = JSON.parse(fs.readFileSync(join(__dirname, '..', '..', 'package.json')));
 
 const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const TERRAFORM_VERSIONS = citizen.terraformVersions
   .map((version) => ({
