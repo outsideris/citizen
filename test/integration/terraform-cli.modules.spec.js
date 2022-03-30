@@ -96,7 +96,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
 
     describe('with private the registry', () => {
       before((done) => {
-        const client = join(__dirname, '../', '../', 'bin', 'citizen');
+        const client = join(__dirname, '../', '../', 'bin', 'citizen.js');
         const moduleDir = join(__dirname, 'fixture', 'alb');
 
         const definition = `module "vpc" {

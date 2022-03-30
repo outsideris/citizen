@@ -109,7 +109,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
       let cleanupProvider;
 
       before(async () => {
-        const client = join(__dirname, '../', '../', 'bin', 'citizen');
+        const client = join(__dirname, '../', '../', 'bin', 'citizen.js');
 
         const result = await helper.generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64', 'darwin_amd64']);
         [tempDir, cleanupProvider] = result;

@@ -3,7 +3,7 @@
   "version": "0.4.0",
   "private": true,
   "bin": {
-    "citizen": "./bin/citizen"
+    "citizen": "./bin/citizen.js"
   },
   "type": "module",
   "scripts": {
