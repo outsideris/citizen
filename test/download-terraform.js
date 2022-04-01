@@ -66,7 +66,7 @@ const download = async (terraform) => {
   });
 };
 
-const mochaHooks = {
+export const mochaHooks = {
   beforeAll: async () => {
     try {
       await mkdir(TARGET_DIR);
@@ -77,5 +77,3 @@ const mochaHooks = {
     await Promise.all(TERRAFORM_VERSIONS.map(download));
   },
 };
-
-export default mochaHooks;
