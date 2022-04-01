@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url';
 import { run, terminate } from './registry.js';
 import { providerDb } from '../../stores/store.js';
 import helper from '../helper.js';
+import { TERRAFORM_VERSIONS } from '../versions.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,15 +23,11 @@ const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
 
-const TERRAFORM_VERSIONS = citizen.terraformVersions
-  .map((version) => ({
-    release: semver.parse(version).minor,
-    version,
-  }))
+const VERSIONS = TERRAFORM_VERSIONS
   // third-party provider supported in terraform 0.13+
-  .filter((terraform) => terraform.release > 12);
+  .filter((terraform) => terraform.release > 0.12);
 
-TERRAFORM_VERSIONS.forEach((terraform) => {
+VERSIONS.forEach((terraform) => {
   describe(`terraform CLI v${terraform.version} for provider`, () => {
     let url;
     let server;

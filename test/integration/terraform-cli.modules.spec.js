@@ -5,27 +5,21 @@ import { expect } from 'chai';
 import { execFile } from 'child_process';
 import { dirname, join } from 'path';
 import rmrf from 'rimraf';
-import semver from 'semver';
 import { fileURLToPath } from 'url';
 
 import { run, terminate } from './registry.js';
 import { moduleDb } from '../../stores/store.js';
 import helper from '../helper.js';
+import { TERRAFORM_VERSIONS } from '../versions.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const { citizen } = JSON.parse(fs.readFileSync(join(__dirname, '..', '..', 'package.json')));
 
 const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
-
-const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
-  release: semver.parse(version).minor,
-  version,
-}));
 
 TERRAFORM_VERSIONS.forEach((terraform) => {
   describe(`terraform CLI v${terraform.version} for module`, () => {
