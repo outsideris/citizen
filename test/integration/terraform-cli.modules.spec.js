@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 import { run, terminate } from './registry.js';
 import { moduleDb } from '../../stores/store.js';
 import helper from '../helper.js';
-import { TERRAFORM_VERSIONS } from '../versions.js';
+import TERRAFORM_VERSIONS from '../versions.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

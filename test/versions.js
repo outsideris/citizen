@@ -7,7 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const { citizen } = JSON.parse(fs.readFileSync(join(__dirname, '..', 'package.json')));
 
-export const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
+const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
   release: `${semver.parse(version).major}.${semver.parse(version).minor}`,
   version,
 }));
+
+export default TERRAFORM_VERSIONS;

@@ -5,17 +5,15 @@ import { expect } from 'chai';
 import { execFile } from 'child_process';
 import { dirname, join } from 'path';
 import rmrf from 'rimraf';
-import semver from 'semver';
 import { fileURLToPath } from 'url';
 
 import { run, terminate } from './registry.js';
 import { providerDb } from '../../stores/store.js';
 import helper from '../helper.js';
-import { TERRAFORM_VERSIONS } from '../versions.js';
+import TERRAFORM_VERSIONS from '../versions.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const { citizen } = JSON.parse(fs.readFileSync(join(__dirname, '..', '..', 'package.json')));
 
 const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
