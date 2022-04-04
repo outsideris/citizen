@@ -5,7 +5,7 @@ const debug = require('debug')('citizen:test:integration');
 const { connect, disconnect } = require('./ngrok');
 const app = require('../../app');
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 
 const run = async (version) => {
   let url;
@@ -31,7 +31,7 @@ const run = async (version) => {
         exit = false;
         throw new Error('Could not connect to ngrok');
       }
-      await sleep(20);
+      await sleep(20); // eslint-disable-line
     }
   }
   app.set('port', port);
