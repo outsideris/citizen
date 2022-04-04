@@ -24,7 +24,7 @@ const run = async (version) => {
         await disconnect(version); // eslint-disable-line
       }
     } catch (e) {
-      if (retried > 30) {
+      if (retried > 50) {
         exit = false;
         throw new Error('Could not connect to ngrok');
       }
