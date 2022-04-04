@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
-import { expect } from 'chai';
+const { expect } = require('chai');
 
-import {
+const {
   init,
   getStoreType,
   moduleDb,
@@ -17,8 +17,8 @@ import {
   findAllProviders,
   getProviderVersions,
   findProviderPackage,
-} from './store.js';
-import helper from '../test/helper.js';
+} = require('./store');
+const helper = require('../test/helper');
 
 const storeTypes = ['mongodb', 'nedb'];
 

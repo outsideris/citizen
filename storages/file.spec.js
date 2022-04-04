@@ -1,12 +1,11 @@
-import path from 'path';
-import fs from 'fs';
-import { promisify } from 'util';
-import { expect } from 'chai';
-import mkdirp from 'mkdirp';
-import rmrf from 'rimraf';
-import { fileURLToPath } from 'url';
+const path = require('path');
+const fs = require('fs');
+const { promisify } = require('util');
+const { expect } = require('chai');
+const mkdirp = require('mkdirp');
+const rmrf = require('rimraf');
 
-import file from './file.js';
+const file = require('./file');
 
 const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
@@ -14,8 +13,6 @@ const readFile = promisify(fs.readFile);
 
 describe('file storage\'s', async () => {
   let modulePath;
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
   const tarballPath = path.join(__dirname, '..', 'test', 'fixture', 'module.tar.gz');
   let moduleBuf;
 

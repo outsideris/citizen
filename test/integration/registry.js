@@ -1,11 +1,9 @@
-import http from 'http';
-import getPort from 'get-port';
-import Debug from 'debug';
+const http = require('http');
+const getPort = require('get-port');
+const debug = require('debug')('citizen:test:integration');
 
-import { connect, disconnect } from './ngrok.js';
-import app from '../../app.js';
-
-const debug = Debug('citizen:test:integration');
+const { connect, disconnect } = require('./ngrok');
+const app = require('../../app');
 
 const run = async () => {
   let url;
@@ -72,7 +70,7 @@ const terminate = (server) => new Promise((resolve, reject) => {
     });
 });
 
-export {
+module.exports = {
   run,
   terminate,
 };

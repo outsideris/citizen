@@ -1,25 +1,22 @@
-import path from 'path';
-import express from 'express';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import helmet from 'helmet';
-import { fileURLToPath } from 'url';
+const path = require('path');
+const express = require('express');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const helmet = require('helmet');
 
-import logger from './lib/logger.js';
-import index from './routes/index.js';
-import serviceDiscovery from './routes/service-discovery.js';
-import providers from './routes/providers.js';
-import moduleList from './routes/list.js';
-import modules from './routes/modules.js';
-import moduleDownload from './routes/download.js';
+const logger = require('./lib/logger');
+const index = require('./routes/index');
+const serviceDiscovery = require('./routes/service-discovery');
+const providers = require('./routes/providers');
+const moduleList = require('./routes/list');
+const modules = require('./routes/modules');
+const moduleDownload = require('./routes/download');
 
 const app = express();
 
 app.use(helmet());
 
 // view engine setup
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jten');
 
@@ -76,4 +73,4 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   });
 });
 
-export default app;
+module.exports = app;

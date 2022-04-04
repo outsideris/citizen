@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import _ from 'lodash';
+const { Router } = require('express');
+const _ = require('lodash');
 
-import { findAllModules, getModuleVersions } from '../stores/store.js';
-import { makeUrl } from '../lib/util.js';
+const { findAllModules, getModuleVersions } = require('../stores/store');
+const { makeUrl } = require('../lib/util');
 
 const router = Router();
 
@@ -112,4 +112,4 @@ router.get('/:namespace/:name', async (req, res) => {
   });
 });
 
-export default router;
+module.exports = router;

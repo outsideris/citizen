@@ -1,9 +1,9 @@
-import request from 'supertest';
-import { expect } from 'chai';
+const request = require('supertest');
+const { expect } = require('chai');
 
-import app from '../app.js';
-import { moduleDb, saveModule } from '../stores/store.js';
-import helper from '../test/helper.js';
+const app = require('../app');
+const { moduleDb, saveModule } = require('../stores/store');
+const helper = require('../test/helper');
 
 describe('GET /v1/modules', () => {
   before(async () => {

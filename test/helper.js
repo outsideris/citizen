@@ -1,14 +1,9 @@
-import nock from 'nock';
-import fs from 'fs';
-import tmp from 'tmp';
-import AdmZip from 'adm-zip';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const nock = require('nock');
+const fs = require('fs');
+const tmp = require('tmp');
+const AdmZip = require('adm-zip');
 
-import { genShaSums, sign } from '../lib/provider/provider.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const { genShaSums, sign } = require('../lib/provider/provider');
 
 const helper = {
   enableMock: ({ modulePath }) => {
@@ -123,4 +118,4 @@ const helper = {
   }),
 };
 
-export default helper;
+module.exports = helper;

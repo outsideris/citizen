@@ -1,15 +1,12 @@
-import got from 'got'; // eslint-disable-line import/no-unresolved
-import { dirname, join } from 'path';
-import fs from 'fs';
-import { promisify } from 'util';
-import unzipper from 'unzipper';
-import debug from 'debug';
-import { fileURLToPath } from 'url';
+const got = require('got');
+const { join } = require('path');
+const fs = require('fs');
+const { promisify } = require('util');
+const unzipper = require('unzipper');
+const debug = require('debug');
 
-import TERRAFORM_VERSIONS from './versions.js';
+const TERRAFORM_VERSIONS = require('./versions');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const chmod = promisify(fs.chmod);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
@@ -59,7 +56,7 @@ const download = async (terraform) => {
   });
 };
 
-export const mochaHooks = { // eslint-disable-line import/prefer-default-export
+exports.mochaHooks = {
   beforeAll: async () => {
     try {
       await mkdir(TARGET_DIR);

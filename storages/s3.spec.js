@@ -1,20 +1,17 @@
-import path from 'path';
-import fs from 'fs';
-import { expect } from 'chai';
-import { promisify } from 'util';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { fileURLToPath } from 'url';
+const path = require('path');
+const fs = require('fs');
+const { expect } = require('chai');
+const { promisify } = require('util');
+const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 
-import helper from '../test/helper.js';
-import s3 from './s3.js';
+const helper = require('../test/helper');
+const s3 = require('./s3');
 
 const s3client = new S3Client({});
 const readFile = promisify(fs.readFile);
 
 describe('s3\'s', async () => {
   const modulePath = `citizen/${(new Date()).getTime()}/module.tar.gz`;
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
   const tarballPath = path.join(__dirname, '../test', 'fixture/module.tar.gz');
   let moduleBuf;
 

@@ -1,19 +1,15 @@
-import https from 'https';
-import fs from 'fs';
-import { promisify } from 'util';
-import { expect } from 'chai';
-import { execFile } from 'child_process';
-import { dirname, join } from 'path';
-import rmrf from 'rimraf';
-import { fileURLToPath } from 'url';
+const https = require('https');
+const fs = require('fs');
+const { promisify } = require('util');
+const { expect } = require('chai');
+const { execFile } = require('child_process');
+const { join } = require('path');
+const rmrf = require('rimraf');
 
-import { run, terminate } from './registry.js';
-import { moduleDb } from '../../stores/store.js';
-import helper from '../helper.js';
-import TERRAFORM_VERSIONS from '../versions.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const { run, terminate } = require('./registry');
+const { moduleDb } = require('../../stores/store');
+const helper = require('../helper');
+const TERRAFORM_VERSIONS = require('../versions');
 
 const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
@@ -89,7 +85,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
 
     describe('with private the registry', () => {
       before((done) => {
-        const client = join(__dirname, '../', '../', 'bin', 'citizen.js');
+        const client = join(__dirname, '../', '../', 'bin', 'citizen');
         const moduleDir = join(__dirname, 'fixture', 'alb');
 
         const definition = `module "vpc" {

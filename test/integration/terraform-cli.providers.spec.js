@@ -1,19 +1,15 @@
-import https from 'https';
-import fs from 'fs';
-import { promisify } from 'util';
-import { expect } from 'chai';
-import { execFile } from 'child_process';
-import { dirname, join } from 'path';
-import rmrf from 'rimraf';
-import { fileURLToPath } from 'url';
+const https = require('https');
+const fs = require('fs');
+const { promisify } = require('util');
+const { expect } = require('chai');
+const { execFile } = require('child_process');
+const { join } = require('path');
+const rmrf = require('rimraf');
 
-import { run, terminate } from './registry.js';
-import { providerDb } from '../../stores/store.js';
-import helper from '../helper.js';
-import TERRAFORM_VERSIONS from '../versions.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const { run, terminate } = require('./registry');
+const { providerDb } = require('../../stores/store');
+const helper = require('../helper');
+const TERRAFORM_VERSIONS = require('../versions');
 
 const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
@@ -103,7 +99,7 @@ VERSIONS.forEach((terraform) => {
       let cleanupProvider;
 
       before(async () => {
-        const client = join(__dirname, '../', '../', 'bin', 'citizen.js');
+        const client = join(__dirname, '../', '../', 'bin', 'citizen');
 
         const result = await helper.generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64', 'darwin_amd64']);
         [tempDir, cleanupProvider] = result;

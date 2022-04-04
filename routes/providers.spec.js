@@ -1,13 +1,13 @@
-import request from 'supertest';
-import got from 'got'; // eslint-disable-line import/no-unresolved
-import { expect } from 'chai';
-import { promisify } from 'util';
-import rmrf from 'rimraf';
-import unzipper from 'unzipper';
+const request = require('supertest');
+const got = require('got');
+const { expect } = require('chai');
+const { promisify } = require('util');
+const rmrf = require('rimraf');
+const unzipper = require('unzipper');
 
-import app from '../app.js';
-import helper from '../test/helper.js';
-import { providerDb, saveProvider } from '../stores/store.js';
+const app = require('../app');
+const helper = require('../test/helper');
+const { providerDb, saveProvider } = require('../stores/store');
 
 const rimraf = promisify(rmrf);
 

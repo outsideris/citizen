@@ -1,10 +1,9 @@
-import fs from 'fs';
-import { join, parse } from 'path';
-import { promisify } from 'util';
-import Debug from 'debug';
-import mkdirp from 'mkdirp';
+const fs = require('fs');
+const { join, parse } = require('path');
+const { promisify } = require('util');
+const debug = require('debug')('citizen:server');
+const mkdirp = require('mkdirp');
 
-const debug = Debug('citizen:server');
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 const access = promisify(fs.access);
@@ -82,4 +81,4 @@ const file = {
   },
 };
 
-export default file;
+module.exports = file;

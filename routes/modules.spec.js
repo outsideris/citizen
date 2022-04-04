@@ -1,15 +1,14 @@
-import request from 'supertest';
-import { expect } from 'chai';
-import { promisify } from 'util';
-import rmrf from 'rimraf';
-import fs from 'fs';
-import path from 'path';
-import mkdirp from 'mkdirp';
-import { fileURLToPath } from 'url';
+const request = require('supertest');
+const { expect } = require('chai');
+const { promisify } = require('util');
+const rmrf = require('rimraf');
+const fs = require('fs');
+const path = require('path');
+const mkdirp = require('mkdirp');
 
-import app from '../app.js';
-import helper from '../test/helper.js';
-import { moduleDb, saveModule } from '../stores/store.js';
+const app = require('../app');
+const helper = require('../test/helper');
+const { moduleDb, saveModule } = require('../stores/store');
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
@@ -18,8 +17,6 @@ const rimraf = promisify(rmrf);
 describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   let moduleBuf;
   let modulePath;
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
   const tarballPath = path.join(__dirname, '..', 'test', 'fixture', 'module.tar.gz');
 
   beforeEach(async () => {

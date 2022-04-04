@@ -1,7 +1,6 @@
-import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import Debug from 'debug';
+const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
+const debug = require('debug')('citizen:server');
 
-const debug = Debug('citizen:server');
 const s3client = new S3Client({});
 
 const S3_BUCKET = process.env.CITIZEN_AWS_S3_BUCKET;
@@ -131,4 +130,4 @@ const s3 = {
   },
 };
 
-export default s3;
+module.exports = s3;

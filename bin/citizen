@@ -1,4 +1,2 @@
 #!/usr/bin/env node
-import run from '../lib/citizen.js';
-
-run();
+require('../lib/citizen');

@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import multiparty from 'multiparty';
+const { Router } = require('express');
+const multiparty = require('multiparty');
 
-import logger from '../lib/logger.js';
-import { parseHcl } from '../lib/util.js';
-import storage from '../lib/storage.js';
-import { saveModule, getModuleLatestVersion, findOneModule } from '../stores/store.js';
+const logger = require('../lib/logger');
+const { parseHcl } = require('../lib/util');
+const storage = require('../lib/storage');
+const { saveModule, getModuleLatestVersion, findOneModule } = require('../stores/store');
 
 const router = Router();
 
@@ -125,4 +125,4 @@ router.get('/:namespace/:name/:provider', async (req, res, next) => {
   return res.render('modules/latest-version', module);
 });
 
-export default router;
+module.exports = router;

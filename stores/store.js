@@ -1,15 +1,13 @@
-import Debug from 'debug';
-
-const debug = Debug('citizen:server:store');
+const debug = require('debug')('citizen:server:store');
 
 let store;
 
-const init = async (dbType) => {
+const init = (dbType) => {
   const t = dbType || process.env.CITIZEN_DATABASE;
   if (t === 'mongodb') {
-    store = await import('./mongodb.js');
+    store = require('./mongodb'); // eslint-disable-line global-require
   } else {
-    store = await import('./nedb.js');
+    store = require('./nedb'); // eslint-disable-line global-require
   }
 };
 
@@ -316,7 +314,7 @@ const findProviderPackage = async ({
   await init();
 })();
 
-export {
+module.exports = {
   init,
   getStoreType,
   moduleDb,

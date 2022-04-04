@@ -3,9 +3,9 @@
   "version": "0.4.0",
   "private": true,
   "bin": {
-    "citizen": "./bin/citizen.js"
+    "citizen": "bin/citizen"
   },
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "node ./bin/citizen server",
     "dev": "nodemon ./bin/citizen server",

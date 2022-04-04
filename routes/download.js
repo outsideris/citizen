@@ -1,7 +1,7 @@
-import { Router } from 'express';
+const { Router } = require('express');
 
-import { findOneModule, getModuleLatestVersion, increaseModuleDownload } from '../stores/store.js';
-import storage from '../lib/storage.js';
+const { findOneModule, getModuleLatestVersion, increaseModuleDownload } = require('../stores/store');
+const storage = require('../lib/storage');
 
 const router = Router();
 
@@ -48,4 +48,4 @@ router.get('/tarball/:namespace/:name/:provider/:version/*.tar.gz', async (req, 
   return res.attachment('module.tar.gz').type('gz').send(file);
 });
 
-export default router;
+module.exports = router;

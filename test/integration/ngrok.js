@@ -1,7 +1,5 @@
-import ngrok from 'ngrok';
-import Debug from 'debug';
-
-const debug = Debug('citizen:test:integration');
+const ngrok = require('ngrok');
+const debug = require('debug')('citizen:test:integration');
 
 const connect = async (port) => {
   debug('try to connect ngrok', port);
@@ -20,7 +18,7 @@ const disconnect = async () => {
   await ngrok.kill();
 };
 
-export {
+module.exports = {
   connect,
   disconnect,
 };

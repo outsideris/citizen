@@ -1,4 +1,4 @@
-import { Router } from 'express';
+const { Router } = require('express');
 
 const router = Router();
 
@@ -11,4 +11,4 @@ router.get('/.well-known/terraform.json', (req, res) => {
   });
 });
 
-export default router;
+module.exports = router;
