@@ -9,16 +9,24 @@ const run = async (version) => {
   let url;
   const port = await getPort();
   let exit = true;
+  let retried = 0;
   while (exit) {
-    url = await connect(port, version); // eslint-disable-line
-    // terraform handle URL which started with a numeric character
-    // as local path, not registry server
-    // see: https://github.com/hashicorp/terraform/pull/18039
-    const startedWithNumeric = /^[0-9]/.test(url.host);
-    if (!startedWithNumeric) {
-      exit = false;
-    } else {
-      await disconnect(version); // eslint-disable-line
+    try {
+      url = await connect(port, version); // eslint-disable-line
+      // terraform handle URL which started with a numeric character
+      // as local path, not registry server
+      // see: https://github.com/hashicorp/terraform/pull/18039
+      const startedWithNumeric = /^[0-9]/.test(url.host);
+      if (!startedWithNumeric) {
+        exit = false;
+      } else {
+        await disconnect(version); // eslint-disable-line
+      }
+    } catch (e) {
+      retried++;
+      if (retried > 15) {
+        exit = false;
+      }
     }
   }
   app.set('port', port);

@@ -8,7 +8,7 @@ const connect = async (port, version) => {
     addr: port,
     authtoken: process.env.NGROK_AUTHTOKEN,
   });
-  debug(`v${version} ngrok connected`, url.host);
+  debug(`v${version} ngrok connected`, new URL(url).host);
   return new URL(url);
 };
 
