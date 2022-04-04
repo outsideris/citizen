@@ -24,8 +24,9 @@ const run = async (version) => {
         await disconnect(version); // eslint-disable-line
       }
     } catch (e) {
-      if (retried > 15) {
+      if (retried > 30) {
         exit = false;
+        throw new Error('Could not connect to ngrok');
       }
     }
   }
@@ -66,8 +67,8 @@ const run = async (version) => {
   };
 };
 
-const terminate = (server) => new Promise((resolve, reject) => {
-  disconnect()
+const terminate = (server, version) => new Promise((resolve, reject) => {
+  disconnect(version)
     .then(() => {
       server.close((err) => {
         if (err) {

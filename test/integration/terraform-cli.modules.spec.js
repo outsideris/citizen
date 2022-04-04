@@ -33,7 +33,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
     });
 
     after(async () => {
-      await terminate(server);
+      await terminate(server, terraform.version);
       await helper.deleteDbAll(moduleDb());
     });
 
