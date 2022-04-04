@@ -5,6 +5,8 @@ const debug = require('debug')('citizen:test:integration');
 const { connect, disconnect } = require('./ngrok');
 const app = require('../../app');
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const run = async (version) => {
   let url;
   const port = await getPort();
@@ -25,9 +27,11 @@ const run = async (version) => {
       }
     } catch (e) {
       if (retried > 50) {
+        debug('Retrying connect to ngrok is failed');
         exit = false;
         throw new Error('Could not connect to ngrok');
       }
+      await sleep(20);
     }
   }
   app.set('port', port);
