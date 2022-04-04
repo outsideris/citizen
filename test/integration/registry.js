@@ -12,6 +12,7 @@ const run = async (version) => {
   let retried = 0;
   while (exit) {
     try {
+      retried += 1;
       url = await connect(port, version); // eslint-disable-line
       // terraform handle URL which started with a numeric character
       // as local path, not registry server
@@ -23,7 +24,6 @@ const run = async (version) => {
         await disconnect(version); // eslint-disable-line
       }
     } catch (e) {
-      retried++;
       if (retried > 15) {
         exit = false;
       }
