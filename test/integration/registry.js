@@ -5,12 +5,12 @@ const debug = require('debug')('citizen:test:integration');
 const { connect, disconnect } = require('./ngrok');
 const app = require('../../app');
 
-const run = async () => {
+const run = async (version) => {
   let url;
   const port = await getPort();
   let exit = true;
   while (exit) {
-    url = await connect(port); // eslint-disable-line
+    url = await connect(port, version); // eslint-disable-line
     // terraform handle URL which started with a numeric character
     // as local path, not registry server
     // see: https://github.com/hashicorp/terraform/pull/18039
@@ -18,7 +18,7 @@ const run = async () => {
     if (!startedWithNumeric) {
       exit = false;
     } else {
-      await disconnect(); // eslint-disable-line
+      await disconnect(version); // eslint-disable-line
     }
   }
   app.set('port', port);

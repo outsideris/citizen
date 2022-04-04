@@ -26,7 +26,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
     const terraformCli = join(__dirname, '../', 'terraform-binaries', `terraform${terraform.release}`);
 
     before(async () => {
-      const serverInfo = await run();
+      const serverInfo = await run(terraform.version);
       server = serverInfo.server;
       url = serverInfo.url;
       process.env.CITIZEN_ADDR = `http://127.0.0.1:${server.address().port}`;
