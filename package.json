@@ -15,7 +15,7 @@
     "test": "npm run test:unit && npm run test:integration",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "build": "pkg . --out-path dist --targets node16-linux-x64,node16-macos-x64,node16-win-x64"
+    "build": "pkg . --out-path dist --targets node16-linux-x64,node16-macos-x64,node16-macos-arm64,node16-win-x64"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.30.0",
