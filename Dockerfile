@@ -8,12 +8,12 @@ ADD . /citizen
 
 RUN npm install
 
-RUN npm run build
+RUN npm run build:linux
 
 # final stage
 FROM bitnami/minideb
 
-COPY --from=build /citizen/dist/citizen-linux /usr/local/bin/citizen
+COPY --from=build /citizen/dist/citizen-linux-x64 /usr/local/bin/citizen
 
 WORKDIR /citizen
 
