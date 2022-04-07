@@ -18,7 +18,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          draft: false
+          draft: true
           prerelease: false
   image-build-push:
     runs-on: ubuntu-latest
