@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+permissions:
+  contents: write
 
 jobs:
   release:
@@ -11,15 +13,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Use Node.js 16
+        uses: actions/setup-node@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
+          node-version: 16
+      - run: npm ci
+      - name: Build distribution
+        run: npm run build
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+#          generate_release_notes: true
+          files: citizen-*
   image-build-push:
     runs-on: ubuntu-latest
     steps:
