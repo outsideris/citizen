@@ -1,8 +1,6 @@
 # build stage
 FROM node:16 as build
 
-LABEL maintainer="outsideris@gmail.com"
-
 WORKDIR /citizen
 ADD . /citizen
 
@@ -12,6 +10,9 @@ RUN npm run build:linux
 
 # final stage
 FROM bitnami/minideb
+
+LABEL maintainer="outsideris@gmail.com"
+LABEL org.opencontainers.image.source = "https://github.com/outsideris/citizen"
 
 COPY --from=build /citizen/dist/citizen-linux-x64 /usr/local/bin/citizen
 
