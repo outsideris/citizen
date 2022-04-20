@@ -16,7 +16,7 @@ jobs:
       matrix:
         node:
           - 16
-          - 17
+          - 18
 
     env:
       CITIZEN_STORAGE: file
