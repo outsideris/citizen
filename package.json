@@ -54,7 +54,7 @@
     "eslint": "^8.10.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-mocha": "^10.0.2",
+    "eslint-plugin-mocha": "^10.0.3",
     "get-port": "^5.1.1",
     "mocha": "^10.0.0",
     "ngrok": "^4.3.1",
