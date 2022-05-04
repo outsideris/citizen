@@ -1,7 +1,7 @@
 const { Router } = require('express');
 
 const { findOneModule, getModuleLatestVersion, increaseModuleDownload } = require('../stores/store');
-const { getModule } = require('../lib/storage');
+const storage = require('../lib/storage');
 
 const router = Router();
 
@@ -16,7 +16,7 @@ router.get('/:namespace/:name/:provider/:version/download', async (req, res, nex
   }
 
   res.set('X-Terraform-Get', `/v1/modules/tarball/${module.location}`);
-  return res.status(204).send();
+  return res.sendStatus(204);
 });
 
 // https://www.terraform.io/docs/registry/api.html#download-the-latest-version-of-a-module
@@ -43,7 +43,7 @@ router.get('/tarball/:namespace/:name/:provider/:version/*.tar.gz', async (req, 
     return next();
   }
 
-  const file = await getModule(module.location);
+  const file = await storage.getModule(module.location);
   await increaseModuleDownload(options);
   return res.attachment('module.tar.gz').type('gz').send(file);
 });

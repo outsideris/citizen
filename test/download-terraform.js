@@ -3,20 +3,13 @@ const { join } = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
 const unzipper = require('unzipper');
-const semver = require('semver');
 const debug = require('debug');
 
-const { citizen } = require('../package.json');
+const TERRAFORM_VERSIONS = require('./versions');
 
 const chmod = promisify(fs.chmod);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
-
-const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
-  release: semver.parse(version).minor,
-  version,
-}));
-
 const PLATFORM = process.platform;
 const TARGET_DIR = join(__dirname, 'terraform-binaries');
 
@@ -36,7 +29,7 @@ const download = async (terraform) => {
   return new Promise((resolve, reject) => {
     if (notExist) {
       log('Start to download terraform');
-      return got.stream(DOWNLOAD_URL)
+      got.stream(DOWNLOAD_URL)
         .pipe(unzipper.Parse())
         .on('entry', (entry) => {
           log('download completed');
@@ -55,10 +48,11 @@ const download = async (terraform) => {
             reject(new Error(`Wrong terraform file for ${terraform.version}`));
           }
         });
+      return;
     }
 
     log('skip to download terraform');
-    return resolve(terraform.release);
+    resolve(terraform.release);
   });
 };
 
