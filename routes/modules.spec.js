@@ -95,7 +95,7 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
 describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
   before(async () => {
     await saveModule({
-      namespace: 'router', name: 'specific', provider: 'aws', version: '1.1.2', owner: '',
+      namespace: 'router', name: 'specific', provider: 'aws', version: '1.1.2', owner: '', source: '', description: '',
     });
   });
 
@@ -121,10 +121,10 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
 describe('GET /v1/modules/:namespace/:name/:provider', () => {
   before(async () => {
     await saveModule({
-      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.1', owner: '', definition: { root: { name: 'latest' }, submodules: [{ name: 'example' }] },
+      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.1', owner: '', source: '', description: '', definition: { root: { name: 'latest' }, submodules: [{ name: 'example' }] },
     });
     await saveModule({
-      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.2', owner: '', definition: { root: { name: 'latest' }, submodules: [{ name: 'example' }] },
+      namespace: 'router', name: 'latest', provider: 'aws', version: '1.1.2', owner: '', source: '', description: '', definition: { root: { name: 'latest' }, submodules: [{ name: 'example' }] },
     });
   });
 

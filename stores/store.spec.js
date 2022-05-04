@@ -49,6 +49,8 @@ storeTypes.forEach((storeType) => {
             provider: 'store-aws',
             version: '0.1.0',
             owner: 'outsideris',
+            source: '',
+            description: '',
           });
 
           expect(result._id).to.exist; // eslint-disable-line no-underscore-dangle
@@ -61,16 +63,16 @@ storeTypes.forEach((storeType) => {
       describe('findAllModules()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'store-GCP', name: 'store-lb-http', provider: 'store-google', version: '1.0.4', owner: '',
+            namespace: 'store-GCP', name: 'store-lb-http', provider: 'store-google', version: '1.0.4', owner: '', source: '', description: '',
           });
           await saveModule({
-            namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.2.1', owner: '',
+            namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.2.1', owner: '', source: '', description: '',
           });
           await saveModule({
-            namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.5.0', owner: '',
+            namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.5.0', owner: '', source: '', description: '',
           });
           await saveModule({
-            namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.5.1', owner: '',
+            namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.5.1', owner: '', source: '', description: '',
           });
         });
 
@@ -140,13 +142,13 @@ storeTypes.forEach((storeType) => {
       describe('getModuleVersions()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '',
+            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '', source: '', description: '',
           });
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '', source: '', description: '',
           });
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', source: '', description: '',
           });
         });
 
@@ -180,10 +182,10 @@ storeTypes.forEach((storeType) => {
       describe('getModuleLatestVersion()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '', source: '', description: '',
           });
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', source: '', description: '',
           });
         });
 
@@ -215,7 +217,7 @@ storeTypes.forEach((storeType) => {
       describe('findOneModule()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
+            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', source: '', description: '', location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
           });
         });
 
@@ -249,7 +251,7 @@ storeTypes.forEach((storeType) => {
       describe('increaseModuleDownload()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
+            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', source: '', description: '', location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
           });
         });
 

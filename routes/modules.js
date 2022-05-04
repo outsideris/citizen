@@ -20,9 +20,9 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
   let tarball;
   let filename;
   let owner = '';
-
+  let source = '';
+  let description = '';
   const form = new multiparty.Form();
-
   form.on('error', (err) => {
     logger.error(`Error parsing form: ${err.stack}`);
     next(err);
@@ -35,10 +35,16 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
     });
 
     const ownerBuf = [];
+    const sourceBuf = [];
+    const descriptionBuf = []; 
     const file = [];
     part.on('data', (buffer) => {
       if (!part.filename && part.name === 'owner') {
         ownerBuf.push(buffer);
+      }else if (!part.filename && part.name === 'source') {
+        sourceBuf.push(buffer);
+      }else if (!part.filename && part.name === 'description') {
+        descriptionBuf.push(buffer);
       }
       if (part.filename) {
         file.push(buffer);
@@ -47,6 +53,13 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
     part.on('end', async () => {
       if (!part.filename && part.name === 'owner') {
         owner = Buffer.concat(ownerBuf).toString();
+        console.log(owner)
+      }else if (!part.filename && part.name === 'source') {
+        source = Buffer.concat(sourceBuf).toString();
+        console.log(source)
+      }else if (!part.filename && part.name === 'description') {
+        description = Buffer.concat(descriptionBuf).toString();
+        console.log(description)
       }
       if (part.filename) {
         ({ filename } = part);
@@ -73,6 +86,8 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
         provider,
         version,
         owner,
+        source,
+        description,
         location: `${destPath}/${filename}`,
         definition,
       });
@@ -81,6 +96,8 @@ router.post('/:namespace/:name/:provider/:version', (req, res, next) => {
         return res.status(201).render('modules/register', {
           id: destPath,
           owner,
+          source,
+          description,
           namespace,
           name,
           provider,
