@@ -5,20 +5,33 @@ const debug = require('debug')('citizen:test:integration');
 const { connect, disconnect } = require('./ngrok');
 const app = require('../../app');
 
-const run = async () => {
+const sleep = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
+
+const run = async (version) => {
   let url;
   const port = await getPort();
   let exit = true;
+  let retried = 0;
   while (exit) {
-    url = await connect(port); // eslint-disable-line
-    // terraform handle URL which started with a numeric character
-    // as local path, not registry server
-    // see: https://github.com/hashicorp/terraform/pull/18039
-    const startedWithNumeric = /^[0-9]/.test(url.host);
-    if (!startedWithNumeric) {
-      exit = false;
-    } else {
-      await disconnect(); // eslint-disable-line
+    try {
+      retried += 1;
+      url = await connect(port, version); // eslint-disable-line
+      // terraform handle URL which started with a numeric character
+      // as local path, not registry server
+      // see: https://github.com/hashicorp/terraform/pull/18039
+      const startedWithNumeric = /^[0-9]/.test(url.host);
+      if (!startedWithNumeric) {
+        exit = false;
+      } else {
+        await disconnect(version); // eslint-disable-line
+      }
+    } catch (e) {
+      if (retried > 50) {
+        debug('Retrying connect to ngrok is failed');
+        exit = false;
+        throw new Error('Could not connect to ngrok');
+      }
+      await sleep(20); // eslint-disable-line
     }
   }
   app.set('port', port);
@@ -58,8 +71,8 @@ const run = async () => {
   };
 };
 
-const terminate = (server) => new Promise((resolve, reject) => {
-  disconnect()
+const terminate = (server, version) => new Promise((resolve, reject) => {
+  disconnect(version)
     .then(() => {
       server.close((err) => {
         if (err) {

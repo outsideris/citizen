@@ -1,6 +1,11 @@
 name: Integration Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*.*'
 
 jobs:
   unit-test:
@@ -10,9 +15,8 @@ jobs:
     strategy:
       matrix:
         node:
-          - 12
-          - 14
           - 16
+          - 18
 
     env:
       CITIZEN_STORAGE: file
@@ -53,3 +57,5 @@ jobs:
             ${{ runner.os }}-integration-terraform-210321-
       - run: npm ci
       - run: npm run test:integration -- --forbid-only
+        env:
+          NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}

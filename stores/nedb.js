@@ -16,7 +16,7 @@ const saveModule = (data) => new Promise((resolve, reject) => {
 
   moduleDb.insert(m, (err, newDoc) => {
     if (err) { return reject(err); }
-    debug('saved the module into store: %o', module);
+    debug('saved the module into store: %o', data);
     return resolve(newDoc);
   });
 });
@@ -97,7 +97,7 @@ const saveProvider = (data) => new Promise((resolve, reject) => {
 
   providerDb.insert(p, (err, newDoc) => {
     if (err) { return reject(err); }
-    debug('saved the provider into db: %o', module);
+    debug('saved the provider into db: %o', data);
     return resolve(newDoc);
   });
 });

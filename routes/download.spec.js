@@ -3,11 +3,13 @@ const { expect } = require('chai');
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
-const rimraf = promisify(require('rimraf'));
+const rmrf = require('rimraf');
 
 const app = require('../app');
-const { deleteDbAll } = require('../test/helper');
+const helper = require('../test/helper');
 const { moduleDb, saveModule } = require('../stores/store');
+
+const rimraf = promisify(rmrf);
 
 describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
   before(async () => {
@@ -17,7 +19,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
   });
 
   after(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
   });
 
   it('should return the location which client can download source code', () => request(app)
@@ -48,7 +50,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/download', () => {
   });
 
   after(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
   });
 
   it('should redirect to the latest version of a module', () => request(app)
@@ -72,7 +74,7 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
   });
 
   afterEach(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
