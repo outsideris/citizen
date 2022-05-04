@@ -4,28 +4,24 @@ const { promisify } = require('util');
 const { expect } = require('chai');
 const { execFile } = require('child_process');
 const { join } = require('path');
-const rimraf = promisify(require('rimraf'));
-const semver = require('semver');
+const rmrf = require('rimraf');
 
-const registry = require('./registry');
+const { run, terminate } = require('./registry');
 const { providerDb } = require('../../stores/store');
-const { deleteDbAll, generateProvider } = require('../helper');
-const { citizen } = require('../../package.json');
+const helper = require('../helper');
+const TERRAFORM_VERSIONS = require('../versions');
 
+const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
 
-const TERRAFORM_VERSIONS = citizen.terraformVersions
-  .map((version) => ({
-    release: semver.parse(version).minor,
-    version,
-  }))
+const VERSIONS = TERRAFORM_VERSIONS
   // third-party provider supported in terraform 0.13+
-  .filter((terraform) => terraform.release > 12);
+  .filter((terraform) => terraform.release > 0.12);
 
-TERRAFORM_VERSIONS.forEach((terraform) => {
+VERSIONS.forEach((terraform) => {
   describe(`terraform CLI v${terraform.version} for provider`, () => {
     let url;
     let server;
@@ -35,15 +31,15 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
     const terraformCli = join(__dirname, '../', 'terraform-binaries', `terraform${terraform.release}`);
 
     before(async () => {
-      const serverInfo = await registry.run();
+      const serverInfo = await run(terraform.version);
       server = serverInfo.server;
       url = serverInfo.url;
       process.env.CITIZEN_ADDR = `http://127.0.0.1:${server.address().port}`;
     });
 
     after(async () => {
-      await registry.terminate(server);
-      await deleteDbAll(providerDb());
+      await terminate(server);
+      await helper.deleteDbAll(providerDb());
     });
 
     describe('basic setup', () => {
@@ -105,7 +101,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
       before(async () => {
         const client = join(__dirname, '../', '../', 'bin', 'citizen');
 
-        const result = await generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64', 'darwin_amd64']);
+        const result = await helper.generateProvider('citizen-null_1.0.0', ['linux_amd64', 'windows_amd64', 'darwin_amd64']);
         [tempDir, cleanupProvider] = result;
 
         await new Promise((resolve, reject) => {
@@ -140,7 +136,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
         cleanupProvider();
         await unlink(definitonFile);
         await rimraf(join(__dirname, 'fixture', '.terraform'));
-        await deleteDbAll(providerDb());
+        await helper.deleteDbAll(providerDb());
         await rimraf(process.env.CITIZEN_STORAGE_PATH);
         try {
           await access(tfLockFile);

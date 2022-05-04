@@ -11,7 +11,7 @@ const access = promisify(fs.access);
 const getModulePath = (path) => join(process.env.CITIZEN_STORAGE_PATH, 'modules', path);
 const getProviderPath = (path) => join(process.env.CITIZEN_STORAGE_PATH, 'providers', path);
 
-module.exports = {
+const file = {
   type: () => 'file',
   saveModule: async (path, tarball) => {
     if (!path) { throw new Error('path is required.'); }
@@ -40,22 +40,22 @@ module.exports = {
     const pathToStore = getModulePath(path);
     debug(`get the module: ${pathToStore}.`);
     try {
-      const file = await readFile(pathToStore);
-      return file;
+      const content = await readFile(pathToStore);
+      return content;
     } catch (e) {
       return null;
     }
   },
-  saveProvider: async (path, file) => {
+  saveProvider: async (path, content) => {
     if (!path) { throw new Error('path is required.'); }
-    if (!file) { throw new Error('file is required.'); }
+    if (!content) { throw new Error('content is required.'); }
 
     const pathToStore = getProviderPath(path);
     debug(`save the Provider into ${pathToStore}.`);
     const parsedPath = parse(pathToStore);
     await mkdirp(parsedPath.dir);
 
-    await writeFile(pathToStore, file);
+    await writeFile(pathToStore, content);
 
     return true;
   },
@@ -73,11 +73,12 @@ module.exports = {
     const pathToStore = getProviderPath(path);
     debug(`get the Provider: ${pathToStore}.`);
     try {
-      const file = await readFile(pathToStore);
-      return file;
+      const content = await readFile(pathToStore);
+      return content;
     } catch (e) {
       return null;
     }
   },
-
 };
+
+module.exports = file;

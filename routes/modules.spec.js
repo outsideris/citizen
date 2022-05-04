@@ -1,17 +1,18 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { promisify } = require('util');
-const rimraf = promisify(require('rimraf'));
+const rmrf = require('rimraf');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 
 const app = require('../app');
-const { deleteDbAll } = require('../test/helper');
+const helper = require('../test/helper');
 const { moduleDb, saveModule } = require('../stores/store');
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
+const rimraf = promisify(rmrf);
 
 describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   let moduleBuf;
@@ -23,7 +24,7 @@ describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   });
 
   afterEach(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
@@ -99,7 +100,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version', () => {
   });
 
   after(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
   });
 
   it('should return a specific module', () => request(app)
@@ -128,7 +129,7 @@ describe('GET /v1/modules/:namespace/:name/:provider', () => {
   });
 
   after(async () => {
-    await deleteDbAll(moduleDb());
+    await helper.deleteDbAll(moduleDb());
   });
 
   it('should return latest version for a specific module provider', () => request(app)
