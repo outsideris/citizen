@@ -20,7 +20,7 @@ const {
 } = require('./store');
 const helper = require('../test/helper');
 
-const storeTypes = ['mongodb', 'nedb'];
+const storeTypes = ['mongodb'];
 
 storeTypes.forEach((storeType) => {
   describe(`${storeType} store`, async () => {

@@ -6,8 +6,6 @@ const init = (dbType) => {
   const t = dbType || process.env.CITIZEN_DATABASE;
   if (t === 'mongodb') {
     store = require('./mongodb'); // eslint-disable-line global-require
-  } else {
-    store = require('./nedb'); // eslint-disable-line global-require
   }
 };
 

@@ -40,7 +40,6 @@
     "mongoose": "^6.3.8",
     "morgan": "^1.10.0",
     "multiparty": "^4.2.2",
-    "nedb": "^1.8.0",
     "ora": "^5.4.1",
     "pino": "^8.0.0",
     "recursive-readdir": "^2.2.1",
