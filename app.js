@@ -4,9 +4,15 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 
-const app = express();
-
 const logger = require('./lib/logger');
+const index = require('./routes/index');
+const serviceDiscovery = require('./routes/service-discovery');
+const providers = require('./routes/providers');
+const moduleList = require('./routes/list');
+const modules = require('./routes/modules');
+const moduleDownload = require('./routes/download');
+
+const app = express();
 
 app.use(helmet());
 
@@ -19,16 +25,14 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/', require('./routes/index'));
-app.use('/', require('./routes/service-discovery'));
+app.use('/', index);
+app.use('/', serviceDiscovery);
 
-app.use('/v1/providers', require('./routes/providers'));
-app.use('/v1/providers', require('./routes/download'));
-app.use('/v1/providers', require('./routes/list'));
+app.use('/v1/providers', providers);
 
-app.use('/v1/modules', require('./routes/list'));
-app.use('/v1/modules', require('./routes/modules'));
-app.use('/v1/modules', require('./routes/download'));
+app.use('/v1/modules', moduleList);
+app.use('/v1/modules', modules);
+app.use('/v1/modules', moduleDownload);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

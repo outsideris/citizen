@@ -1,12 +1,19 @@
 const ngrok = require('ngrok');
-const { parse } = require('url');
+const debug = require('debug')('citizen:test:integration');
 
-const connect = async (port) => {
-  const url = await ngrok.connect(port);
-  return parse(url);
+const connect = async (port, version) => {
+  debug(`v${version} try to connect ngrok`, port);
+
+  const url = await ngrok.connect({
+    addr: port,
+    authtoken: process.env.NGROK_AUTHTOKEN,
+  });
+  debug(`v${version} ngrok connected`, (new URL(url)).host);
+  return new URL(url);
 };
 
-const disconnect = async () => {
+const disconnect = async (version) => {
+  debug(`v${version} ngrok disconnected`);
   await ngrok.disconnect();
   await ngrok.kill();
 };

@@ -4,23 +4,18 @@ const { promisify } = require('util');
 const { expect } = require('chai');
 const { execFile } = require('child_process');
 const { join } = require('path');
-const rimraf = promisify(require('rimraf'));
-const semver = require('semver');
+const rmrf = require('rimraf');
 
-const registry = require('./registry');
+const { run, terminate } = require('./registry');
 const { moduleDb } = require('../../stores/store');
-const { deleteDbAll } = require('../helper');
-const { citizen } = require('../../package.json');
+const helper = require('../helper');
+const TERRAFORM_VERSIONS = require('../versions');
 
+const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);
 const access = promisify(fs.access);
-
-const TERRAFORM_VERSIONS = citizen.terraformVersions.map((version) => ({
-  release: semver.parse(version).minor,
-  version,
-}));
 
 TERRAFORM_VERSIONS.forEach((terraform) => {
   describe(`terraform CLI v${terraform.version} for module`, () => {
@@ -31,15 +26,15 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
     const terraformCli = join(__dirname, '../', 'terraform-binaries', `terraform${terraform.release}`);
 
     before(async () => {
-      const serverInfo = await registry.run();
+      const serverInfo = await run(terraform.version);
       server = serverInfo.server;
       url = serverInfo.url;
       process.env.CITIZEN_ADDR = `http://127.0.0.1:${server.address().port}`;
     });
 
     after(async () => {
-      await registry.terminate(server);
-      await deleteDbAll(moduleDb());
+      await terminate(server, terraform.version);
+      await helper.deleteDbAll(moduleDb());
     });
 
     describe('basic setup', () => {
@@ -117,7 +112,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
       after(async () => {
         await unlink(definitonFile);
         await rimraf(join(__dirname, 'fixture', '.terraform'));
-        await deleteDbAll(moduleDb());
+        await helper.deleteDbAll(moduleDb());
         await rimraf(process.env.CITIZEN_STORAGE_PATH);
       });
 
