@@ -27,16 +27,42 @@ const saveModule = (data) => {
 const findModules = (options) => Module.find(options);
 
 const findAllModules = (options, meta, offset, limit) => {
-  debug('search store with %o', options);
-
-  return Module.find(options, null, { sort: '_id', skip: offset, limit })
+  grouping = {
+    "$group": {
+      _id: {
+        namespace: "$namespace",
+        name: "$name"
+      },
+      id: { "$first": "$id" },
+      owner: { "$first": "$owner"},
+      namespace : { "$first": "$namespace"},
+      name: { "$first": "$name"},
+      version: { "$first": "$version"},
+      provider: { "$first": "$provider"},
+      description: { "$first": "$description"},
+      source: { "$first": "$source"},
+      published_at: { "$first": "$published_at"},
+      downloads: { "$first": "$downloads"},
+      verified: { "$first": "$verified"}
+    }
+  }
+  params = [grouping, {$sort: { published_at: -1}}, {$skip: offset}, {$limit: limit}]
+  if (Object.keys(options).length != 0) {
+    match = {"$match": {}}
+    for (const property in options) {
+      match.$match[property] = options[property]
+    }
+    params.unshift(match)
+  }
+  debug('search store with %o', params);
+  return Module.aggregate(params)
     .then((docs) => {
       debug('search result from store: %o', docs);
       return {
         meta,
         modules: docs,
       };
-    });
+  });
 };
 
 const getModuleVersions = (options) => {
