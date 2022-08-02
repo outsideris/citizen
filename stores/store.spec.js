@@ -20,7 +20,7 @@ const {
 } = require('./store');
 const helper = require('../test/helper');
 
-const storeTypes = ['mongodb'];
+const storeTypes = ['mongodb', 'sqlite'];
 
 storeTypes.forEach((storeType) => {
   describe(`${storeType} store`, async () => {
@@ -51,7 +51,7 @@ storeTypes.forEach((storeType) => {
             owner: 'outsideris',
           });
 
-          expect(result._id).to.exist; // eslint-disable-line no-underscore-dangle
+          expect(result.id).to.exist;
           expect(result.name).to.equal('store-consul');
           expect(result.published_at).to.exist;
           expect(result.downloads).to.equal(0);

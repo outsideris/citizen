@@ -6,13 +6,15 @@ const init = (dbType) => {
   const t = dbType || process.env.CITIZEN_DATABASE;
   if (t === 'mongodb') {
     store = require('./mongodb'); // eslint-disable-line global-require
+  } else {
+    store = require('./sqlite'); // eslint-disable-line global-require
   }
 };
 
 const getStoreType = () => store.storeType;
 
 // modules
-const moduleDb = () => store.moduleDb;
+const moduleDb = () => store.moduleDb || store.client;
 
 const saveModule = async (data) => {
   const {

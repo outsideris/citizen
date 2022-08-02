@@ -78,18 +78,14 @@ const helper = {
       nock.cleanAll();
     }
   },
-  deleteDbAll: (db, dbType) => new Promise((resolve, reject) => {
+  deleteDbAll: async (db, dbType) => {
     if (dbType === 'mongodb' || (!dbType && process.env.CITIZEN_DATABASE === 'mongodb')) {
-      db.deleteMany({})
-        .then((doc) => resolve(doc))
-        .catch((err) => reject(err));
-    } else {
-      db.remove({}, { multi: true }, (err, numRemoved) => {
-        if (err) { return reject(err); }
-        return resolve(numRemoved);
-      });
+      const doc = await db.deleteMany({});
+      return doc;
     }
-  }),
+    const deletedModules = await db.module.deleteMany({});
+    return deletedModules;
+  },
   generateProvider: (prefix, platforms) => new Promise((resolve, reject) => {
     tmp.dir({ unsafeCleanup: true }, (err, tempDir, cleanupCallback) => {
       if (err) { return reject(err); }
