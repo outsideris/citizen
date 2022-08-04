@@ -83,8 +83,8 @@ const helper = {
       const doc = await db.deleteMany({});
       return doc;
     }
-    const deletedModules = await db.module.deleteMany({});
-    return deletedModules;
+    await db.module.deleteMany({});
+    await db.provider.deleteMany({});
   },
   generateProvider: (prefix, platforms) => new Promise((resolve, reject) => {
     tmp.dir({ unsafeCleanup: true }, (err, tempDir, cleanupCallback) => {

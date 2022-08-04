@@ -302,7 +302,7 @@ storeTypes.forEach((storeType) => {
             }],
           });
 
-          expect(result._id).to.exist; // eslint-disable-line no-underscore-dangle
+          expect(result.id).to.exist;
           expect(result.namespace).to.equal('outsider');
           expect(result.type).to.equal('citizen');
           expect(result.published_at).to.exist;

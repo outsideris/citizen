@@ -19,3 +19,14 @@ model Module {
   downloads Int @default(0)
   published_at DateTime @default(now())
 }
+
+model Provider {
+  id Int @id @default(autoincrement())
+  namespace String
+  type String
+  version String
+  protocols String
+  platforms String
+  gpgPublicKeys String
+  published_at DateTime @default(now())
+}

@@ -158,7 +158,7 @@ const increaseModuleDownload = async ({
 };
 
 // providers
-const providerDb = () => store.providerDb;
+const providerDb = () => store.providerDb || store.client;
 
 const saveProvider = async (data) => {
   const p = {
