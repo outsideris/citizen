@@ -19,7 +19,7 @@
     "build:linux": "pkg . --targets node16-linux-x64 -o dist/citizen-linux-x64",
     "build:macos": "pkg . --targets node16-macos-x64,node16-macos-arm64 -o dist/citizen-macos",
     "build:windows": "pkg . --targets node16-win-x64 -o dist/citizen-win-x64.exe",
-    "migrate:dev": "prisma migrate dev --name init"
+    "migrate:sqlite": "prisma migrate dev --name init --schema ./stores/schemas/sqlite.prisma"
   },
   "dependencies": {
     "@prisma/client": "^4.1.1",
