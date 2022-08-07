@@ -3,11 +3,13 @@ const debug = require('debug')('citizen:server:store');
 let store;
 
 const init = (dbType) => {
-  const t = dbType || process.env.CITIZEN_DATABASE;
+  const t = dbType || process.env.CITIZEN_DATABASE_TYPE;
   if (t === 'mongodb') {
     store = require('./mongodb'); // eslint-disable-line global-require
-  } else {
+  } else if (t === 'sqlite') {
     store = require('./sqlite'); // eslint-disable-line global-require
+  } else {
+    throw new Error(`unknown database type: ${t}. Please set CITIZEN_DATABASE_TYPE environment variable.`);
   }
 };
 
