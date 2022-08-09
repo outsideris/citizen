@@ -16,8 +16,6 @@ const init = (dbType) => {
 const getStoreType = () => store.storeType;
 
 // modules
-const moduleDb = () => store.moduleDb || store.client;
-
 const saveModule = async (data) => {
   const {
     namespace,
@@ -160,8 +158,6 @@ const increaseModuleDownload = async ({
 };
 
 // providers
-const providerDb = () => store.providerDb || store.client;
-
 const saveProvider = async (data) => {
   const p = {
     namespace: data.namespace,
@@ -319,14 +315,13 @@ const findProviderPackage = async ({
 module.exports = {
   init,
   getStoreType,
-  moduleDb,
+  client: store.client,
   saveModule,
   findAllModules,
   getModuleVersions,
   getModuleLatestVersion,
   findOneModule,
   increaseModuleDownload,
-  providerDb,
   saveProvider,
   findOneProvider,
   findAllProviders,

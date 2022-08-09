@@ -1,122 +1,125 @@
-const mongoose = require('mongoose');
+const { PrismaClient } = require('@prisma/client/mongodb');
 const debug = require('debug')('citizen:server:store:mongodb');
 
-const dbUri = process.env.CITIZEN_MONGO_DB_URI || 'mongodb://localhost:27017/citizen';
-mongoose.connect(dbUri, {});
-
 const storeType = 'mongodb';
+const prisma = new PrismaClient();
 
 // modules
-const Module = mongoose.model('Module', {
-  namespace: String,
-  name: String,
-  provider: String,
-  version: String,
-  owner: { type: String, default: '' },
-  location: String,
-  definition: mongoose.Schema.Types.Mixed,
-  downloads: { type: Number, default: 0 },
-  published_at: { type: Date, default: Date.now },
-});
-
-const saveModule = (data) => {
-  const module = new Module(data);
-  return module.save();
+const saveModule = async (data) => {
+  const result = await prisma.module.create({ data });
+  debug('saved the module into store: %o', result);
+  return result;
 };
 
-const findModules = (options) => Module.find(options);
-
-const findAllModules = (options, meta, offset, limit) => {
-  debug('search store with %o', options);
-
-  return Module.find(options, null, { sort: '_id', skip: offset, limit })
-    .then((docs) => {
-      debug('search result from store: %o', docs);
-      return {
-        meta,
-        modules: docs,
-      };
-    });
+const findModules = async (options) => {
+  const modules = await prisma.module.findMany({ where: options });
+  return modules;
 };
 
-const getModuleVersions = (options) => {
-  debug('search versions in store with %o', options);
-  return Module.find(options, null, { sort: '_id' });
-};
+const findAllModules = async (options, meta, offset, limit) => {
+  debug('search all modules with %o', options);
 
-const getModuleLatestVersion = (options) => Module.find(options, null, { sort: '-version', limit: 1 })
-  .then((docs) => {
-    debug('search latest version result from db: %o', docs);
-    return docs.length > 0 ? docs[0] : null;
+  const modules = await prisma.module.findMany({
+    where: options,
+    skip: offset,
+    take: limit,
+    orderBy: [{ published_at: 'asc' }, { version: 'asc' }],
   });
+  debug('search result from store: %o', modules);
+
+  return { meta, modules };
+};
+
+const getModuleVersions = async (options) => {
+  debug('search module versions in store with %o', options);
+  const modules = await prisma.module.findMany({ where: options, orderBy: { id: 'asc' } });
+  return modules;
+};
+
+const getModuleLatestVersion = async (options) => {
+  const module = await prisma.module.findFirst({ where: options, orderBy: { version: 'desc' } });
+  debug('search latest version result from store: %o', module);
+  return module;
+};
 
 const findOneModule = async (options) => {
   debug('search a module in store with %o', options);
-  return Module.findOne(options).lean().exec();
+  const module = await prisma.module.findFirst({ where: options });
+  debug('search a module result from store: %o', module);
+  return module;
 };
 
-const increaseModuleDownload = (options) => Module
-  .findOneAndUpdate(options, { $inc: { downloads: 1 } }, { new: true });
+const increaseModuleDownload = async (options) => {
+  const { count } = await prisma.module.updateMany({
+    where: options,
+    data: { downloads: { increment: 1 } },
+  });
+  if (count === 1) {
+    const module = await prisma.module.findFirst({ where: options });
+    return module;
+  }
+  return null;
+};
 
 // providers
-const Provider = mongoose.model('Provider', {
-  namespace: String,
-  type: String,
-  version: String,
-  protocols: [String],
-  platforms: [new mongoose.Schema({
-    os: { type: String },
-    arch: { type: String },
-    filename: { type: String },
-    shasum: { type: String },
-  })],
-  gpgPublicKeys: [new mongoose.Schema({
-    keyId: { type: String },
-    asciiArmor: { type: String },
-    trustSignature: { type: String },
-    source: { type: String },
-    sourceUrl: { type: String },
-  })],
-  published_at: { type: Date, default: Date.now },
-});
+const saveProvider = async (data) => {
+  const result = await prisma.provider.create({ data });
+  debug('saved the provider into db: %o', result);
 
-const saveProvider = (data) => {
-  const provider = new Provider(data);
-  return provider.save();
+  return result;
 };
 
 const findOneProvider = async (options) => {
+  const provider = await prisma.provider.findFirst({ where: options });
   debug('search a provider in store with %o', options);
-  return Provider.findOne(options).lean().exec();
+  return provider;
 };
 
-const findProviders = (options) => Provider.find(options);
-
-const findAllProviders = (options, meta, offset, limit) => {
-  debug('search store with %o', options);
-
-  return Provider.find(options, null, { sort: '_id', skip: offset, limit })
-    .then((docs) => {
-      debug('search result from store: %o', docs);
-      return {
-        meta,
-        providers: docs,
-      };
-    });
+const findProviders = async (options) => {
+  const providers = await prisma.provider.findMany({ where: options });
+  return providers;
 };
 
-const getProviderVersions = (options) => {
-  debug('search versions in store with %o', options);
-  return Provider.find(options, null, { sort: 'version' });
+const findAllProviders = async (options, meta, offset, limit) => {
+  debug('search all providers with %o', options);
+
+  const providers = await prisma.provider.findMany({
+    where: options,
+    skip: offset,
+    take: limit,
+    orderBy: [{ published_at: 'asc' }, { version: 'asc' }],
+  });
+  debug('search result from store: %o', providers);
+
+  return { meta, providers };
 };
 
-const findProviderPackage = (options) => Provider
-  .find(options, null, { sort: '-version' })
-  .then((docs) => (docs.length > 0 ? docs[0] : null));
+const getProviderVersions = async (options) => {
+  debug('search provider versions in store with %o', options);
+  const providers = await prisma.provider.findMany({ where: options, orderBy: { id: 'asc' } });
+  return providers;
+};
+
+const findProviderPackage = async (options) => {
+  const {
+    namespace, type, version, 'platforms.os': os, 'platforms.arch': arch,
+  } = options;
+  const providers = await prisma.provider.findMany({
+    where: {
+      namespace,
+      type,
+      version,
+    },
+    orderBy: { version: 'desc' },
+  });
+  const packages = providers
+    .filter((p) => p.platforms.some((i) => i.os === os && i.arch === arch));
+  return packages.length > 0 ? packages[0] : null;
+};
 
 module.exports = {
   storeType,
-  moduleDb: Module,
+  client: prisma,
   saveModule,
   findModules,
   findAllModules,
@@ -124,7 +127,6 @@ module.exports = {
   getModuleLatestVersion,
   findOneModule,
   increaseModuleDownload,
-  providerDb: Provider,
   saveProvider,
   findOneProvider,
   findProviders,

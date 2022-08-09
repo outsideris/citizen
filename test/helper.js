@@ -79,10 +79,6 @@ const helper = {
     }
   },
   deleteDbAll: async (db, dbType) => {
-    if (dbType === 'mongodb' || (!dbType && process.env.CITIZEN_DATABASE === 'mongodb')) {
-      const doc = await db.deleteMany({});
-      return doc;
-    }
     await db.module.deleteMany({});
     await db.provider.deleteMany({});
   },
