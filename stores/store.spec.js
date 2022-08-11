@@ -4,7 +4,7 @@ const { expect } = require('chai');
 const {
   init,
   getStoreType,
-  client,
+  getClient,
   saveModule,
   findAllModules,
   getModuleVersions,
@@ -23,12 +23,20 @@ const storeTypes = ['mongodb', 'sqlite'];
 
 storeTypes.forEach((storeType) => {
   describe(`${storeType} store`, async () => {
+    let originDatabaseUrl;
     before(async () => {
+      originDatabaseUrl = process.env.CITIZEN_DATABASE_URL;
+      if (storeType === 'mongodb') {
+        process.env.CITIZEN_DATABASE_URL = 'mongodb://root:citizen@127.0.0.1:27018/citizen?authSource=admin';
+      } else if (storeType === 'sqlite') {
+        process.env.CITIZEN_DATABASE_URL = 'file:./dev.db';
+      }
       await init(storeType);
     });
 
     after(async () => {
-      await helper.deleteDbAll(client, storeType);
+      await helper.deleteDbAll(getClient());
+      process.env.Citizen_DATABASE_URL = originDatabaseUrl;
     });
 
     it(`should use ${storeType}`, () => {
@@ -38,7 +46,7 @@ storeTypes.forEach((storeType) => {
     describe('module', () => {
       describe('saveModule()', () => {
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should store module meta', async () => {
@@ -74,7 +82,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return all modules', async () => {
@@ -150,7 +158,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return available versions', async () => {
@@ -187,7 +195,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return latest versions for a specific module', async () => {
@@ -219,7 +227,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return the specific module', async () => {
@@ -253,7 +261,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should increase download count of the module', async () => {
@@ -272,7 +280,7 @@ storeTypes.forEach((storeType) => {
     describe('provider', () => {
       describe('saveProvider()', () => {
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should store provider meta', async () => {
@@ -324,7 +332,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should find the provider', async () => {
@@ -390,7 +398,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return all providers', async () => {
@@ -483,7 +491,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return available versions', async () => {
@@ -532,7 +540,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(client, storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return provider that matched', async () => {

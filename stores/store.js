@@ -315,7 +315,7 @@ const findProviderPackage = async ({
 module.exports = {
   init,
   getStoreType,
-  client: store.client,
+  getClient: () => store.client,
   saveModule,
   findAllModules,
   getModuleVersions,

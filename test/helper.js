@@ -78,7 +78,7 @@ const helper = {
       nock.cleanAll();
     }
   },
-  deleteDbAll: async (db, dbType) => {
+  deleteDbAll: async (db) => {
     await db.module.deleteMany({});
     await db.provider.deleteMany({});
   },

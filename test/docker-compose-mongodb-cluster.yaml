@@ -6,7 +6,7 @@ services:
     build: ./mongodb_replica
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: prisma
+      MONGO_INITDB_ROOT_PASSWORD: citizen
       MONGO_REPLICA_HOST: localhost
       MONGO_REPLICA_PORT: 27018
     ports:

@@ -21,7 +21,8 @@ COPY --from=build /citizen/dist/citizen-linux-x64 /usr/local/bin/citizen
 
 WORKDIR /citizen
 
-ENV CITIZEN_DB_DIR ./data
+ENV CITIZEN_DATABASE_TYPE mongodb_or_sqlite
+ENV CITIZEN_DATABASE_URL protocol//username:password@hosts:port/database?options
 ENV CITIZEN_STORAGE file
 ENV CITIZEN_STORAGE_PATH /path/to/store
 #ENV CITIZEN_AWS_S3_BUCKET BUCKET_IF_STORAGE_IS_S3

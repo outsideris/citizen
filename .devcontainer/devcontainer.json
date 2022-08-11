@@ -16,8 +16,8 @@
 	"forwardPorts": [3000, 27017],
 
 	"remoteEnv": {
-		"DATABASE_URL": "postgres://postgres:postgres@localhost:5432/postgres",
-		"CITIZEN_DB_DIR": "./data",
+		"CITIZEN_DATABASE_TYPE": "sqlite",
+    "CITIZEN_DATABASE_URL": "./dev.db",
 		"CITIZEN_STORAGE": "s3",
 		"CITIZEN_STORAGE_PATH": "./disk",
 		"CITIZEN_ADDR": "http://127.0.0.1:3000",
