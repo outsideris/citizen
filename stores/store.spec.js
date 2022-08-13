@@ -63,6 +63,47 @@ storeTypes.forEach((storeType) => {
           expect(result.published_at).to.exist;
           expect(result.downloads).to.equal(0);
         });
+
+        it('should store module with root and submodule', async () => {
+          const result = await saveModule({
+            namespace: 'store-hashicorp',
+            name: 'store-consul',
+            provider: 'store-aws',
+            version: '0.1.0',
+            owner: 'outsideris',
+            definition: {
+              root: {
+                path: '',
+                name: 'consul',
+                empty: false,
+                inputs: undefined,
+                outputs: {
+                  arn: { name: 'arn', pos: { filename: '<input>', line: 11 } },
+                  dns: { name: 'dns', pos: { filename: '<input>', line: 16 } },
+                  id: { name: 'id', pos: { filename: '<input>', line: 6 } },
+                  name: { name: 'name', pos: { filename: '<input>', line: 1 } },
+                  zone_id: { name: 'zone_id', pos: { filename: '<input>', line: 21 } },
+                },
+                dependencies: [],
+                module_calls: {},
+                resources: {
+                  aws_alb__main: {
+                    mode: 'managed',
+                    type: 'aws_alb',
+                    name: 'main',
+                    provider: { name: 'aws' },
+                    pos: { filename: '<input>', line: 2 },
+                  },
+                },
+              },
+              submodules: [{ name: 'example' }],
+            },
+          });
+
+          expect(result.id).to.exist;
+          expect(result.root).to.be.an.instanceof(Object);
+          expect(result.submodules).to.be.an.instanceof(Object);
+        });
       });
 
       describe('findAllModules()', () => {

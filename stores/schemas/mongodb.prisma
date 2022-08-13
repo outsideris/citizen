@@ -19,6 +19,8 @@ model Module {
   definition String?
   downloads Int @default(0)
   published_at DateTime @default(now())
+  root Json?
+  submodules Json[]
 }
 
 model Provider {

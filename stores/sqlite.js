@@ -5,26 +5,52 @@ const storeType = 'sqlite';
 const prisma = new PrismaClient();
 
 // modules
+const delimiter = '#$$#';
+const serializeObjectArray = (arr) => {
+  const temp = arr.map((a) => JSON.stringify(a));
+  return temp.join(delimiter);
+};
+
+const deserializeString = (str) => str.split(delimiter).map((s) => JSON.parse(s));
+
+const serializeModule = (m) => {
+  const module = m;
+  if (module.root) { module.root = JSON.stringify(module.root); }
+  if (module.submodules) { module.submodules = serializeObjectArray(module.submodules); }
+  return module;
+};
+
+const deserializeModule = (m) => {
+  if (!m) { return null; }
+  const module = m;
+  module.root = module.root ? JSON.parse(module.root) : null;
+  module.submodules = module.submodules ? deserializeString(module.submodules) : [];
+  return module;
+};
+
 const saveModule = async (data) => {
-  const result = await prisma.module.create({ data });
-  debug('saved the module into store: %o', result);
-  return result;
+  const module = serializeModule(data);
+  const result = await prisma.module.create({ data: module });
+  const resultModule = deserializeModule(result);
+  debug('saved the module into store: %o', resultModule);
+  return resultModule;
 };
 
 const findModules = async (options) => {
   const modules = await prisma.module.findMany({ where: options });
-  return modules;
+  return modules.map((m) => deserializeModule(m));
 };
 
 const findAllModules = async (options, meta, offset, limit) => {
   debug('search all modules with %o', options);
 
-  const modules = await prisma.module.findMany({
+  const result = await prisma.module.findMany({
     where: options,
     skip: offset,
     take: limit,
     orderBy: [{ published_at: 'asc' }, { version: 'asc' }],
   });
+  const modules = result.map((m) => deserializeModule(m));
   debug('search result from store: %o', modules);
 
   return { meta, modules };
@@ -33,18 +59,19 @@ const findAllModules = async (options, meta, offset, limit) => {
 const getModuleVersions = async (options) => {
   debug('search module versions in store with %o', options);
   const modules = await prisma.module.findMany({ where: options, orderBy: { id: 'asc' } });
-  return modules;
+  return modules.map((m) => deserializeModule(m));
 };
 
 const getModuleLatestVersion = async (options) => {
   const module = await prisma.module.findFirst({ where: options, orderBy: { version: 'desc' } });
   debug('search latest version result from store: %o', module);
-  return module;
+  return deserializeModule(module);
 };
 
 const findOneModule = async (options) => {
   debug('search a module in store with %o', options);
-  const module = await prisma.module.findFirst({ where: options });
+  const result = await prisma.module.findFirst({ where: options });
+  const module = deserializeModule(result);
   debug('search a module result from store: %o', module);
   return module;
 };
@@ -56,22 +83,12 @@ const increaseModuleDownload = async (options) => {
   });
   if (count === 1) {
     const module = await prisma.module.findFirst({ where: options });
-    return module;
+    return deserializeModule(module);
   }
   return null;
 };
 
 // providers
-const delimiter = '#$$#';
-const serializeObjectArray = (arr) => {
-  const temp = arr.map((a) => JSON.stringify(a))
-  return temp.join(delimiter);
-};
-
-const deserializeString = (str) => {
-  return str.split(delimiter).map((s) => JSON.parse(s));
-};
-
 const serializeProvider = (p) => {
   const provider = p;
   if (!provider.protocols) { provider.protocols = []; }
