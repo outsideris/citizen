@@ -2,7 +2,7 @@ const request = require('supertest');
 const { expect } = require('chai');
 
 const app = require('../app');
-const { moduleDb, saveModule } = require('../stores/store');
+const { getClient, saveModule } = require('../stores/store');
 const helper = require('../test/helper');
 
 describe('GET /v1/modules', () => {
@@ -22,7 +22,7 @@ describe('GET /v1/modules', () => {
   });
 
   after(async () => {
-    await helper.deleteDbAll(moduleDb());
+    await helper.deleteDbAll(getClient());
   });
 
   it('should return all modules', () => request(app)
@@ -85,7 +85,7 @@ describe('GET /v1/modules/:namespace', () => {
   });
 
   after(async () => {
-    await helper.deleteDbAll(moduleDb());
+    await helper.deleteDbAll(getClient());
   });
 
   it('should return all modules of namespace', () => request(app)
@@ -126,7 +126,7 @@ describe('GET /v1/modules/search', () => {
   });
 
   after(async () => {
-    await helper.deleteDbAll(moduleDb());
+    await helper.deleteDbAll(getClient());
   });
 
   it('should return all modules which matched by q', () => request(app)
@@ -175,7 +175,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/versions', () => {
   });
 
   after(async () => {
-    await helper.deleteDbAll(moduleDb());
+    await helper.deleteDbAll(getClient());
   });
 
   it('should return available versions for a specific module', () => request(app)
@@ -224,7 +224,7 @@ describe('GET /v1/modules/:namespace/:name', () => {
   });
 
   after(async () => {
-    await helper.deleteDbAll(moduleDb());
+    await helper.deleteDbAll(getClient());
   });
 
   it('should return all latest version of module for all providers', () => request(app)

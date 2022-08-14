@@ -7,7 +7,7 @@ const { join } = require('path');
 const rmrf = require('rimraf');
 
 const { run, terminate } = require('./registry');
-const { moduleDb } = require('../../stores/store');
+const { getClient } = require('../../stores/store');
 const helper = require('../helper');
 const TERRAFORM_VERSIONS = require('../versions');
 
@@ -34,7 +34,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
 
     after(async () => {
       await terminate(server, terraform.version);
-      await helper.deleteDbAll(moduleDb());
+      await helper.deleteDbAll(getClient());
     });
 
     describe('basic setup', () => {
@@ -112,7 +112,7 @@ TERRAFORM_VERSIONS.forEach((terraform) => {
       after(async () => {
         await unlink(definitonFile);
         await rimraf(join(__dirname, 'fixture', '.terraform'));
-        await helper.deleteDbAll(moduleDb());
+        await helper.deleteDbAll(getClient());
         await rimraf(process.env.CITIZEN_STORAGE_PATH);
       });
 
