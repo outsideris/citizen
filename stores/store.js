@@ -50,6 +50,14 @@ const findAllModules = async ({
   limit = 15,
 } = {}) => {
   const options = selector;
+  // `q` search in `name` field.
+  // It could be extended to other fields. Specification said it depends on registry implementation.
+  if (options.search) {
+    options.name = {
+      contains: options.search,
+    };
+    delete options.search;
+  }
 
   if (namespace) {
     options.namespace = namespace;
