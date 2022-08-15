@@ -9,6 +9,8 @@ RUN npm install
 
 COPY . .
 
+RUN npm run client
+
 RUN npm run build:linux
 
 # final stage
