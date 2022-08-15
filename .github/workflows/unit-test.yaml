@@ -63,6 +63,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-v${{ matrix.node }}-210321-
       - run: npm ci
+      - name: Generating DB clients
+        run: |
+          npm run client:sqlite
+          npm run client:mongodb
       - name: linting
         run: npm run lint
       - name: unit test

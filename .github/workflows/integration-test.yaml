@@ -57,6 +57,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-integration-terraform-210321-
       - run: npm ci
+      - name: Generating DB clients
+        run: |
+          npm run client:sqlite
+          npm run client:mongodb
       - run: npm run test:integration -- --forbid-only
         env:
           NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}

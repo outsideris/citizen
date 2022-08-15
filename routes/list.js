@@ -17,7 +17,7 @@ router.get('/search', async (req, res) => {
   const options = {
     ...req.query,
     selector: {
-      search: req.query.q
+      search: req.query.q,
     },
     q: null,
   };
