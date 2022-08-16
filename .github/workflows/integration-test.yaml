@@ -21,7 +21,7 @@ jobs:
 
     env:
       CITIZEN_DATABASE_TYPE: sqlite
-      CITIZEN_DATABASE_URL: ./dev.db
+      CITIZEN_DATABASE_URL: file:./dev.db
       CITIZEN_STORAGE: file
       CITIZEN_STORAGE_PATH: /tmp/citizen
       DEBUG: 'citizen:*'
