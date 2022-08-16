@@ -63,6 +63,8 @@ jobs:
         run: |
           npm run client:sqlite
           npm run client:mongodb
+      - npm: DB migration
+        run: npm run migrate:sqlite
       - run: npm run test:integration -- --forbid-only
         env:
           NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
