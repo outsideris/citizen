@@ -63,7 +63,7 @@ jobs:
         run: |
           npm run client:sqlite
           npm run client:mongodb
-      - npm: DB migration
+      - name: DB migration
         run: npm run migrate:sqlite
       - run: npm run test:integration -- --forbid-only
         env:

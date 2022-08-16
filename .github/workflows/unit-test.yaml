@@ -68,7 +68,7 @@ jobs:
           npm run client:mongodb
       - name: linting
         run: npm run lint
-      - npm: DB migration
+      - name: DB migration
         run: npm run migrate:sqlite
       - name: unit test
         run: npm run test:unit -- --forbid-only
