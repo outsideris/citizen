@@ -1,9 +1,9 @@
-const https = require('https');
-const fs = require('fs');
-const { promisify } = require('util');
+const https = require('node:https');
+const fs = require('node:fs');
+const { promisify } = require('node:util');
 const { expect } = require('chai');
-const { execFile } = require('child_process');
-const { join } = require('path');
+const { execFile } = require('node:child_process');
+const { join } = require('node:path');
 const rmrf = require('rimraf');
 
 const { run, terminate } = require('./registry');

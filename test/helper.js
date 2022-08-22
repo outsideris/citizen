@@ -1,5 +1,5 @@
 const nock = require('nock');
-const fs = require('fs');
+const fs = require('node:fs');
 const tmp = require('tmp');
 const AdmZip = require('adm-zip');
 

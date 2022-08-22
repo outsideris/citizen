@@ -1,7 +1,7 @@
-const path = require('path');
-const fs = require('fs');
+const path = require('node:path');
+const fs = require('node:fs');
 const { expect } = require('chai');
-const { promisify } = require('util');
+const { promisify } = require('node:util');
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 
 const helper = require('../test/helper');

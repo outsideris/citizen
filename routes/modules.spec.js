@@ -2,8 +2,8 @@ const request = require('supertest');
 const { expect } = require('chai');
 const { promisify } = require('util');
 const rmrf = require('rimraf');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const mkdirp = require('mkdirp');
 
 const app = require('../app');

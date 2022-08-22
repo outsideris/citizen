@@ -1,6 +1,6 @@
-const path = require('path');
-const fs = require('fs');
-const { promisify } = require('util');
+const path = require('node:path');
+const fs = require('node:fs');
+const { promisify } = require('node:util');
 const { expect } = require('chai');
 const mkdirp = require('mkdirp');
 const rmrf = require('rimraf');

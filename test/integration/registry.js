@@ -1,4 +1,4 @@
-const http = require('http');
+const http = require('node:http');
 const getPort = require('get-port');
 const debug = require('debug')('citizen:test:integration');
 

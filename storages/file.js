@@ -1,6 +1,6 @@
-const fs = require('fs');
-const { join, parse } = require('path');
-const { promisify } = require('util');
+const fs = require('node:fs');
+const { join, parse } = require('node:path');
+const { promisify } = require('node:util');
 const debug = require('debug')('citizen:server');
 const mkdirp = require('mkdirp');
 
