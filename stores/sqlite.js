@@ -1,8 +1,22 @@
 const { PrismaClient } = require('@prisma/client/sqlite');
 const debug = require('debug')('citizen:server:store:sqlite');
+const { join } = require('node:path');
 
 const storeType = 'sqlite';
-const prisma = new PrismaClient();
+
+const DB_URL = process.env.CITIZEN_DATABASE_URL;
+const dbConfig = {};
+if (DB_URL.startsWith('file:')) {
+  const [dbFile, params] = DB_URL.split('?');
+  const url = join(process.cwd(), dbFile.replace('file:', ''))
+  dbConfig.datasources = {
+    db: {
+      url: `file:${url}?${params}`,
+    },
+  };
+}
+
+const prisma = new PrismaClient(dbConfig);
 
 // modules
 const delimiter = '#$$#';
