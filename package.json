@@ -21,7 +21,7 @@
     "build:windows": "pkg . --targets node16-win-x64 -o dist/citizen-win-x64.exe",
     "migrate:sqlite": "prisma migrate dev --name init --schema ./stores/schemas/sqlite.prisma",
     "migrate:mongodb": "prisma migrate dev --name init --schema ./stores/schemas/mongodb.prisma",
-    "client": "npm run clinet:sqlite && npm run client:mongodb",
+    "client": "npm run client:sqlite && npm run client:mongodb",
     "client:sqlite": "prisma generate --schema ./stores/schemas/sqlite.prisma",
     "client:mongodb": "prisma generate --schema ./stores/schemas/mongodb.prisma"
   },
