@@ -8,7 +8,7 @@ const DB_URL = process.env.CITIZEN_DATABASE_URL;
 const dbConfig = {};
 if (DB_URL.startsWith('file:')) {
   const [dbFile, params] = DB_URL.split('?');
-  const url = join(process.cwd(), dbFile.replace('file:', ''))
+  const url = join(process.cwd(), dbFile.replace('file:', ''));
   dbConfig.datasources = {
     db: {
       url: `file:${url}?${params}`,
