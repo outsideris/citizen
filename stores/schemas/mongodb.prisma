@@ -9,27 +9,27 @@ datasource db {
 }
 
 model Module {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  namespace String
-  name String
-  provider String
-  version String
-  owner String
-  location String?
-  definition String?
-  downloads Int @default(0)
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  namespace    String
+  name         String
+  provider     String
+  version      String
+  owner        String
+  location     String?
+  definition   String?
+  downloads    Int      @default(0)
   published_at DateTime @default(now())
-  root Json?
-  submodules Json[]
+  root         Json?
+  submodules   Json[]
 }
 
 model Provider {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  namespace String
-  type String
-  version String
-  protocols String[]
-  platforms Json[]
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  namespace     String
+  type          String
+  version       String
+  protocols     String[]
+  platforms     Json[]
   gpgPublicKeys Json[]
-  published_at DateTime @default(now())
+  published_at  DateTime @default(now())
 }
