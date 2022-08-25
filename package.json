@@ -19,11 +19,11 @@
     "build:linux": "pkg . --targets node16-linux-x64 -o dist/citizen-linux-x64",
     "build:macos": "pkg . --targets node16-macos-x64,node16-macos-arm64 -o dist/citizen-macos",
     "build:windows": "pkg . --targets node16-win-x64 -o dist/citizen-win-x64.exe",
-    "migrate:sqlite": "prisma migrate dev --name init --schema ./stores/schemas/sqlite.prisma",
-    "migrate:mongodb": "prisma migrate dev --name init --schema ./stores/schemas/mongodb.prisma",
+    "migrate:sqlite": "prisma migrate dev --name init --schema stores/sqlite/sqlite.prisma",
+    "migrate:mongodb": "prisma migrate dev --name init --schema stores/mongodb/mongodb.prisma",
     "client": "npm run client:sqlite && npm run client:mongodb",
-    "client:sqlite": "prisma generate --schema ./stores/schemas/sqlite.prisma",
-    "client:mongodb": "prisma generate --schema ./stores/schemas/mongodb.prisma"
+    "client:sqlite": "prisma generate --schema stores/sqlite/sqlite.prisma",
+    "client:mongodb": "prisma generate --schema stores/mongodb/mongodb.prisma"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.110.0",

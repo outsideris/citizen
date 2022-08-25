@@ -5,9 +5,9 @@ let store;
 const init = (dbType) => {
   const t = dbType || process.env.CITIZEN_DATABASE_TYPE;
   if (t === 'mongodb') {
-    store = require('./mongodb'); // eslint-disable-line global-require
+    store = require('./mongodb/mongodb'); // eslint-disable-line global-require
   } else if (t === 'sqlite') {
-    store = require('./sqlite'); // eslint-disable-line global-require
+    store = require('./sqlite/sqlite'); // eslint-disable-line global-require
   } else {
     throw new Error(`unknown database type: ${t}. Please set CITIZEN_DATABASE_TYPE environment variable.`);
   }
