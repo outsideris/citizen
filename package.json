@@ -77,7 +77,9 @@
   },
   "pkg": {
     "assets": [
-      "views/**/*"
+      "views/**/*",
+      "stores/**/*.prisma",
+      "stores/**/migrations/**/*"
     ]
   },
   "citizen": {
