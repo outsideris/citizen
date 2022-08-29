@@ -45,6 +45,14 @@ Environment variables:
 * `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
 * `CITIZEN_AWS_S3_BUCKET`: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.(And AWS credentials required.)
 
+=== Database migration
+To migrate the database, you can use `citizen generate-migration` command.
+The command will generate migration files which are `schema.prisma` and `migrations/` directory.
+Because we use link:https://www.prisma.io/[prisma] to handle databases, you need to link:https://www.prisma.io/docs/concepts/components/prisma-cli/installation[install prisma CLI].
+
+Then, Set `CITIZEN_DATABASE_TYPE` and `CITIZEN_DATABASE_URL` envorinment variables
+and Run link:https://www.prisma.io/docs/reference/api-reference/command-reference#migrate-deploy[prisma migrate deploy].
+
 == Client Usage
 
 === `citizen module <namespace> <name> <provider> <version>`
