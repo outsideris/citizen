@@ -7,8 +7,6 @@ image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.
 A Private link:https://registry.terraform.io/[Terraform Module] and link:https://www.terraform.io/docs/internals/provider-registry-protocol.html[Terraform Provider] registry.
 
 == Requirements
-
-* Node.js 16+
 * HTTPS - Terraform module registry only support HTTPS.
 
 == Download
@@ -142,6 +140,8 @@ terraform {
 ....
 
 == Development
+Node.js 16+ required
+
 Set environment variables, see above.
 
 [source, sh]
