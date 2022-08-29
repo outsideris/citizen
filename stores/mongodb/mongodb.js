@@ -2,7 +2,12 @@ const { PrismaClient } = require('@prisma/client/mongodb');
 const debug = require('debug')('citizen:server:store:mongodb');
 
 const storeType = 'mongodb';
-const prisma = new PrismaClient();
+
+const config = {};
+if (process.env.VERBOSE_DB_LOG) {
+  config.log = ['query', 'info', 'warn', 'error'];
+}
+const prisma = new PrismaClient(config);
 
 // modules
 const saveModule = async (data) => {

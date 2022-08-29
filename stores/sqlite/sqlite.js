@@ -6,7 +6,12 @@ const { normalizeSqlitePath } = require('../../lib/util');
 const storeType = 'sqlite';
 
 normalizeSqlitePath();
-const prisma = new PrismaClient();
+
+const config = {};
+if (process.env.VERBOSE_DB_LOG) {
+  config.log = ['query', 'info', 'warn', 'error'];
+}
+const prisma = new PrismaClient(config);
 
 // modules
 const delimiter = '#$$#';
