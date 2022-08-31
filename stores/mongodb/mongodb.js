@@ -106,9 +106,7 @@ const getProviderVersions = async (options) => {
 };
 
 const findProviderPackage = async (options) => {
-  const {
-    namespace, type, version, 'platforms.os': os, 'platforms.arch': arch,
-  } = options;
+  const { namespace, type, version, 'platforms.os': os, 'platforms.arch': arch } = options;
   const providers = await prisma.provider.findMany({
     where: {
       namespace,
@@ -117,8 +115,7 @@ const findProviderPackage = async (options) => {
     },
     orderBy: { version: 'desc' },
   });
-  const packages = providers
-    .filter((p) => p.platforms.some((i) => i.os === os && i.arch === arch));
+  const packages = providers.filter((p) => p.platforms.some((i) => i.os === os && i.arch === arch));
   return packages.length > 0 ? packages[0] : null;
 };
 

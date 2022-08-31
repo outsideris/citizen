@@ -10,8 +10,8 @@ const s3 = require('./s3');
 const s3client = new S3Client({});
 const readFile = promisify(fs.readFile);
 
-describe('s3\'s', async () => {
-  const modulePath = `citizen/${(new Date()).getTime()}/module.tar.gz`;
+describe("s3's", async () => {
+  const modulePath = `citizen/${new Date().getTime()}/module.tar.gz`;
   const tarballPath = path.join(__dirname, '../test', 'fixture/module.tar.gz');
   let moduleBuf;
 

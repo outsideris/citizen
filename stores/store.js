@@ -17,15 +17,7 @@ const getStoreType = () => store.storeType;
 
 // modules
 const saveModule = async (data) => {
-  const {
-    namespace,
-    name,
-    provider,
-    version,
-    owner,
-    location,
-    definition = {},
-  } = data;
+  const { namespace, name, provider, version, owner, location, definition = {} } = data;
 
   const module = {
     owner: owner || '',
@@ -42,13 +34,7 @@ const saveModule = async (data) => {
   return m;
 };
 
-const findAllModules = async ({
-  selector = {},
-  namespace = '',
-  provider = '',
-  offset = 0,
-  limit = 15,
-} = {}) => {
+const findAllModules = async ({ selector = {}, namespace = '', provider = '', offset = 0, limit = 15 } = {}) => {
   const options = selector;
   // `q` search in `name` field.
   // It could be extended to other fields. Specification said it depends on registry implementation.
@@ -75,17 +61,27 @@ const findAllModules = async ({
     nextOffset: +offset + +limit,
     prevOffset: +offset - +limit,
   };
-  if (meta.prevOffset < 0) { meta.prevOffset = null; }
-  if (meta.nextOffset >= totalRows) { meta.nextOffset = null; }
+  if (meta.prevOffset < 0) {
+    meta.prevOffset = null;
+  }
+  if (meta.nextOffset >= totalRows) {
+    meta.nextOffset = null;
+  }
 
   const result = await store.findAllModules(options, meta, +offset, +limit);
   return result;
 };
 
 const getModuleVersions = async ({ namespace, name, provider } = {}) => {
-  if (!namespace) { throw new Error('namespace required.'); }
-  if (!name) { throw new Error('name required.'); }
-  if (!provider) { throw new Error('provider required.'); }
+  if (!namespace) {
+    throw new Error('namespace required.');
+  }
+  if (!name) {
+    throw new Error('name required.');
+  }
+  if (!provider) {
+    throw new Error('provider required.');
+  }
 
   const options = {
     namespace,
@@ -106,9 +102,15 @@ const getModuleVersions = async ({ namespace, name, provider } = {}) => {
 };
 
 const getModuleLatestVersion = async ({ namespace, name, provider } = {}) => {
-  if (!namespace) { throw new Error('namespace required.'); }
-  if (!name) { throw new Error('name required.'); }
-  if (!provider) { throw new Error('provider required.'); }
+  if (!namespace) {
+    throw new Error('namespace required.');
+  }
+  if (!name) {
+    throw new Error('name required.');
+  }
+  if (!provider) {
+    throw new Error('provider required.');
+  }
 
   const options = {
     namespace,
@@ -120,16 +122,19 @@ const getModuleLatestVersion = async ({ namespace, name, provider } = {}) => {
   return result;
 };
 
-const findOneModule = async ({
-  namespace,
-  name,
-  provider,
-  version,
-} = {}) => {
-  if (!namespace) { throw new Error('namespace required.'); }
-  if (!name) { throw new Error('name required.'); }
-  if (!provider) { throw new Error('provider required.'); }
-  if (!version) { throw new Error('version required.'); }
+const findOneModule = async ({ namespace, name, provider, version } = {}) => {
+  if (!namespace) {
+    throw new Error('namespace required.');
+  }
+  if (!name) {
+    throw new Error('name required.');
+  }
+  if (!provider) {
+    throw new Error('provider required.');
+  }
+  if (!version) {
+    throw new Error('version required.');
+  }
 
   const options = {
     namespace,
@@ -143,16 +148,19 @@ const findOneModule = async ({
   return result;
 };
 
-const increaseModuleDownload = async ({
-  namespace,
-  name,
-  provider,
-  version,
-} = {}) => {
-  if (!namespace) { throw new Error('namespace required.'); }
-  if (!name) { throw new Error('name required.'); }
-  if (!provider) { throw new Error('provider required.'); }
-  if (!version) { throw new Error('version required.'); }
+const increaseModuleDownload = async ({ namespace, name, provider, version } = {}) => {
+  if (!namespace) {
+    throw new Error('namespace required.');
+  }
+  if (!name) {
+    throw new Error('name required.');
+  }
+  if (!provider) {
+    throw new Error('provider required.');
+  }
+  if (!version) {
+    throw new Error('version required.');
+  }
 
   const options = {
     namespace,
@@ -203,14 +211,16 @@ const saveProvider = async (data) => {
   return result;
 };
 
-const findOneProvider = async ({
-  namespace,
-  type,
-  version,
-} = {}) => {
-  if (!namespace) { throw new Error('namespace required.'); }
-  if (!type) { throw new Error('type required.'); }
-  if (!version) { throw new Error('version required.'); }
+const findOneProvider = async ({ namespace, type, version } = {}) => {
+  if (!namespace) {
+    throw new Error('namespace required.');
+  }
+  if (!type) {
+    throw new Error('type required.');
+  }
+  if (!version) {
+    throw new Error('version required.');
+  }
 
   const options = {
     namespace,
@@ -223,13 +233,7 @@ const findOneProvider = async ({
   return result;
 };
 
-const findAllProviders = async ({
-  selector = {},
-  namespace = '',
-  type = '',
-  offset = 0,
-  limit = 15,
-} = {}) => {
+const findAllProviders = async ({ selector = {}, namespace = '', type = '', offset = 0, limit = 15 } = {}) => {
   const options = selector;
 
   if (namespace) {
@@ -248,16 +252,24 @@ const findAllProviders = async ({
     nextOffset: +offset + +limit,
     prevOffset: +offset - +limit,
   };
-  if (meta.prevOffset < 0) { meta.prevOffset = null; }
-  if (meta.nextOffset >= totalRows) { meta.nextOffset = null; }
+  if (meta.prevOffset < 0) {
+    meta.prevOffset = null;
+  }
+  if (meta.nextOffset >= totalRows) {
+    meta.nextOffset = null;
+  }
 
   const result = await store.findAllProviders(options, meta, +offset, +limit);
   return result;
 };
 
 const getProviderVersions = async ({ namespace, type } = {}) => {
-  if (!namespace) { throw new Error('namespace required.'); }
-  if (!type) { throw new Error('type required.'); }
+  if (!namespace) {
+    throw new Error('namespace required.');
+  }
+  if (!type) {
+    throw new Error('type required.');
+  }
 
   const options = {
     namespace,
@@ -290,18 +302,22 @@ const getProviderVersions = async ({ namespace, type } = {}) => {
 };
 
 // FIXME: return correct response format
-const findProviderPackage = async ({
-  namespace = '',
-  type = '',
-  version = '',
-  os = '',
-  arch = '',
-} = {}) => {
-  if (!namespace) { throw new Error('namespace required.'); }
-  if (!type) { throw new Error('type required.'); }
-  if (!version) { throw new Error('version required.'); }
-  if (!os) { throw new Error('os required.'); }
-  if (!arch) { throw new Error('arch required.'); }
+const findProviderPackage = async ({ namespace = '', type = '', version = '', os = '', arch = '' } = {}) => {
+  if (!namespace) {
+    throw new Error('namespace required.');
+  }
+  if (!type) {
+    throw new Error('type required.');
+  }
+  if (!version) {
+    throw new Error('version required.');
+  }
+  if (!os) {
+    throw new Error('os required.');
+  }
+  if (!arch) {
+    throw new Error('arch required.');
+  }
 
   const options = {
     namespace,

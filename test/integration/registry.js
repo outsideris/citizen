@@ -5,7 +5,10 @@ const debug = require('debug')('citizen:test:integration');
 const { connect, disconnect } = require('./ngrok');
 const app = require('../../app');
 
-const sleep = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
+const sleep = (ms) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 
 const run = async (version) => {
   let url;
@@ -71,9 +74,9 @@ const run = async (version) => {
   };
 };
 
-const terminate = (server, version) => new Promise((resolve, reject) => {
-  disconnect(version)
-    .then(() => {
+const terminate = (server, version) =>
+  new Promise((resolve, reject) => {
+    disconnect(version).then(() => {
       server.close((err) => {
         if (err) {
           reject(err);
@@ -81,7 +84,7 @@ const terminate = (server, version) => new Promise((resolve, reject) => {
         resolve();
       });
     });
-});
+  });
 
 module.exports = {
   run,

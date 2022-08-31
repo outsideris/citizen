@@ -24,13 +24,19 @@ const deserializeString = (str) => str.split(delimiter).map((s) => JSON.parse(s)
 
 const serializeModule = (m) => {
   const module = m;
-  if (module.root) { module.root = JSON.stringify(module.root); }
-  if (module.submodules) { module.submodules = serializeObjectArray(module.submodules); }
+  if (module.root) {
+    module.root = JSON.stringify(module.root);
+  }
+  if (module.submodules) {
+    module.submodules = serializeObjectArray(module.submodules);
+  }
   return module;
 };
 
 const deserializeModule = (m) => {
-  if (!m) { return null; }
+  if (!m) {
+    return null;
+  }
   const module = m;
   module.root = module.root ? JSON.parse(module.root) : null;
   module.submodules = module.submodules ? deserializeString(module.submodules) : [];
@@ -100,7 +106,9 @@ const increaseModuleDownload = async (options) => {
 // providers
 const serializeProvider = (p) => {
   const provider = p;
-  if (!provider.protocols) { provider.protocols = []; }
+  if (!provider.protocols) {
+    provider.protocols = [];
+  }
   provider.protocols = provider.protocols.toString();
   provider.platforms = serializeObjectArray(provider.platforms);
   provider.gpgPublicKeys = serializeObjectArray(provider.gpgPublicKeys);
@@ -108,7 +116,9 @@ const serializeProvider = (p) => {
 };
 
 const deserializeProvider = (p) => {
-  if (!p) { return null; }
+  if (!p) {
+    return null;
+  }
   const provider = p;
   provider.protocols = provider.protocols ? provider.protocols.split(',') : [];
   provider.platforms = provider.platforms ? deserializeString(provider.platforms) : [];
@@ -159,9 +169,7 @@ const getProviderVersions = async (options) => {
 };
 
 const findProviderPackage = async (options) => {
-  const {
-    namespace, type, version, 'platforms.os': os, 'platforms.arch': arch,
-  } = options;
+  const { namespace, type, version, 'platforms.os': os, 'platforms.arch': arch } = options;
   const result = await prisma.provider.findMany({
     where: {
       namespace,
@@ -171,8 +179,7 @@ const findProviderPackage = async (options) => {
     orderBy: { version: 'desc' },
   });
   const providers = result.map((p) => deserializeProvider(p));
-  const packages = providers
-    .filter((p) => p.platforms.some((i) => i.os === os && i.arch === arch));
+  const packages = providers.filter((p) => p.platforms.some((i) => i.os === os && i.arch === arch));
   return packages.length > 0 ? packages[0] : null;
 };
 

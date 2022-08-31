@@ -5,23 +5,14 @@ const { v4: uuid } = require('uuid');
 
 const logger = require('../lib/logger');
 const storage = require('../lib/storage');
-const {
-  saveProvider,
-  findOneProvider,
-  getProviderVersions,
-  findProviderPackage,
-} = require('../stores/store');
+const { saveProvider, findOneProvider, getProviderVersions, findProviderPackage } = require('../stores/store');
 const { extractShasum } = require('../lib/util');
 
 const router = Router();
 
 // register a provider with version
 router.post('/:namespace/:type/:version', (req, res, next) => {
-  const {
-    namespace,
-    type,
-    version,
-  } = req.params;
+  const { namespace, type, version } = req.params;
 
   const destPath = `${namespace}/${type}/${version}`;
 
@@ -103,8 +94,9 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
         return next(error);
       }
 
-      const isFilesMatched = data.platforms
-        .every((p) => providerFiles.some((f) => f.filename === `${namespace}-${type}_${version}_${p.os}_${p.arch}.zip`));
+      const isFilesMatched = data.platforms.every((p) =>
+        providerFiles.some((f) => f.filename === `${namespace}-${type}_${version}_${p.os}_${p.arch}.zip`)
+      );
       if (!isFilesMatched) {
         const error = new Error('Unmatched platform data and files');
         error.status = 400;
@@ -153,7 +145,9 @@ router.get('/:namespace/:type/versions', async (req, res, next) => {
   const options = { ...req.params };
 
   const versions = await getProviderVersions(options);
-  if (!versions) { return next(); }
+  if (!versions) {
+    return next();
+  }
 
   if (versions.length === 0) {
     return res.status(404).send({});
@@ -167,10 +161,11 @@ router.get('/:namespace/:type/:version/download/:os/:arch', async (req, res, nex
   const options = { ...req.params };
 
   const providerPackage = await findProviderPackage(options);
-  if (!providerPackage) { return next(); }
+  if (!providerPackage) {
+    return next();
+  }
 
-  const platform = providerPackage.platforms
-    .find((p) => p.os === options.os && p.arch === options.arch);
+  const platform = providerPackage.platforms.find((p) => p.os === options.os && p.arch === options.arch);
 
   const viewModel = {
     protocols: providerPackage.protocols,
@@ -193,17 +188,20 @@ router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res,
     const options = { ...req.params };
 
     const providerPackage = await findProviderPackage(options);
-    if (!providerPackage) { return next(); }
+    if (!providerPackage) {
+      return next();
+    }
 
-    const platform = providerPackage.platforms
-      .find((p) => p.os === options.os && p.arch === options.arch);
+    const platform = providerPackage.platforms.find((p) => p.os === options.os && p.arch === options.arch);
 
     const provider = await findOneProvider(options);
     const protocols = provider.protocols.map((prot) => Math.floor(prot));
     res.header('x-terraform-protocol-version', Math.min(...protocols));
     res.header('x-terraform-protocol-versions', provider.protocols.join(', '));
 
-    const file = await storage.getProvider(`${options.namespace}/${options.type}/${options.version}/${platform.filename}`);
+    const file = await storage.getProvider(
+      `${options.namespace}/${options.type}/${options.version}/${platform.filename}`
+    );
     return res.attachment(platform.filename).send(file);
   } catch (e) {
     return next(e);
@@ -216,16 +214,16 @@ router.get('/:namespace/:type/:version/sha256sums', async (req, res, next) => {
 
     const sumsLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS`;
     const shasumsContent = await storage.getProvider(sumsLocation);
-    if (!shasumsContent) { return next(); }
+    if (!shasumsContent) {
+      return next();
+    }
 
     const provider = await findOneProvider(options);
     const protocols = provider.protocols.map((prot) => Math.floor(prot));
     res.header('x-terraform-protocol-version', Math.min(...protocols));
     res.header('x-terraform-protocol-versions', provider.protocols.join(', '));
 
-    return res
-      .contentType('text/plain')
-      .send(shasumsContent.toString('utf8'));
+    return res.contentType('text/plain').send(shasumsContent.toString('utf8'));
   } catch (e) {
     return next(e);
   }
@@ -236,7 +234,9 @@ router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) =
     const options = { ...req.params };
     const sigLocation = `${options.namespace}/${options.type}/${options.version}/${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`;
     const sig = await storage.getProvider(sigLocation);
-    if (!sig) { return next(); }
+    if (!sig) {
+      return next();
+    }
 
     const provider = await findOneProvider(options);
     const protocols = provider.protocols.map((prot) => Math.floor(prot));
@@ -245,7 +245,10 @@ router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) =
 
     return res
       .set('Content-Type', 'application/octet-stream')
-      .set('Content-disposition', `attachment; filename=${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`)
+      .set(
+        'Content-disposition',
+        `attachment; filename=${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`
+      )
       .send(sig);
   } catch (e) {
     return next(e);

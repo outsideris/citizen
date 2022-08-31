@@ -17,15 +17,11 @@ module.exports = {
   },
   overrides: [
     {
-      files: [
-        '**/*.spec.js',
-      ],
+      files: ['**/*.spec.js'],
       env: {
         mocha: true,
       },
-      plugins: [
-        'mocha',
-      ],
+      plugins: ['mocha'],
       rules: {
         'mocha/no-exclusive-tests': 'error',
         'no-unused-expressions': ['off'],

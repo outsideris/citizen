@@ -29,7 +29,8 @@ const download = async (terraform) => {
   return new Promise((resolve, reject) => {
     if (notExist) {
       log('Start to download terraform');
-      got.stream(DOWNLOAD_URL)
+      got
+        .stream(DOWNLOAD_URL)
         .pipe(unzipper.Parse())
         .on('entry', (entry) => {
           log('download completed');

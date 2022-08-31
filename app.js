@@ -48,7 +48,8 @@ app.use((req, res, next) => {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
     if (!err.status || err.status >= 500) {
       logger.error(err.stack);
     }
@@ -63,7 +64,8 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
   if (!err.status || err.status >= 500) {
     logger.error(err.stack);
   }

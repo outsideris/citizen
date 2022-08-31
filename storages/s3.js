@@ -5,9 +5,9 @@ const s3client = new S3Client({});
 
 const S3_BUCKET = process.env.CITIZEN_AWS_S3_BUCKET;
 if (process.env.CITIZEN_STORAGE === 's3' && !S3_BUCKET) {
-  throw new Error('S3 storage requires CITIZEN_AWS_S3_BUCKET. Additionally, ensure that either '
-    + 'AWS_PROFILE or AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set. '
-    + 'If running on AWS EC2 or ECS, IAM Roles may be used.');
+  throw new Error(
+    'S3 storage requires CITIZEN_AWS_S3_BUCKET. Additionally, ensure that either AWS_PROFILE or AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set. If running on AWS EC2 or ECS, IAM Roles may be used.'
+  );
 }
 
 const s3 = {
@@ -15,8 +15,12 @@ const s3 = {
   saveModule: async (path, tarball) => {
     debug(`save the module into ${path}.`);
 
-    if (!path) { throw new Error('path is required.'); }
-    if (!tarball) { throw new Error('tarball is required.'); }
+    if (!path) {
+      throw new Error('path is required.');
+    }
+    if (!tarball) {
+      throw new Error('tarball is required.');
+    }
 
     const params = {
       Bucket: S3_BUCKET,
@@ -73,8 +77,12 @@ const s3 = {
   saveProvider: async (path, tarball) => {
     debug(`save the provider into ${path}.`);
 
-    if (!path) { throw new Error('path is required.'); }
-    if (!tarball) { throw new Error('tarball is required.'); }
+    if (!path) {
+      throw new Error('path is required.');
+    }
+    if (!tarball) {
+      throw new Error('tarball is required.');
+    }
 
     const params = {
       Bucket: S3_BUCKET,

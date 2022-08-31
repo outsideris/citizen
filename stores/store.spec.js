@@ -19,7 +19,9 @@ const {
 } = require('./store');
 const helper = require('../test/helper');
 
-const storeTypes = ['mongodb', 'sqlite'];
+// const storeTypes = ['mongodb', 'sqlite'];
+// const storeTypes = ['mongodb'];
+const storeTypes = ['sqlite'];
 
 storeTypes.forEach((storeType) => {
   describe(`${storeType} store`, async () => {
@@ -109,16 +111,32 @@ storeTypes.forEach((storeType) => {
       describe('findAllModules()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'store-GCP', name: 'store-lb-http', provider: 'store-google', version: '1.0.4', owner: '',
+            namespace: 'store-GCP',
+            name: 'store-lb-http',
+            provider: 'store-google',
+            version: '1.0.4',
+            owner: '',
           });
           await saveModule({
-            namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.2.1', owner: '',
+            namespace: 'store-aws-modules',
+            name: 'store-vpc',
+            provider: 'store-aws',
+            version: '1.2.1',
+            owner: '',
           });
           await saveModule({
-            namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.5.0', owner: '',
+            namespace: 'store-aws-modules',
+            name: 'store-vpc',
+            provider: 'store-aws',
+            version: '1.5.0',
+            owner: '',
           });
           await saveModule({
-            namespace: 'store-aws-modules', name: 'store-vpc', provider: 'store-aws', version: '1.5.1', owner: '',
+            namespace: 'store-aws-modules',
+            name: 'store-vpc',
+            provider: 'store-aws',
+            version: '1.5.1',
+            owner: '',
           });
         });
 
@@ -188,13 +206,25 @@ storeTypes.forEach((storeType) => {
       describe('getModuleVersions()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.2.1', owner: '',
+            namespace: 'aws-modules',
+            name: 'vpc',
+            provider: 'aws',
+            version: '1.2.1',
+            owner: '',
           });
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+            namespace: 'aws-modules',
+            name: 'vpc',
+            provider: 'aws',
+            version: '1.5.0',
+            owner: '',
           });
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+            namespace: 'aws-modules',
+            name: 'vpc',
+            provider: 'aws',
+            version: '1.5.1',
+            owner: '',
           });
         });
 
@@ -228,10 +258,18 @@ storeTypes.forEach((storeType) => {
       describe('getModuleLatestVersion()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.0', owner: '',
+            namespace: 'aws-modules',
+            name: 'vpc',
+            provider: 'aws',
+            version: '1.5.0',
+            owner: '',
           });
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '',
+            namespace: 'aws-modules',
+            name: 'vpc',
+            provider: 'aws',
+            version: '1.5.1',
+            owner: '',
           });
         });
 
@@ -263,7 +301,12 @@ storeTypes.forEach((storeType) => {
       describe('findOneModule()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
+            namespace: 'aws-modules',
+            name: 'vpc',
+            provider: 'aws',
+            version: '1.5.1',
+            owner: '',
+            location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
           });
         });
 
@@ -297,7 +340,12 @@ storeTypes.forEach((storeType) => {
       describe('increaseModuleDownload()', () => {
         before(async () => {
           await saveModule({
-            namespace: 'aws-modules', name: 'vpc', provider: 'aws', version: '1.5.1', owner: '', location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
+            namespace: 'aws-modules',
+            name: 'vpc',
+            provider: 'aws',
+            version: '1.5.1',
+            owner: '',
+            location: 'aws-modules/vpc/aws/1.5.1/module.tar.gz',
           });
         });
 
@@ -344,10 +392,12 @@ storeTypes.forEach((storeType) => {
                 shasum: 'af9c7aa76b7c34d722fc9123208e26b22d60440cb47150dd04733b9b94f4541a',
               },
             ],
-            gpgPublicKeys: [{
-              keyId: 'asdf',
-              asciiArmor: '1234',
-            }],
+            gpgPublicKeys: [
+              {
+                keyId: 'asdf',
+                asciiArmor: '1234',
+              },
+            ],
           });
 
           expect(result.id).to.exist;
@@ -366,9 +416,14 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.0.4',
-            platforms: [{
-              os: 'linux', arch: 'amd64', filename: 'outsider-citizen_1.0.4_linux_amd64.zip', shasum: 'aaabbb1',
-            }],
+            platforms: [
+              {
+                os: 'linux',
+                arch: 'amd64',
+                filename: 'outsider-citizen_1.0.4_linux_amd64.zip',
+                shasum: 'aaabbb1',
+              },
+            ],
           });
         });
 
@@ -405,36 +460,56 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.0.4',
-            platforms: [{
-              os: 'linux', arch: 'amd64', filename: '', shasum: '',
-            }],
+            platforms: [
+              {
+                os: 'linux',
+                arch: 'amd64',
+                filename: '',
+                shasum: '',
+              },
+            ],
           });
 
           await saveProvider({
             namespace: 'outsider',
             type: 'citizen',
             version: '1.1.0',
-            platforms: [{
-              os: 'linux', arch: 'amd64', filename: '', shasum: '',
-            }],
+            platforms: [
+              {
+                os: 'linux',
+                arch: 'amd64',
+                filename: '',
+                shasum: '',
+              },
+            ],
           });
 
           await saveProvider({
             namespace: 'thirdparty',
             type: 'terraform',
             version: '1.2.0',
-            platforms: [{
-              os: 'windows', arch: 'amd64', filename: '', shasum: '',
-            }],
+            platforms: [
+              {
+                os: 'windows',
+                arch: 'amd64',
+                filename: '',
+                shasum: '',
+              },
+            ],
           });
 
           await saveProvider({
             namespace: 'outsider',
             type: 'citizen',
             version: '1.3.0',
-            platforms: [{
-              os: 'linux', arch: 'amd64', filename: '', shasum: '',
-            }],
+            platforms: [
+              {
+                os: 'linux',
+                arch: 'amd64',
+                filename: '',
+                shasum: '',
+              },
+            ],
           });
         });
 
@@ -507,27 +582,42 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.0.4',
-            platforms: [{
-              os: 'linux', arch: 'amd64', filename: '', shasum: '',
-            }],
+            platforms: [
+              {
+                os: 'linux',
+                arch: 'amd64',
+                filename: '',
+                shasum: '',
+              },
+            ],
           });
 
           await saveProvider({
             namespace: 'outsider',
             type: 'citizen',
             version: '1.1.0',
-            platforms: [{
-              os: 'linux', arch: 'amd64', filename: '', shasum: '',
-            }],
+            platforms: [
+              {
+                os: 'linux',
+                arch: 'amd64',
+                filename: '',
+                shasum: '',
+              },
+            ],
           });
 
           await saveProvider({
             namespace: 'outsider',
             type: 'citizen',
             version: '1.2.0',
-            platforms: [{
-              os: 'linux', arch: 'amd64', filename: '', shasum: '',
-            }],
+            platforms: [
+              {
+                os: 'linux',
+                arch: 'amd64',
+                filename: '',
+                shasum: '',
+              },
+            ],
           });
         });
 
@@ -542,9 +632,7 @@ storeTypes.forEach((storeType) => {
           });
 
           expect(result).to.have.property('id').to.equal('outsider/citizen');
-          expect(result).to.have.property('versions')
-            .to.be.an('array')
-            .to.have.lengthOf(3);
+          expect(result).to.have.property('versions').to.be.an('array').to.have.lengthOf(3);
         });
 
         it('should return provider with properties', async () => {
@@ -565,18 +653,28 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.1.0',
-            platforms: [{
-              os: 'windows', arch: 'amd64', filename: '', shasum: '',
-            }],
+            platforms: [
+              {
+                os: 'windows',
+                arch: 'amd64',
+                filename: '',
+                shasum: '',
+              },
+            ],
           });
 
           await saveProvider({
             namespace: 'outsider',
             type: 'citizen',
             version: '1.2.0',
-            platforms: [{
-              os: 'linux', arch: 'amd64', filename: '', shasum: '',
-            }],
+            platforms: [
+              {
+                os: 'linux',
+                arch: 'amd64',
+                filename: '',
+                shasum: '',
+              },
+            ],
           });
         });
 

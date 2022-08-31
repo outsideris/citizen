@@ -14,8 +14,12 @@ const getProviderPath = (path) => join(process.env.CITIZEN_STORAGE_PATH, 'provid
 const file = {
   type: () => 'file',
   saveModule: async (path, tarball) => {
-    if (!path) { throw new Error('path is required.'); }
-    if (!tarball) { throw new Error('tarball is required.'); }
+    if (!path) {
+      throw new Error('path is required.');
+    }
+    if (!tarball) {
+      throw new Error('tarball is required.');
+    }
 
     const pathToStore = getModulePath(path);
     debug(`save the module into ${pathToStore}.`);
@@ -47,8 +51,12 @@ const file = {
     }
   },
   saveProvider: async (path, content) => {
-    if (!path) { throw new Error('path is required.'); }
-    if (!content) { throw new Error('content is required.'); }
+    if (!path) {
+      throw new Error('path is required.');
+    }
+    if (!content) {
+      throw new Error('content is required.');
+    }
 
     const pathToStore = getProviderPath(path);
     debug(`save the Provider into ${pathToStore}.`);
