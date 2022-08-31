@@ -19,9 +19,18 @@ router.get('/search', async (req, res) => {
   const options = {
     ...req.query,
     selector: {
-      name: {
-        $regex: req.query.q,
-      },
+      $or: [
+        {
+          namespace: {
+            $regex: req.query.q,
+          }
+        },
+        {
+          name: {
+            $regex: req.query.q,
+          }
+        },
+      ]
     },
     q: null,
   };
