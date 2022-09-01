@@ -48,7 +48,7 @@ const findAllModules = (options, meta, offset, limit) => {
       verified: { "$first": "$verified"}
     }
   }
-  params = [grouping, {$sort: { published_at: -1}}, {$skip: offset}, {$limit: limit}]
+  params = [{$sort: { published_at: -1}}, grouping, {$skip: offset}, {$limit: limit}]
   if (Object.keys(options).length != 0) {
     match = {"$match": {}}
     for (const property in options) {
