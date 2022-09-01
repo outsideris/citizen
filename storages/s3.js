@@ -1,7 +1,7 @@
 const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
 const debug = require('debug')('citizen:server');
 
-const s3 = new S3Client({});
+const s3client = new S3Client({});
 
 const S3_BUCKET = process.env.CITIZEN_AWS_S3_BUCKET;
 if (process.env.CITIZEN_STORAGE === 's3' && !S3_BUCKET) {
@@ -10,7 +10,7 @@ if (process.env.CITIZEN_STORAGE === 's3' && !S3_BUCKET) {
     + 'If running on AWS EC2 or ECS, IAM Roles may be used.');
 }
 
-module.exports = {
+const s3 = {
   type: () => 's3',
   saveModule: async (path, tarball) => {
     debug(`save the module into ${path}.`);
@@ -23,7 +23,7 @@ module.exports = {
       Key: `modules/${path}`,
       Body: tarball,
     };
-    const result = await s3.send(new PutObjectCommand(params));
+    const result = await s3client.send(new PutObjectCommand(params));
 
     if (result.ETag) {
       return true;
@@ -37,7 +37,7 @@ module.exports = {
     };
 
     try {
-      const module = await s3.send(new GetObjectCommand(params));
+      const module = await s3client.send(new GetObjectCommand(params));
       if (module.Body) {
         debug(`the module already exist: ${path}.`);
         return true;
@@ -61,7 +61,7 @@ module.exports = {
       Key: `modules/${path}`,
     };
     const chunks = [];
-    const file = await s3.send(new GetObjectCommand(params));
+    const file = await s3client.send(new GetObjectCommand(params));
     const content = await new Promise((resolve, reject) => {
       file.Body.on('data', (chunk) => chunks.push(chunk));
       file.Body.on('error', reject);
@@ -81,7 +81,7 @@ module.exports = {
       Key: `providers/${path}`,
       Body: tarball,
     };
-    const result = await s3.save(params);
+    const result = await s3client.send(new PutObjectCommand(params));
 
     if (result.ETag) {
       return true;
@@ -95,8 +95,8 @@ module.exports = {
     };
 
     try {
-      const module = await s3.get(params);
-      if (module.Body) {
+      const provider = await s3client.send(new GetObjectCommand(params));
+      if (provider.Body) {
         debug(`the provider already exist: ${path}.`);
         return true;
       }
@@ -118,7 +118,16 @@ module.exports = {
       Bucket: S3_BUCKET,
       Key: `providers/${path}`,
     };
-    const file = await s3.get(params);
-    return file.Body;
+    const chunks = [];
+    const file = await s3client.send(new GetObjectCommand(params));
+    const content = await new Promise((resolve, reject) => {
+      file.Body.on('data', (chunk) => chunks.push(chunk));
+      file.Body.on('error', reject);
+      file.Body.on('end', () => resolve(Buffer.concat(chunks)));
+    });
+
+    return content;
   },
 };
+
+module.exports = s3;

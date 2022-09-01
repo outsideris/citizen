@@ -1,4 +1,3 @@
-/* eslint-disable global-require */
 const debug = require('debug')('citizen:server:store');
 
 let store;
@@ -6,9 +5,9 @@ let store;
 const init = (dbType) => {
   const t = dbType || process.env.CITIZEN_DATABASE;
   if (t === 'mongodb') {
-    store = require('./mongodb');
+    store = require('./mongodb'); // eslint-disable-line global-require
   } else {
-    store = require('./nedb');
+    store = require('./nedb'); // eslint-disable-line global-require
   }
 };
 
@@ -315,7 +314,9 @@ const findProviderPackage = async ({
   return result;
 };
 
-init();
+(async () => {
+  await init();
+})();
 
 module.exports = {
   init,

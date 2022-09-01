@@ -1,14 +1,14 @@
 = Citizen
 
-image:https://github.com/outsideris/citizen/workflows/Unit%20tests/badge.svg["Unit Test Status", link="https://github.com/outsideris/citizen/actions?query=workflow%3A%22Unit+tests%22+branch%3Amaster"]
-image:https://github.com/outsideris/citizen/workflows/Integration%20Tests/badge.svg["Integration Test Status", link="https://github.com/outsideris/citizen/actions?query=workflow%3A%22Integration+Tests%22+branch%3Amaster"]
+image:https://github.com/outsideris/citizen/workflows/Unit%20tests/badge.svg["Unit Test Status", link="https://github.com/outsideris/citizen/actions?query=workflow%3A%22Unit+tests%22+branch%3Amain"]
+image:https://github.com/outsideris/citizen/workflows/Integration%20Tests/badge.svg["Integration Test Status", link="https://github.com/outsideris/citizen/actions?query=workflow%3A%22Integration+Tests%22+branch%3Amain"]
 image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.svg?type=shield["FOSSA Status", link="https://app.fossa.io/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen?ref=badge_shield"]
 
 A Private link:https://registry.terraform.io/[Terraform Module] and link:https://www.terraform.io/docs/internals/provider-registry-protocol.html[Terraform Provider] registry.
 
 == Requirements
 
-* Node.js 12+
+* Node.js 16+
 * HTTPS - Terraform module registry only support HTTPS.
 
 == Download
@@ -20,7 +20,7 @@ The docker image is in link:https://github.com/users/outsideris/packages/contain
 
 [source, sh]
 ....
-$ docker run -d -p "3000:3000" ghcr.io/outsideris/citizen:latest
+$ docker run -d -p "3000:3000" ghcr.io/outsideris/citizen:0.5.0
 ....
 
 == Server Usage
@@ -46,7 +46,7 @@ Environment variables:
 * `CITIZEN_DB_DIR`: A directory to save database file if using local backend storage. The default is `data` directory in a current working directory (absolute/relative path can be used).
 * `CITIZEN_STORAGE` : Storage type to store module files. You can use `file` or `s3` type.
 * `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
-* `CITIZEN_AWS_S3_BUCKET``: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.(And AWS credentials required.)
+* `CITIZEN_AWS_S3_BUCKET`: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.(And AWS credentials required.)
 
 == Client Usage
 

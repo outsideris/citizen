@@ -5,7 +5,7 @@ const AdmZip = require('adm-zip');
 
 const { genShaSums, sign } = require('../lib/provider/provider');
 
-module.exports = {
+const helper = {
   enableMock: ({ modulePath }) => {
     if (process.env.CITIZEN_MOCK_ENABLED) {
       nock('https://s3.amazonaws.com')
@@ -117,3 +117,5 @@ module.exports = {
     });
   }),
 };
+
+module.exports = helper;
