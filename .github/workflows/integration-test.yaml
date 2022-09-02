@@ -13,23 +13,26 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      max-parallel: 1
       matrix:
         node:
           - 16
           - 18
 
     env:
+      CITIZEN_DATABASE_TYPE: sqlite
+      CITIZEN_DATABASE_URL: file:./dev.db
       CITIZEN_STORAGE: file
       CITIZEN_STORAGE_PATH: /tmp/citizen
       DEBUG: 'citizen:*'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Import GPG key
         id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v3
+        uses: crazy-max/ghaction-import-gpg@v4
         with:
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
       - name: GPG user IDs
         run: |
@@ -38,24 +41,30 @@ jobs:
           echo "name:        ${{ steps.import_gpg.outputs.name }}"
           echo "email:       ${{ steps.import_gpg.outputs.email }}"
       - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
       - name: 'Cache node_modules'
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: '~/.npm'
           key: ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210321-${{ hashFiles('**/package-lock.json') }} }}
           restore-keys: |
             ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210321-
       - name: 'Cache terraform binaries'
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: 'test/terraform-binaries'
           key: ${{ runner.os }}-integration-terraform-210321-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-integration-terraform-210321-
       - run: npm ci
+      - name: Generating DB clients
+        run: |
+          npm run client:sqlite
+          npm run client:mongodb
+      - name: DB migration
+        run: npm run migrate:sqlite
       - run: npm run test:integration -- --forbid-only
         env:
           NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}

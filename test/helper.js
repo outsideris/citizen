@@ -1,5 +1,5 @@
 const nock = require('nock');
-const fs = require('fs');
+const fs = require('node:fs');
 const tmp = require('tmp');
 const AdmZip = require('adm-zip');
 
@@ -78,18 +78,10 @@ const helper = {
       nock.cleanAll();
     }
   },
-  deleteDbAll: (db, dbType) => new Promise((resolve, reject) => {
-    if (dbType === 'mongodb' || (!dbType && process.env.CITIZEN_DATABASE === 'mongodb')) {
-      db.deleteMany({})
-        .then((doc) => resolve(doc))
-        .catch((err) => reject(err));
-    } else {
-      db.remove({}, { multi: true }, (err, numRemoved) => {
-        if (err) { return reject(err); }
-        return resolve(numRemoved);
-      });
-    }
-  }),
+  deleteDbAll: async (db) => {
+    await db.module.deleteMany({});
+    await db.provider.deleteMany({});
+  },
   generateProvider: (prefix, platforms) => new Promise((resolve, reject) => {
     tmp.dir({ unsafeCleanup: true }, (err, tempDir, cleanupCallback) => {
       if (err) { return reject(err); }

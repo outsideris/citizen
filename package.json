@@ -1,6 +1,6 @@
 {
   "name": "citizen",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "private": true,
   "bin": {
     "citizen": "bin/citizen"
@@ -18,14 +18,22 @@
     "build": "npm run build:linux && npm run build:macos && npm run build:windows",
     "build:linux": "pkg . --targets node16-linux-x64 -o dist/citizen-linux-x64",
     "build:macos": "pkg . --targets node16-macos-x64,node16-macos-arm64 -o dist/citizen-macos",
-    "build:windows": "pkg . --targets node16-win-x64 -o dist/citizen-win-x64.exe"
+    "build:windows": "pkg . --targets node16-win-x64 -o dist/citizen-win-x64.exe",
+    "migrate:sqlite": "prisma migrate dev --name init --schema stores/sqlite/sqlite.prisma",
+    "migrate:mongodb": "prisma migrate dev --name init --schema stores/mongodb/mongodb.prisma",
+    "client": "npm run client:sqlite && npm run client:mongodb",
+    "client:sqlite": "prisma generate --schema stores/sqlite/sqlite.prisma",
+    "client:mongodb": "prisma generate --schema stores/mongodb/mongodb.prisma"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.30.0",
+    "@aws-sdk/client-s3": "^3.110.0",
     "@evops/hcl-terraform-parser": "^1.0.0",
+    "@prisma/client": "^4.2.1",
     "body-parser": "^1.19.0",
+    "bson": "^4.6.5",
     "chalk": "^4.1.2",
     "commander": "^9.0.0",
+    "cors": "2.8.5",
     "debug": "^4.3.2",
     "express": "^4.17.1",
     "form-data": "^4.0.0",
@@ -36,12 +44,11 @@
     "jten": "^0.2.0",
     "lodash": "^4.17.20",
     "mkdirp": "^1.0.4",
-    "mongoose": "^6.0.5",
+    "mongoose": "^6.3.8",
     "morgan": "^1.10.0",
     "multiparty": "^4.2.2",
-    "nedb": "^1.8.0",
     "ora": "^5.4.1",
-    "pino": "^7.8.0",
+    "pino": "^8.0.0",
     "recursive-readdir": "^2.2.1",
     "semver": "^7.3.4",
     "tar": "^6.1.11",
@@ -59,9 +66,11 @@
     "get-port": "^5.1.1",
     "mocha": "^10.0.0",
     "ngrok": "^4.3.1",
-    "nock": "^13.1.3",
+    "nock": "^13.2.7",
     "nodemon": "^2.0.7",
-    "pkg": "^5.3.1",
+    "pino-pretty": "^9.0.0",
+    "pkg": "^5.8.0",
+    "prisma": "^4.2.1",
     "rimraf": "^3.0.2",
     "supertest": "^6.1.3",
     "unzipper": "^0.10.11"
@@ -79,7 +88,8 @@
       "0.14.11",
       "0.15.5",
       "1.0.11",
-      "1.1.7"
+      "1.1.9",
+      "1.2.7"
     ]
   }
 }

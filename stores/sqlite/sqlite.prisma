@@ -1,0 +1,36 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../../node_modules/@prisma/client/sqlite"
+  binaryTargets = ["darwin", "darwin-arm64", "windows", "debian-openssl-1.1.x", "linux-musl"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("CITIZEN_DATABASE_URL")
+}
+
+model Module {
+  id           Int      @id @default(autoincrement())
+  namespace    String
+  name         String
+  provider     String
+  version      String
+  owner        String
+  location     String?
+  definition   String?
+  downloads    Int      @default(0)
+  published_at DateTime @default(now())
+  root         String?
+  submodules   String?
+}
+
+model Provider {
+  id            Int      @id @default(autoincrement())
+  namespace     String
+  type          String
+  version       String
+  protocols     String
+  platforms     String
+  gpgPublicKeys String
+  published_at  DateTime @default(now())
+}

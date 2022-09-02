@@ -1,13 +1,13 @@
-const https = require('https');
-const fs = require('fs');
-const { promisify } = require('util');
+const https = require('node:https');
+const fs = require('node:fs');
+const { promisify } = require('node:util');
 const { expect } = require('chai');
-const { execFile } = require('child_process');
-const { join } = require('path');
+const { execFile } = require('node:child_process');
+const { join } = require('node:path');
 const rmrf = require('rimraf');
 
 const { run, terminate } = require('./registry');
-const { providerDb } = require('../../stores/store');
+const { getClient } = require('../../stores/store');
 const helper = require('../helper');
 const TERRAFORM_VERSIONS = require('../versions');
 
@@ -39,7 +39,7 @@ VERSIONS.forEach((terraform) => {
 
     after(async () => {
       await terminate(server);
-      await helper.deleteDbAll(providerDb());
+      await helper.deleteDbAll(getClient());
     });
 
     describe('basic setup', () => {
@@ -136,7 +136,7 @@ VERSIONS.forEach((terraform) => {
         cleanupProvider();
         await unlink(definitonFile);
         await rimraf(join(__dirname, 'fixture', '.terraform'));
-        await helper.deleteDbAll(providerDb());
+        await helper.deleteDbAll(getClient());
         await rimraf(process.env.CITIZEN_STORAGE_PATH);
         try {
           await access(tfLockFile);

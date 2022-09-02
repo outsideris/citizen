@@ -14,8 +14,6 @@ router.get('/search', async (req, res) => {
     });
   }
 
-  // `q` search in `name` field.
-  // It could be extended to other fields. Specification said it depends on registry implementation.
   const options = {
     ...req.query,
     selector: {

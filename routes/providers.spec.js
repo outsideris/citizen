@@ -7,7 +7,7 @@ const unzipper = require('unzipper');
 
 const app = require('../app');
 const helper = require('../test/helper');
-const { providerDb, saveProvider } = require('../stores/store');
+const { getClient, saveProvider } = require('../stores/store');
 
 const rimraf = promisify(rmrf);
 
@@ -43,7 +43,7 @@ describe('POST /v1/providers/:namespace/:type/:version', () => {
 
   afterEach(async () => {
     cleanupProvider();
-    await helper.deleteDbAll(providerDb());
+    await helper.deleteDbAll(getClient());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
@@ -154,7 +154,7 @@ describe('GET /v1/providers/:namespace/:type/versions', () => {
   });
 
   after(async () => {
-    await helper.deleteDbAll(providerDb());
+    await helper.deleteDbAll(getClient());
   });
 
   it('should return provider versions', () => request(app)
@@ -214,7 +214,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
 
   after(async () => {
     cleanupProvider();
-    await helper.deleteDbAll(providerDb());
+    await helper.deleteDbAll(getClient());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 

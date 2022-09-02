@@ -18,14 +18,10 @@ jobs:
         node:
           - 16
           - 18
-    services:
-      mongodb:
-        image: mongo
-        ports:
-          - 27017:27017
 
     env:
-      CITIZEN_DB_DIR: ./data
+      CITIZEN_DATABASE_TYPE: sqlite
+      CITIZEN_DATABASE_URL: file:./dev.db
       CITIZEN_STORAGE: file
       CITIZEN_STORAGE_PATH: /tmp/citizen
       CITIZEN_ADDR: http://127.0.0.1:3000
@@ -37,12 +33,16 @@ jobs:
       DEBUG: 'citizen:*'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: isbang/compose-action@v1.1.0
+        with:
+          compose-file: "./test/docker-compose-mongodb-cluster.yaml"
+
       - name: Import GPG key
         id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v3
+        uses: crazy-max/ghaction-import-gpg@v4
         with:
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
       - name: GPG user IDs
         run: |
@@ -51,18 +51,24 @@ jobs:
           echo "name:        ${{ steps.import_gpg.outputs.name }}"
           echo "email:       ${{ steps.import_gpg.outputs.email }}"
       - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
       - name: 'Cache node_modules'
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: '~/.npm'
           key: ${{ runner.os }}-node-v${{ matrix.node }}-210321-${{ hashFiles('**/package-lock.json') }} }}
           restore-keys: |
             ${{ runner.os }}-node-v${{ matrix.node }}-210321-
       - run: npm ci
+      - name: Generating DB clients
+        run: |
+          npm run client:sqlite
+          npm run client:mongodb
       - name: linting
         run: npm run lint
+      - name: DB migration
+        run: npm run migrate:sqlite
       - name: unit test
         run: npm run test:unit -- --forbid-only

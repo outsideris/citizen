@@ -1,7 +1,7 @@
 const got = require('got');
-const { join } = require('path');
-const fs = require('fs');
-const { promisify } = require('util');
+const { join } = require('node:path');
+const fs = require('node:fs');
+const { promisify } = require('node:util');
 const unzipper = require('unzipper');
 const debug = require('debug');
 

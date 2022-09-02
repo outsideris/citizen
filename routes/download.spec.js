@@ -1,13 +1,13 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const fs = require('fs');
-const path = require('path');
-const { promisify } = require('util');
+const fs = require('node:fs');
+const path = require('node:path');
+const { promisify } = require('node:util');
 const rmrf = require('rimraf');
 
 const app = require('../app');
 const helper = require('../test/helper');
-const { moduleDb, saveModule } = require('../stores/store');
+const { getClient, saveModule, findOneModule } = require('../stores/store');
 
 const rimraf = promisify(rmrf);
 
@@ -19,7 +19,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
   });
 
   after(async () => {
-    await helper.deleteDbAll(moduleDb());
+    await helper.deleteDbAll(getClient());
   });
 
   it('should return the location which client can download source code', () => request(app)
@@ -50,7 +50,7 @@ describe('GET /v1/modules/:namespace/:name/:provider/download', () => {
   });
 
   after(async () => {
-    await helper.deleteDbAll(moduleDb());
+    await helper.deleteDbAll(getClient());
   });
 
   it('should redirect to the latest version of a module', () => request(app)
@@ -74,7 +74,7 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
   });
 
   afterEach(async () => {
-    await helper.deleteDbAll(moduleDb());
+    await helper.deleteDbAll(getClient());
     await rimraf(process.env.CITIZEN_STORAGE_PATH);
   });
 
@@ -92,21 +92,19 @@ describe('GET /v1/modules/tarball/:namespace/:name/:provider/*.tar.gz', () => {
       });
   });
 
-  it('should increase download count for a specific module', (done) => {
-    request(app)
-      .get(`/v1/modules/tarball/download/tar/aws/${version}/module.tar.gz`)
-      .expect(200)
-      .then(() => {
-        moduleDb().find({
-          namespace: 'download',
-          name: 'tar',
-          provider: 'aws',
-          version: `${version}`,
-        }, (err, docs) => {
-          if (err) { return done(err); }
-          expect(docs[0]).to.have.property('downloads').to.equal(1);
-          return done();
-        });
+  it('should increase download count for a specific module', () => request(app)
+    .get(`/v1/modules/tarball/download/tar/aws/${version}/module.tar.gz`)
+    .expect(200)
+    .then(async () => {
+      const module = await findOneModule({
+        namespace: 'download',
+        name: 'tar',
+        provider: 'aws',
+        version: `${version}`,
       });
-  });
+      expect(module).to.have.property('downloads').to.equal(1);
+    })
+    .catch((err) => {
+      throw err;
+    }));
 });

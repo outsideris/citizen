@@ -4,14 +4,13 @@ const { expect } = require('chai');
 const {
   init,
   getStoreType,
-  moduleDb,
+  getClient,
   saveModule,
   findAllModules,
   getModuleVersions,
   getModuleLatestVersion,
   findOneModule,
   increaseModuleDownload,
-  providerDb,
   saveProvider,
   findOneProvider,
   findAllProviders,
@@ -20,16 +19,24 @@ const {
 } = require('./store');
 const helper = require('../test/helper');
 
-const storeTypes = ['mongodb', 'nedb'];
+const storeTypes = ['mongodb', 'sqlite'];
 
 storeTypes.forEach((storeType) => {
   describe(`${storeType} store`, async () => {
+    let originDatabaseUrl;
     before(async () => {
+      originDatabaseUrl = process.env.CITIZEN_DATABASE_URL;
+      if (storeType === 'mongodb') {
+        process.env.CITIZEN_DATABASE_URL = 'mongodb://root:citizen@127.0.0.1:27018/citizen?authSource=admin';
+      } else if (storeType === 'sqlite') {
+        process.env.CITIZEN_DATABASE_URL = 'file:./dev.db';
+      }
       await init(storeType);
     });
 
     after(async () => {
-      await helper.deleteDbAll(moduleDb(), storeType);
+      await helper.deleteDbAll(getClient());
+      process.env.Citizen_DATABASE_URL = originDatabaseUrl;
     });
 
     it(`should use ${storeType}`, () => {
@@ -39,7 +46,7 @@ storeTypes.forEach((storeType) => {
     describe('module', () => {
       describe('saveModule()', () => {
         after(async () => {
-          await helper.deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should store module meta', async () => {
@@ -53,10 +60,51 @@ storeTypes.forEach((storeType) => {
             description: '',
           });
 
-          expect(result._id).to.exist; // eslint-disable-line no-underscore-dangle
+          expect(result.id).to.exist;
           expect(result.name).to.equal('store-consul');
           expect(result.published_at).to.exist;
           expect(result.downloads).to.equal(0);
+        });
+
+        it('should store module with root and submodule', async () => {
+          const result = await saveModule({
+            namespace: 'store-hashicorp',
+            name: 'store-consul',
+            provider: 'store-aws',
+            version: '0.1.0',
+            owner: 'outsideris',
+            definition: {
+              root: {
+                path: '',
+                name: 'consul',
+                empty: false,
+                inputs: undefined,
+                outputs: {
+                  arn: { name: 'arn', pos: { filename: '<input>', line: 11 } },
+                  dns: { name: 'dns', pos: { filename: '<input>', line: 16 } },
+                  id: { name: 'id', pos: { filename: '<input>', line: 6 } },
+                  name: { name: 'name', pos: { filename: '<input>', line: 1 } },
+                  zone_id: { name: 'zone_id', pos: { filename: '<input>', line: 21 } },
+                },
+                dependencies: [],
+                module_calls: {},
+                resources: {
+                  aws_alb__main: {
+                    mode: 'managed',
+                    type: 'aws_alb',
+                    name: 'main',
+                    provider: { name: 'aws' },
+                    pos: { filename: '<input>', line: 2 },
+                  },
+                },
+              },
+              submodules: [{ name: 'example' }],
+            },
+          });
+
+          expect(result.id).to.exist;
+          expect(result.root).to.be.an.instanceof(Object);
+          expect(result.submodules).to.be.an.instanceof(Object);
         });
       });
 
@@ -77,7 +125,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return all modules', async () => {
@@ -153,7 +201,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return available versions', async () => {
@@ -190,7 +238,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return latest versions for a specific module', async () => {
@@ -222,7 +270,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return the specific module', async () => {
@@ -256,7 +304,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(moduleDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should increase download count of the module', async () => {
@@ -275,7 +323,7 @@ storeTypes.forEach((storeType) => {
     describe('provider', () => {
       describe('saveProvider()', () => {
         after(async () => {
-          await helper.deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should store provider meta', async () => {
@@ -304,7 +352,7 @@ storeTypes.forEach((storeType) => {
             }],
           });
 
-          expect(result._id).to.exist; // eslint-disable-line no-underscore-dangle
+          expect(result.id).to.exist;
           expect(result.namespace).to.equal('outsider');
           expect(result.type).to.equal('citizen');
           expect(result.published_at).to.exist;
@@ -327,7 +375,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should find the provider', async () => {
@@ -393,7 +441,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return all providers', async () => {
@@ -486,7 +534,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return available versions', async () => {
@@ -535,7 +583,7 @@ storeTypes.forEach((storeType) => {
         });
 
         after(async () => {
-          await helper.deleteDbAll(providerDb(), storeType);
+          await helper.deleteDbAll(getClient());
         });
 
         it('should return provider that matched', async () => {

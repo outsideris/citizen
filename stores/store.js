@@ -3,19 +3,19 @@ const debug = require('debug')('citizen:server:store');
 let store;
 
 const init = (dbType) => {
-  const t = dbType || process.env.CITIZEN_DATABASE;
+  const t = dbType || process.env.CITIZEN_DATABASE_TYPE;
   if (t === 'mongodb') {
-    store = require('./mongodb'); // eslint-disable-line global-require
+    store = require('./mongodb/mongodb'); // eslint-disable-line global-require
+  } else if (t === 'sqlite') {
+    store = require('./sqlite/sqlite'); // eslint-disable-line global-require
   } else {
-    store = require('./nedb'); // eslint-disable-line global-require
+    throw new Error(`unknown database type: ${t}. Please set CITIZEN_DATABASE_TYPE environment variable.`);
   }
 };
 
 const getStoreType = () => store.storeType;
 
 // modules
-const moduleDb = () => store.moduleDb;
-
 const saveModule = async (data) => {
   const {
     namespace,
@@ -54,6 +54,14 @@ const findAllModules = async ({
   limit = 15,
 } = {}) => {
   const options = selector;
+  // `q` search in `name` field.
+  // It could be extended to other fields. Specification said it depends on registry implementation.
+  if (options.search) {
+    options.name = {
+      contains: options.search,
+    };
+    delete options.search;
+  }
 
   if (namespace) {
     options.namespace = namespace;
@@ -162,8 +170,6 @@ const increaseModuleDownload = async ({
 };
 
 // providers
-const providerDb = () => store.providerDb;
-
 const saveProvider = async (data) => {
   const p = {
     namespace: data.namespace,
@@ -321,14 +327,13 @@ const findProviderPackage = async ({
 module.exports = {
   init,
   getStoreType,
-  moduleDb,
+  getClient: () => store.client,
   saveModule,
   findAllModules,
   getModuleVersions,
   getModuleLatestVersion,
   findOneModule,
   increaseModuleDownload,
-  providerDb,
   saveProvider,
   findOneProvider,
   findAllProviders,
