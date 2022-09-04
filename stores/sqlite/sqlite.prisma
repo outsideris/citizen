@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  output        = "../../node_modules/@prisma/client/sqlite"
+  output        = "./client"
   binaryTargets = ["darwin", "darwin-arm64", "windows", "debian-openssl-1.1.x", "linux-musl"]
 }
 

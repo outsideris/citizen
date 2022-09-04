@@ -1,5 +1,6 @@
-const { PrismaClient } = require('@prisma/client/mongodb');
 const debug = require('debug')('citizen:server:store:mongodb');
+
+const { PrismaClient } = require('./client');
 
 const storeType = 'mongodb';
 

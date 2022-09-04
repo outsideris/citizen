@@ -1,6 +1,6 @@
-const { PrismaClient } = require('@prisma/client/sqlite');
 const debug = require('debug')('citizen:server:store:sqlite');
 
+const { PrismaClient } = require('./client');
 const { normalizeSqlitePath } = require('../../lib/util');
 
 const storeType = 'sqlite';

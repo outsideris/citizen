@@ -6,3 +6,4 @@ dist/
 data/
 test/terraform-binaries/
 .env
+stores/**/client/
