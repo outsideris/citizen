@@ -51,7 +51,8 @@ The command will generate migration files which are `schema.prisma` and `migrati
 Because we use link:https://www.prisma.io/[prisma] to handle databases, you need to link:https://www.prisma.io/docs/concepts/components/prisma-cli/installation[install prisma CLI].
 
 Then, Set `CITIZEN_DATABASE_TYPE` and `CITIZEN_DATABASE_URL` envorinment variables
-and Run link:https://www.prisma.io/docs/reference/api-reference/command-reference#migrate-deploy[prisma migrate deploy].
+and Run link:https://www.prisma.io/docs/reference/api-reference/command-reference#migrate-deploy[`prisma migrate deploy`] for Sqlite or
+link:https://www.prisma.io/docs/reference/api-reference/command-reference#db-push[`prisma db push`] for MongoDB.
 
 == Client Usage
 
