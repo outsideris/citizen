@@ -51,8 +51,8 @@ The command will generate migration files which are `schema.prisma` and `migrati
 Because we use link:https://www.prisma.io/[prisma] to handle databases, you need to link:https://www.prisma.io/docs/concepts/components/prisma-cli/installation[install prisma CLI].
 
 Then, Set `CITIZEN_DATABASE_TYPE` and `CITIZEN_DATABASE_URL` envorinment variables
-and Run link:https://www.prisma.io/docs/reference/api-reference/command-reference#migrate-deploy[`prisma migrate deploy`] for Sqlite or
-link:https://www.prisma.io/docs/reference/api-reference/command-reference#db-push[`prisma db push`] for MongoDB.
+and Run link:https://www.prisma.io/docs/reference/api-reference/command-reference#migrate-deploy[`prisma migrate deploy`] for Sqlite.
+For MongoDB, migration is not required.
 
 == Client Usage
 
@@ -157,6 +157,7 @@ Set environment variables, see above.
 ....
 $ ./bin/citizen server
 $ ./bin/citizen module
+$ ./bin/citizen provider
 ....
 
 === Test
@@ -185,11 +186,14 @@ $ CITIZEN_STORAGE_PATH=storage CITIZEN_AWS_S3_BUCKET=terraform-registry-modules 
 
 [source, sh]
 ....
+$ npm run client
 $ npm run build
 ....
 
+It will generate prisma clients for databases.
+
 Under ``dist/``,
-citizen binaries for linux, darwin and windows made.
+citizen binaries for linux, darwin(amd64/arm64) and windows made.
 
 == License
 image:https://app.fossa.io/api/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen.svg?type=large["FOSSA Status", link="https://app.fossa.io/projects/git%2Bgithub.com%2Foutsideris%2Fcitizen?ref=badge_large"]
