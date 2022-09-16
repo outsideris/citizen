@@ -27,7 +27,7 @@
     "client:mongodb": "prisma generate --schema stores/mongodb/mongodb.prisma"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.163.0",
+    "@aws-sdk/client-s3": "^3.171.0",
     "@evops/hcl-terraform-parser": "^1.0.0",
     "@prisma/client": "^4.3.1",
     "body-parser": "^1.19.0",
@@ -47,7 +47,7 @@
     "morgan": "^1.10.0",
     "multiparty": "^4.2.2",
     "ora": "^5.4.1",
-    "pino": "^8.4.2",
+    "pino": "^8.5.0",
     "recursive-readdir": "^2.2.1",
     "semver": "^7.3.4",
     "tar": "^6.1.11",
@@ -57,7 +57,7 @@
   "devDependencies": {
     "adm-zip": "^0.5.5",
     "chai": "^4.3.4",
-    "eslint": "^8.23.0",
+    "eslint": "^8.23.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.24.2",
