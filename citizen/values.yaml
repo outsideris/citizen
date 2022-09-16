@@ -1,0 +1,168 @@
+# Default values for citizen.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+# For mongo, you have to modify and edit values under mongo key bellow
+
+# NOT CONFIGURABLE, keep it at 1
+replicaCount: 1
+
+image:
+  repository: gcr.io/atypon-devops/citizin
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v0.2.1"
+
+# GitHub: start the GitHub container to sync modules/providers with the Citizen
+# DEBUG: Disable the GitHub repo and start citizen with sleep command forever to debug and test
+# anything else: will start it normally
+MODE: "GitHub"
+
+app_envs:
+  # Backend provider for registry metadata. Set to mongodb to use MongoDB. Leaving unset will use local nedb file.
+  CITIZEN_DATABASE: "mongodb"
+
+  # MongoDB database URI if using MongoDB backend. URI format is mongodb://username:password@host:port/database?options
+  # Default is mongodb://localhost:27017/citizen
+  CITIZEN_MONGO_DB_URI: "mongodb://user:password@mongo:27017/citizen"
+
+  # A directory to save database file if using local backend storage. The default is data directory in a current
+  # working directory (absolute/relative path can be used).
+  # CITIZEN_DB_DIR:
+
+  # Storage type to store module files. You can use file or s3 type.
+  CITIZEN_STORAGE: "gs"
+
+  # A directory to save module files only if CITIZEN_STORAGE is file (absolute/relative path can be used).
+  # CITIZEN_STORAGE_PATH: "/mnt/storage"
+
+  # A Google Storage Bucket to save module files only if CITIZEN_STORAGE is gs.
+  # CITIZEN_GCP_GS_KEYPATH is set statically in the chart, it is mounted using secret object, you need to put the key
+  # In the repo root in order for Helm to use it
+  CITIZEN_GCP_GS_BUCKET: atypon-citizen
+
+  # A S3 bucket to save module files only if CITIZEN_STORAGE is s3.(And AWS credentials required.)
+  # CITIZEN_AWS_S3_BUCKET:
+  # GitHub token of you enabled the GitHub watcher
+  CITIZEN_GITHUB_TOKEN: "Bla"
+  CITIZEN_GITHUB_REPO: "github.com/atypon/terraform-modules.git"
+  CITIZEN_GITHUB_MODULES_PATH: "modules"
+  CITIZEN_GITHUB_REPO_INTERNAL_ROOT_PATH: "/data/storage"
+
+GitHubWatcher:
+  enabled: true
+
+storage:
+  mountPath: "/data/"
+  storageClass: "ssd"
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "citizen"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    external-dns.alpha.kubernetes.io/target: devops.atypon.com
+  host: citizen.devops.atypon.com
+  paths:
+    - path: /
+      pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - citizen.devops.atypon.com
+
+resources:
+   limits:
+     cpu: 250m
+     memory: 512Mi
+   requests:
+     cpu: 250m
+     memory: 512Mi
+
+
+# note that this is not reflected on mongo, you have to set it bellow too
+nodeSelector: {}
+
+# note that this is not reflected on mongo, you have to set it bellow too
+tolerations: []
+
+# note that this is not reflected on mongo, you have to set it bellow too
+affinity: {}
+
+# MongoDB's configuration based on Bitnami's chart "10.29.0"
+mongodb:
+  enabled: true
+  global:
+    storageClass: "ssd"
+  fullnameOverride: "mongo"
+
+  image:
+    registry: docker.io
+    repository: bitnami/mongodb
+    tag: 4.4.10-debian-10-r20
+
+  architecture: standalone
+  useStatefulSet: true
+
+  auth:
+    enabled: true
+    rootUser: root
+    rootPassword: "citizen"
+    username: "user"
+    password: "password"
+    database: "citizen"
+
+  ## initdbScripts:
+  ##   my_init_script.sh: |
+  ##      #!/bin/bash
+  ##      echo "Do something."
+  ##
+  initdbScripts: { }
+
+  affinity: { }
+
+  nodeSelector: { }
+
+  tolerations: [ ]
+
+  resources:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 512Mi

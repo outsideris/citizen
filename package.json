@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node ./bin/citizen server",
     "dev": "nodemon ./bin/citizen server",
+    "sendCommand": "node ./bin/citizen",
     "lint": "eslint .",
     "test:unit": "mocha --exit {lib,routes,storages,stores}/**/**/*.spec.js",
     "test:integration": "mocha --exit -t 15000 --require test/download-terraform.js test/**/*.spec.js",
@@ -29,13 +30,14 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.171.0",
     "@evops/hcl-terraform-parser": "^1.0.0",
-    "@prisma/client": "^4.3.1",
+    "@google-cloud/storage": "^5.15.6",
     "body-parser": "^1.19.0",
     "chalk": "^4.1.2",
     "commander": "^9.0.0",
     "cors": "2.8.5",
     "debug": "^4.3.2",
     "express": "^4.17.1",
+    "firearch": "0.0.1020",
     "form-data": "^4.0.0",
     "fs-extra": "^10.1.0",
     "globby": "^11.1.0",
