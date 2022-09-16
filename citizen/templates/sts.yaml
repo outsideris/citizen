@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "citizen.fullname" . }}
+  labels:
+    {{- include "citizen.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  serviceName: {{ include "citizen.fullname" . }}
+  selector:
+    matchLabels:
+      {{- include "citizen.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "citizen.selectorLabels" . | nindent 8 }}
+    spec:
+
+      volumes:
+        - name: config
+          configMap:
+            name: config
+            defaultMode: 0777
+      {{ if .Values.app_envs.CITIZEN_GCP_GS_BUCKET }}
+        - name: secret-volume
+          secret:
+            secretName: {{ include "citizen.fullname" . }}-gcp-key
+      {{ end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "citizen.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        {{ if .Values.app_envs.CITIZEN_DATABASE }}
+        - name: {{ .Chart.Name }}-waitmongo
+          image: subfuzion/netcat
+          command:
+            - sh
+            - -c
+            - |
+                echo "Waiting Mongo to be up"
+                until nc -z mongo 27017
+                do
+                  sleep 1
+                done
+                echo "Mongo is up, starting App."
+          {{ end }}
+      containers:
+        {{ if and (.Values.GitHubWatcher.enabled) (eq .Values.MODE "GitHub") }}
+        - name: {{ .Chart.Name }}-watchgithub
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: CITIZEN_ADDR
+              value: "http://{{ include "citizen.fullname" . }}"
+            - name: MODE
+              value: "GitHub"
+            - name: CITIZEN_GCP_GS_KEYPATH
+              value: "/etc/secret-volume/key.json"
+            {{ range $key, $value := .Values.app_envs }}
+            - name: {{ $key }}
+              value: {{ $value  | quote }}
+            {{ end }}
+        {{ end }}
+          volumeMounts:
+            - mountPath: "/mnt/"
+              name: config
+        {{ if .Values.app_envs.CITIZEN_GCP_GS_BUCKET }}
+            - name: secret-volume
+              readOnly: true
+              mountPath: "/etc/secret-volume"
+        {{ end }}
+        - name: {{ .Chart.Name }}
+          env:
+            - name: MODE
+              value: "Server"
+            - name: CITIZEN_GCP_GS_KEYPATH
+              value: "/etc/secret-volume/key.json"
+            {{ range $key, $value := .Values.app_envs }}
+            - name: {{ $key }}
+              value: {{ $value  | quote }}
+          {{ end }}
+          volumeMounts:
+            - mountPath: {{ .Values.storage.mountPath }}
+              name: storage
+            {{ if .Values.app_envs.CITIZEN_GCP_GS_BUCKET }}
+            - name: secret-volume
+              readOnly: true
+              mountPath: "/etc/secret-volume"
+            {{ end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: storage
+      spec:
+        accessModes: {{ .Values.storage.accessModes }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
+        storageClassName: {{ .Values.storage.storageClass }}

@@ -1,6 +1,6 @@
-const fs = require('node:fs');
-const { join, parse } = require('node:path');
-const { promisify } = require('node:util');
+const fs = require('fs');
+const { join, parse } = require('path');
+const { promisify } = require('util');
 const debug = require('debug')('citizen:server');
 const mkdirp = require('mkdirp');
 
@@ -11,15 +11,11 @@ const access = promisify(fs.access);
 const getModulePath = (path) => join(process.env.CITIZEN_STORAGE_PATH, 'modules', path);
 const getProviderPath = (path) => join(process.env.CITIZEN_STORAGE_PATH, 'providers', path);
 
-const file = {
+module.exports = {
   type: () => 'file',
   saveModule: async (path, tarball) => {
-    if (!path) {
-      throw new Error('path is required.');
-    }
-    if (!tarball) {
-      throw new Error('tarball is required.');
-    }
+    if (!path) { throw new Error('path is required.'); }
+    if (!tarball) { throw new Error('tarball is required.'); }
 
     const pathToStore = getModulePath(path);
     debug(`save the module into ${pathToStore}.`);
@@ -44,26 +40,22 @@ const file = {
     const pathToStore = getModulePath(path);
     debug(`get the module: ${pathToStore}.`);
     try {
-      const content = await readFile(pathToStore);
-      return content;
+      const file = await readFile(pathToStore);
+      return file;
     } catch (e) {
       return null;
     }
   },
-  saveProvider: async (path, content) => {
-    if (!path) {
-      throw new Error('path is required.');
-    }
-    if (!content) {
-      throw new Error('content is required.');
-    }
+  saveProvider: async (path, file) => {
+    if (!path) { throw new Error('path is required.'); }
+    if (!file) { throw new Error('file is required.'); }
 
     const pathToStore = getProviderPath(path);
     debug(`save the Provider into ${pathToStore}.`);
     const parsedPath = parse(pathToStore);
     await mkdirp(parsedPath.dir);
 
-    await writeFile(pathToStore, content);
+    await writeFile(pathToStore, file);
 
     return true;
   },
@@ -81,12 +73,11 @@ const file = {
     const pathToStore = getProviderPath(path);
     debug(`get the Provider: ${pathToStore}.`);
     try {
-      const content = await readFile(pathToStore);
-      return content;
+      const file = await readFile(pathToStore);
+      return file;
     } catch (e) {
       return null;
     }
   },
-};
 
-module.exports = file;
+};
