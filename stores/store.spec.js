@@ -19,9 +19,7 @@ const {
 } = require('./store');
 const helper = require('../test/helper');
 
-// const storeTypes = ['mongodb', 'sqlite'];
-// const storeTypes = ['mongodb'];
-const storeTypes = ['sqlite'];
+const storeTypes = ['mongodb', 'sqlite'];
 
 storeTypes.forEach((storeType) => {
   describe(`${storeType} store`, async () => {
