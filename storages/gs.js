@@ -5,15 +5,14 @@ const { Storage } = require('@google-cloud/storage');
 const GS_BUCKET = process.env.CITIZEN_GCP_GS_BUCKET;
 const GS_KEYPATH = process.env.CITIZEN_GCP_GS_KEYPATH;
 if (process.env.CITIZEN_STORAGE === 'gs' && !GS_BUCKET && !GS_KEYPATH) {
-  throw new Error('Google storage requires CITIZEN_GCP_GS_BUCKET. Additionally, ensure that either '
-    + 'CITIZEN_GCP_GS_KEYPATH is set. ');
+  throw new Error(
+    'Google storage requires CITIZEN_GCP_GS_BUCKET. Additionally, ensure that either CITIZEN_GCP_GS_KEYPATH is set.'
+  );
 }
 
-const gs = new Storage(
-  {
-    keyFile: 'key.json',
-  },
-);
+const gs = new Storage({
+  keyFile: 'key.json',
+});
 
 async function saveFile(type, path, tarball) {
   if (!path) {
@@ -23,8 +22,7 @@ async function saveFile(type, path, tarball) {
     throw new Error('tarball is required.');
   }
 
-  const file = gs.bucket(GS_BUCKET)
-    .file(`${type}/${path}`);
+  const file = gs.bucket(GS_BUCKET).file(`${type}/${path}`);
   const result = await file.save(tarball, (err) => {
     if (!err) {
       debug('saved');
@@ -60,9 +58,11 @@ async function hasFile(type, path) {
 async function getFile(type, path) {
   const file = await gs.bucket(GS_BUCKET).file(`${type}/${path}`);
 
-  return file.download({
-    // don't set destination here
-  }).then((data) => data[0]);
+  return file
+    .download({
+      // don't set destination here
+    })
+    .then((data) => data[0]);
 }
 
 module.exports = {
