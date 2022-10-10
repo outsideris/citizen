@@ -5,6 +5,8 @@ node_modules/
 dist/
 data/
 test/terraform-binaries/
+.env
+stores/**/client/
 citizen/Chart.lock
 citizen/charts
 citizen/secrets/key.json
