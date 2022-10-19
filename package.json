@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "adm-zip": "^0.5.5",
+    "aws-sdk-client-mock": "^2.0.0",
     "chai": "^4.3.4",
     "eslint": "^8.25.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -67,7 +68,6 @@
     "get-port": "^5.1.1",
     "mocha": "^10.0.0",
     "ngrok": "^4.3.3",
-    "nock": "^13.2.7",
     "nodemon": "^2.0.20",
     "pino-pretty": "^9.1.1",
     "pkg": "^5.8.0",
