@@ -3,7 +3,7 @@ const multiparty = require('multiparty');
 
 const logger = require('../lib/logger');
 const { parseHcl } = require('../lib/util');
-const storage = require('../lib/storage');
+const storage = require('../storages/storage');
 const { saveModule, getModuleLatestVersion, findOneModule } = require('../stores/store');
 
 const router = Router();

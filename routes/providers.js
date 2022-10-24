@@ -4,7 +4,7 @@ const multiparty = require('multiparty');
 const { v4: uuid } = require('uuid');
 
 const logger = require('../lib/logger');
-const storage = require('../lib/storage');
+const storage = require('../storages/storage');
 const { saveProvider, findOneProvider, getProviderVersions, findProviderPackage } = require('../stores/store');
 const { extractShasum } = require('../lib/util');
 

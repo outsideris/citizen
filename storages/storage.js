@@ -39,6 +39,10 @@ const getProvider = async (path) => {
   return storage.getProvider(path);
 };
 
+(async () => {
+  await init();
+})();
+
 module.exports = {
   init,
   getStorageType,
