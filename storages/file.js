@@ -1,12 +1,7 @@
-const fs = require('node:fs');
+const { readFile, writeFile, access } = require('node:fs/promises');
 const { join, parse } = require('node:path');
-const { promisify } = require('node:util');
 const debug = require('debug')('citizen:server');
 const mkdirp = require('mkdirp');
-
-const writeFile = promisify(fs.writeFile);
-const readFile = promisify(fs.readFile);
-const access = promisify(fs.access);
 
 const getModulePath = (path) => join(process.env.CITIZEN_STORAGE_PATH, 'modules', path);
 const getProviderPath = (path) => join(process.env.CITIZEN_STORAGE_PATH, 'providers', path);
