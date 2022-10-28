@@ -12,8 +12,8 @@ if (process.env.CITIZEN_STORAGE === 's3' && !S3_BUCKET) {
 
 const s3 = {
   type: () => 's3',
-  saveModule: async (path, tarball) => {
-    debug(`save the module into ${path}.`);
+  setItem: async (path, tarball) => {
+    debug(`set item in ${path}.`);
 
     if (!path) {
       throw new Error('path is required.');
@@ -24,107 +24,45 @@ const s3 = {
 
     const params = {
       Bucket: S3_BUCKET,
-      Key: `modules/${path}`,
+      Key: path,
       Body: tarball,
     };
-    const result = await s3client.send(new PutObjectCommand(params));
+    const res = await s3client.send(new PutObjectCommand(params));
 
-    if (result.ETag) {
+    if (res.ETag) {
       return true;
     }
     return false;
   },
-  hasModule: async (path) => {
+  hasItem: async (path) => {
     const params = {
       Bucket: S3_BUCKET,
-      Key: `modules/${path}`,
+      Key: path,
     };
 
     try {
-      const module = await s3client.send(new GetObjectCommand(params));
-      if (module.Body) {
-        debug(`the module already exist: ${path}.`);
+      const res = await s3client.send(new GetObjectCommand(params));
+      if (res.Body) {
+        debug(`the item already exist: ${path}.`);
         return true;
       }
     } catch (err) {
       if (err.name === 'NoSuchKey') {
-        debug(`the module doesn't exist: ${path}.`);
+        debug(`the item doesn't exist: ${path}.`);
         return false;
       }
 
       throw err;
     }
 
-    debug(`the module doesn't exist: ${path}.`);
+    debug(`the item doesn't exist: ${path}.`);
     return false;
   },
-  getModule: async (path) => {
-    debug(`get the module: ${path}.`);
+  getItem: async (path) => {
+    debug(`get item from ${path}`);
     const params = {
       Bucket: S3_BUCKET,
-      Key: `modules/${path}`,
-    };
-    const chunks = [];
-    const file = await s3client.send(new GetObjectCommand(params));
-    const content = await new Promise((resolve, reject) => {
-      file.Body.on('data', (chunk) => chunks.push(chunk));
-      file.Body.on('error', reject);
-      file.Body.on('end', () => resolve(Buffer.concat(chunks)));
-    });
-
-    return content;
-  },
-  saveProvider: async (path, tarball) => {
-    debug(`save the provider into ${path}.`);
-
-    if (!path) {
-      throw new Error('path is required.');
-    }
-    if (!tarball) {
-      throw new Error('tarball is required.');
-    }
-
-    const params = {
-      Bucket: S3_BUCKET,
-      Key: `providers/${path}`,
-      Body: tarball,
-    };
-    const result = await s3client.send(new PutObjectCommand(params));
-
-    if (result.ETag) {
-      return true;
-    }
-    return false;
-  },
-  hasProvider: async (path) => {
-    const params = {
-      Bucket: S3_BUCKET,
-      Key: `providers/${path}`,
-    };
-
-    try {
-      const provider = await s3client.send(new GetObjectCommand(params));
-      if (provider.Body) {
-        debug(`the provider already exist: ${path}.`);
-        return true;
-      }
-    } catch (err) {
-      if (err.name === 'NoSuchKey') {
-        debug(`the provider doesn't exist: ${path}.`);
-        return false;
-      }
-
-      throw err;
-    }
-
-    debug(`the provider doesn't exist: ${path}.`);
-    return false;
-  },
-  getProvider: async (path) => {
-    debug(`get the provider: ${path}.`);
-    const params = {
-      Bucket: S3_BUCKET,
-      Key: `providers/${path}`,
+      Key: path,
     };
     const chunks = [];
     const file = await s3client.send(new GetObjectCommand(params));
