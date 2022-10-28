@@ -16,27 +16,27 @@ const init = (type) => {
 const getStorageType = () => storage.type();
 
 const saveModule = async (path, tarball) => {
-  return storage.saveModule(path, tarball);
+  return storage.setItem(`modules/${path}`, tarball);
 };
 
 const hasModule = async (path) => {
-  return storage.hasModule(path);
+  return storage.hasItem(`modules/${path}`);
 };
 
 const getModule = async (path) => {
-  return storage.getModule(path);
+  return storage.getItem(`modules/${path}`);
 };
 
-const saveProvider = async (path, content) => {
-  return storage.saveProvider(path, content);
+const saveProvider = async (path, tarball) => {
+  return storage.setItem(`providers/${path}`, tarball);
 };
 
 const hasProvider = async (path) => {
-  return storage.hasProvider(path);
+  return storage.hasItem(`providers/${path}`);
 };
 
 const getProvider = async (path) => {
-  return storage.getProvider(path);
+  return storage.getItem(`providers/${path}`);
 };
 
 (async () => {
