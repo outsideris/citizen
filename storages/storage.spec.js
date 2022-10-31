@@ -22,7 +22,7 @@ const {
   getProvider,
 } = require('./storage');
 
-const storageTypes = ['file', 's3'];
+const storageTypes = ['file', 's3', 'gs'];
 
 storageTypes.forEach((storageType) => {
   describe(`${storageType} storage`, async () => {
@@ -80,6 +80,14 @@ storageTypes.forEach((storageType) => {
             expect(result).to.be.true;
           });
         }
+
+        if (storageType === 'gs') {
+          it('should save the module onto GS', async () => {
+            const modulePath = `${new Date().getTime()}/module.tar.gz`;
+            const result = await saveModule(modulePath, moduleBuf);
+            expect(result).to.be.true;
+          });
+        }
       });
 
       describe('hasModule()', () => {
@@ -92,6 +100,8 @@ storageTypes.forEach((storageType) => {
             await writeFile(pathToStore, moduleBuf);
           } else if (storageType === 's3') {
             s3Mock.on(GetObjectCommand).resolves({ Body: 'data' });
+          } else if (storageType === 'gs') {
+            await saveModule(modulePath, moduleBuf);
           }
 
           const exist = await hasModule(modulePath);
@@ -121,6 +131,8 @@ storageTypes.forEach((storageType) => {
             s3Mock.on(GetObjectCommand).resolves({
               Body: Readable.from(buf),
             });
+          } else if (storageType === 'gs') {
+            await saveModule(modulePath, moduleBuf);
           }
 
           const result = await getModule(modulePath);
@@ -168,6 +180,14 @@ storageTypes.forEach((storageType) => {
             expect(result).to.be.true;
           });
         }
+
+        if (storageType === 'gs') {
+          it('should save the provider onto GS', async () => {
+            const providerPath = `${new Date().getTime()}/provider.tar.gz`;
+            const result = await saveProvider(providerPath, providerBuf);
+            expect(result).to.be.true;
+          });
+        }
       });
 
       describe('hasProvider()', () => {
@@ -180,6 +200,8 @@ storageTypes.forEach((storageType) => {
             await writeFile(pathToStore, providerBuf);
           } else if (storageType === 's3') {
             s3Mock.on(GetObjectCommand).resolves({ Body: 'data' });
+          } else if (storageType === 'gs') {
+            await saveProvider(providerPath, providerBuf);
           }
 
           const exist = await hasProvider(providerPath);
@@ -209,6 +231,8 @@ storageTypes.forEach((storageType) => {
             s3Mock.on(GetObjectCommand).resolves({
               Body: Readable.from(buf),
             });
+          } else if (storageType === 'gs') {
+            await saveProvider(providerPath, providerBuf);
           }
 
           const result = await getProvider(providerPath);

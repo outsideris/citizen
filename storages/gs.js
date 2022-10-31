@@ -11,10 +11,10 @@ if (process.env.CITIZEN_STORAGE === 'gs' && !GS_BUCKET && !GS_KEYPATH) {
 }
 
 const gs = new Storage({
-  keyFile: GS_KEYPATH,
+  keyFilename: GS_KEYPATH,
 });
 
-const gs = {
+const googleCloudStorage = {
   type: () => 'gs',
   setItem: async (path, tarball) => {
     if (!path) {
@@ -25,15 +25,12 @@ const gs = {
     }
 
     const file = gs.bucket(GS_BUCKET).file(path);
-    const result = await file.save(tarball, (err) => {
-      if (!err) {
-        debug('saved');
-        return true;
-      }
+    try {
+      await file.save(tarball);
+      return true;
+    } catch (err) {
       return false;
-    });
-
-    return !!result;
+    }
   },
   hasItem: async (path) => {
     try {
@@ -43,8 +40,7 @@ const gs = {
         return true;
       }
     } catch (err) {
-      // i think error name should be fixed
-      if (err.code === 404) {
+      if (err.message.startsWith('No such object:')) {
         debug(`the item doesn't exist: ${path}.`);
         return false;
       }
@@ -64,6 +60,6 @@ const gs = {
       })
       .then((data) => data[0]);
   },
-}
+};
 
-module.exports = gs;
+module.exports = googleCloudStorage;
