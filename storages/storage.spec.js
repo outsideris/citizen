@@ -21,18 +21,25 @@ const {
   hasProvider,
   getProvider,
 } = require('./storage');
+const { enableGCSMock, disableGCSMock } = require('./gcs.mock');
 
 const storageTypes = ['file', 's3', 'gs'];
 
 storageTypes.forEach((storageType) => {
   describe(`${storageType} storage`, async () => {
     let s3Mock;
+    let uid;
     beforeEach(async () => {
+      uid = new Date().getTime();
       if (storageType === 'file') {
         process.env.CITIZEN_STORAGE_PATH = '/tmp/citizen-test';
       } else if (storageType === 's3') {
         s3Mock = mockClient(S3Client);
+      } else if (storageType === 'gcs') {
+        process.env.CITIZEN_GCP_GS_BUCKET = 'citizen-test';
+        enableGCSMock(process.env.CITIZEN_GCP_GS_BUCKET, uid);
       }
+
       await init(storageType);
     });
 
@@ -41,6 +48,8 @@ storageTypes.forEach((storageType) => {
         await rimraf(process.env.CITIZEN_STORAGE_PATH);
       } else if (storageType === 's3') {
         s3Mock.reset();
+      } else if (storageType === 'gcs') {
+        disableGCSMock();
       }
     });
 
@@ -81,9 +90,9 @@ storageTypes.forEach((storageType) => {
           });
         }
 
-        if (storageType === 'gs') {
-          it('should save the module onto GS', async () => {
-            const modulePath = `${new Date().getTime()}/module.tar.gz`;
+        if (storageType === 'gcs') {
+          it('should save the module onto GCS', async () => {
+            const modulePath = `${uid}/module.tar.gz`;
             const result = await saveModule(modulePath, moduleBuf);
             expect(result).to.be.true;
           });
@@ -92,7 +101,7 @@ storageTypes.forEach((storageType) => {
 
       describe('hasModule()', () => {
         it('should return true if the module is already exist', async () => {
-          const modulePath = `${new Date().getTime()}/module.tar.gz`;
+          const modulePath = `${uid}/module.tar.gz`;
           if (storageType === 'file') {
             const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'modules', modulePath);
             const parsedPath = parse(pathToStore);
@@ -100,7 +109,7 @@ storageTypes.forEach((storageType) => {
             await writeFile(pathToStore, moduleBuf);
           } else if (storageType === 's3') {
             s3Mock.on(GetObjectCommand).resolves({ Body: 'data' });
-          } else if (storageType === 'gs') {
+          } else if (storageType === 'gcs') {
             await saveModule(modulePath, moduleBuf);
           }
 
@@ -112,7 +121,7 @@ storageTypes.forEach((storageType) => {
           if (storageType === 's3') {
             s3Mock.on(GetObjectCommand).rejects({ name: 'NoSuchKey' });
           }
-          const modulePath = `${new Date().getTime()}/module.tar.gz`;
+          const modulePath = `${uid}/module.tar.gz`;
           const exist = await hasModule(`${modulePath}/wrong`);
           expect(exist).to.be.false;
         });
@@ -120,7 +129,7 @@ storageTypes.forEach((storageType) => {
 
       describe('getModule()', () => {
         it('should get file buffer from the storage', async () => {
-          const modulePath = `${new Date().getTime()}/module.tar.gz`;
+          const modulePath = `${uid}/module.tar.gz`;
           if (storageType === 'file') {
             const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'modules', modulePath);
             const parsedPath = parse(pathToStore);
@@ -131,7 +140,7 @@ storageTypes.forEach((storageType) => {
             s3Mock.on(GetObjectCommand).resolves({
               Body: Readable.from(buf),
             });
-          } else if (storageType === 'gs') {
+          } else if (storageType === 'gcs') {
             await saveModule(modulePath, moduleBuf);
           }
 
@@ -181,9 +190,9 @@ storageTypes.forEach((storageType) => {
           });
         }
 
-        if (storageType === 'gs') {
-          it('should save the provider onto GS', async () => {
-            const providerPath = `${new Date().getTime()}/provider.tar.gz`;
+        if (storageType === 'gcs') {
+          it('should save the provider onto GCS', async () => {
+            const providerPath = `${uid}/provider.tar.gz`;
             const result = await saveProvider(providerPath, providerBuf);
             expect(result).to.be.true;
           });
@@ -192,7 +201,7 @@ storageTypes.forEach((storageType) => {
 
       describe('hasProvider()', () => {
         it('should return true if the provider is already exist', async () => {
-          const providerPath = `${new Date().getTime()}/provider.tar.gz`;
+          const providerPath = `${uid}/provider.tar.gz`;
           if (storageType === 'file') {
             const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'providers', providerPath);
             const parsedPath = parse(pathToStore);
@@ -200,7 +209,7 @@ storageTypes.forEach((storageType) => {
             await writeFile(pathToStore, providerBuf);
           } else if (storageType === 's3') {
             s3Mock.on(GetObjectCommand).resolves({ Body: 'data' });
-          } else if (storageType === 'gs') {
+          } else if (storageType === 'gcs') {
             await saveProvider(providerPath, providerBuf);
           }
 
@@ -212,7 +221,7 @@ storageTypes.forEach((storageType) => {
           if (storageType === 's3') {
             s3Mock.on(GetObjectCommand).rejects({ name: 'NoSuchKey' });
           }
-          const providerPath = `${new Date().getTime()}/provider.tar.gz`;
+          const providerPath = `${uid}/provider.tar.gz`;
           const exist = await hasProvider(`${providerPath}/wrong`);
           expect(exist).to.be.false;
         });
@@ -220,7 +229,7 @@ storageTypes.forEach((storageType) => {
 
       describe('getProvider()', () => {
         it('should get file buffer from the storage', async () => {
-          const providerPath = `${new Date().getTime()}/provider.tar.gz`;
+          const providerPath = `${uid}/provider.tar.gz`;
           if (storageType === 'file') {
             const pathToStore = join(process.env.CITIZEN_STORAGE_PATH, 'providers', providerPath);
             const parsedPath = parse(pathToStore);
@@ -231,7 +240,7 @@ storageTypes.forEach((storageType) => {
             s3Mock.on(GetObjectCommand).resolves({
               Body: Readable.from(buf),
             });
-          } else if (storageType === 'gs') {
+          } else if (storageType === 'gcs') {
             await saveProvider(providerPath, providerBuf);
           }
 

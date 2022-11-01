@@ -17,7 +17,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/*.spec.js'],
+      files: ['**/*.spec.js', '**/*.mock.js'],
       env: {
         mocha: true,
       },
@@ -25,6 +25,7 @@ module.exports = {
       rules: {
         'mocha/no-exclusive-tests': 'error',
         'no-unused-expressions': ['off'],
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
       },
     },
   ],
