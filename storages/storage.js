@@ -4,8 +4,8 @@ const init = (type) => {
   const t = type || process.env.CITIZEN_STORAGE;
   if (t === 's3') {
     storage = require('./s3'); // eslint-disable-line global-require
-  } else if (t === 'gs') {
-    storage = require('./gs'); // eslint-disable-line global-require
+  } else if (t === 'gcs') {
+    storage = require('./gcs'); // eslint-disable-line global-require
   } else if (t === 'file') {
     storage = require('./file'); // eslint-disable-line global-require
   } else {

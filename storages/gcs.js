@@ -4,18 +4,18 @@ const { Storage } = require('@google-cloud/storage');
 
 const GS_BUCKET = process.env.CITIZEN_GCP_GS_BUCKET;
 const GS_KEYPATH = process.env.CITIZEN_GCP_GS_KEYPATH;
-if (process.env.CITIZEN_STORAGE === 'gs' && !GS_BUCKET && !GS_KEYPATH) {
+if (process.env.CITIZEN_STORAGE === 'gcs' && !GS_BUCKET && !GS_KEYPATH) {
   throw new Error(
     'Google storage requires CITIZEN_GCP_GS_BUCKET. Additionally, ensure that either CITIZEN_GCP_GS_KEYPATH is set.'
   );
 }
 
-const gs = new Storage({
+const gcs = new Storage({
   keyFilename: GS_KEYPATH,
 });
 
 const googleCloudStorage = {
-  type: () => 'gs',
+  type: () => 'gcs',
   setItem: async (path, tarball) => {
     if (!path) {
       throw new Error('path is required.');
@@ -24,17 +24,18 @@ const googleCloudStorage = {
       throw new Error('tarball is required.');
     }
 
-    const file = gs.bucket(GS_BUCKET).file(path);
+    const file = gcs.bucket(GS_BUCKET).file(path);
     try {
       await file.save(tarball);
       return true;
     } catch (err) {
+      console.log(err)
       return false;
     }
   },
   hasItem: async (path) => {
     try {
-      const [resource] = await gs.bucket(GS_BUCKET).file(path).getMetadata();
+      const [resource] = await gcs.bucket(GS_BUCKET).file(path).getMetadata();
       if (resource.name) {
         debug(`the item already exist: ${path}.`);
         return true;
@@ -52,7 +53,7 @@ const googleCloudStorage = {
     return false;
   },
   getItem: async (path) => {
-    const file = await gs.bucket(GS_BUCKET).file(path);
+    const file = await gcs.bucket(GS_BUCKET).file(path);
 
     return file
       .download({
