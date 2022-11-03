@@ -36,8 +36,8 @@ storageTypes.forEach((storageType) => {
       } else if (storageType === 's3') {
         s3Mock = mockClient(S3Client);
       } else if (storageType === 'gcs') {
-        process.env.CITIZEN_GCP_GS_BUCKET = 'citizen-test';
-        enableGCSMock(process.env.CITIZEN_GCP_GS_BUCKET, uid);
+        process.env.CITIZEN_STORAGE_BUCKET = 'citizen-test';
+        enableGCSMock(process.env.CITIZEN_STORAGE_BUCKET, uid);
       }
 
       await init(storageType);

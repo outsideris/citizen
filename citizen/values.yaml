@@ -38,7 +38,7 @@ app_envs:
   # A Google Storage Bucket to save module files only if CITIZEN_STORAGE is gs.
   # CITIZEN_GCP_GS_KEYPATH is set statically in the chart, it is mounted using secret object, you need to put the key
   # In the repo root in order for Helm to use it
-  CITIZEN_GCP_GS_BUCKET: atypon-citizen
+  CITIZEN_STORAGE_BUCKET: atypon-citizen
 
   # A S3 bucket to save module files only if CITIZEN_STORAGE is s3.(And AWS credentials required.)
   # CITIZEN_AWS_S3_BUCKET:

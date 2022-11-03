@@ -2,11 +2,11 @@ const debug = require('debug')('citizen:server');
 
 const { Storage } = require('@google-cloud/storage');
 
-const GS_BUCKET = process.env.CITIZEN_GCP_GS_BUCKET;
+const GS_BUCKET = process.env.CITIZEN_STORAGE_BUCKET;
 const GS_KEYPATH = process.env.CITIZEN_GCP_GS_KEYPATH;
 if (process.env.CITIZEN_STORAGE === 'gcs' && !GS_BUCKET && !GS_KEYPATH) {
   throw new Error(
-    'Google storage requires CITIZEN_GCP_GS_BUCKET. Additionally, ensure that either CITIZEN_GCP_GS_KEYPATH is set.'
+    'Google storage requires CITIZEN_STORAGE_BUCKET. Additionally, ensure that either CITIZEN_GCP_GS_KEYPATH is set.'
   );
 }
 

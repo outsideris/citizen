@@ -25,7 +25,7 @@ spec:
           configMap:
             name: config
             defaultMode: 0777
-      {{ if .Values.app_envs.CITIZEN_GCP_GS_BUCKET }}
+      {{ if .Values.app_envs.CITIZEN_STORAGE_BUCKET }}
         - name: secret-volume
           secret:
             secretName: {{ include "citizen.fullname" . }}-gcp-key
@@ -71,7 +71,7 @@ spec:
           volumeMounts:
             - mountPath: "/mnt/"
               name: config
-        {{ if .Values.app_envs.CITIZEN_GCP_GS_BUCKET }}
+        {{ if .Values.app_envs.CITIZEN_STORAGE_BUCKET }}
             - name: secret-volume
               readOnly: true
               mountPath: "/etc/secret-volume"
@@ -89,7 +89,7 @@ spec:
           volumeMounts:
             - mountPath: {{ .Values.storage.mountPath }}
               name: storage
-            {{ if .Values.app_envs.CITIZEN_GCP_GS_BUCKET }}
+            {{ if .Values.app_envs.CITIZEN_STORAGE_BUCKET }}
             - name: secret-volume
               readOnly: true
               mountPath: "/etc/secret-volume"

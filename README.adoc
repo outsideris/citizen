@@ -43,7 +43,7 @@ Environment variables:
 * `CITIZEN_DATABASE_URL`: The URL of the database. `protocol//username:password@hosts:port/database?options`
 * `CITIZEN_STORAGE` : Storage type to store module files. You can use `file` or `s3` type.
 * `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
-* `CITIZEN_AWS_S3_BUCKET`: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3`.(And AWS credentials required.)
+* `CITIZEN_STORAGE_BUCKET`: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3` or `gcs`.(And AWS credentials required.)
 
 === Database migration
 To migrate the database, you can use `citizen generate-migration` command.
