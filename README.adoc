@@ -41,9 +41,13 @@ Environment variables:
 
 * `CITIZEN_DATABASE_TYPE`: Backend provider for registry metadata. Set to `mongodb` or `sqlite`.
 * `CITIZEN_DATABASE_URL`: The URL of the database. `protocol//username:password@hosts:port/database?options`
-* `CITIZEN_STORAGE` : Storage type to store module files. You can use `file` or `s3` type.
+* `CITIZEN_STORAGE`: Storage type to store module files. You can use `file`, `s3` or `gcs` type.
+** `s3` is for link:https://aws.amazon.com/ko/s3/[AWS S3].
+** `gcs` is for link:https://cloud.google.com/storage[Google Cloud Storage].
 * `CITIZEN_STORAGE_PATH`: A directory to save module files only if `CITIZEN_STORAGE` is `file` (absolute/relative path can be used).
 * `CITIZEN_STORAGE_BUCKET`: A S3 bucket to save module files only if `CITIZEN_STORAGE` is `s3` or `gcs`.(And AWS credentials required.)
+
+If you want to use GCS as a storage, you need to link:https://cloud.google.com/docs/authentication/client-libraries[authenticate to Google Cloud services].
 
 === Database migration
 To migrate the database, you can use `citizen generate-migration` command.
