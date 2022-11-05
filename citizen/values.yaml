@@ -41,7 +41,7 @@ app_envs:
   CITIZEN_STORAGE_BUCKET: atypon-citizen
 
   # A S3 bucket to save module files only if CITIZEN_STORAGE is s3.(And AWS credentials required.)
-  # CITIZEN_AWS_S3_BUCKET:
+  # CITIZEN_STORAGE_BUCKET:
   # GitHub token of you enabled the GitHub watcher
   CITIZEN_GITHUB_TOKEN: "Bla"
   CITIZEN_GITHUB_REPO: "github.com/atypon/terraform-modules.git"

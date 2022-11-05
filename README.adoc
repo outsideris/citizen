@@ -183,7 +183,7 @@ $ npm test
 Run the tests with the environment variables prefixed:
 [source, sh]
 ....
-$ CITIZEN_STORAGE_PATH=storage CITIZEN_AWS_S3_BUCKET=terraform-registry-modules npm test
+$ CITIZEN_STORAGE_PATH=storage CITIZEN_STORAGE_BUCKET=terraform-registry-modules npm test
 ....
 
 === Build distributions

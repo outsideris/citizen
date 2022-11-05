@@ -25,7 +25,7 @@ jobs:
       CITIZEN_STORAGE: file
       CITIZEN_STORAGE_PATH: /tmp/citizen
       CITIZEN_ADDR: http://127.0.0.1:3000
-      CITIZEN_AWS_S3_BUCKET: kr.ne.outsider.test
+      CITIZEN_STORAGE_BUCKET: kr.ne.outsider.test
       AWS_ACCESS_KEY_ID: ooooo
       AWS_SECRET_ACCESS_KEY: xxxxx
       AWS_REGION: ap-northeast-1
