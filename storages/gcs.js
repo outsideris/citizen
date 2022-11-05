@@ -24,7 +24,6 @@ const googleCloudStorage = {
       await file.save(tarball);
       return true;
     } catch (err) {
-      console.log(err)
       return false;
     }
   },
