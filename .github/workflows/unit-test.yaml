@@ -18,6 +18,7 @@ jobs:
         node:
           - 16
           - 18
+          - 19
 
     env:
       CITIZEN_DATABASE_TYPE: sqlite
