@@ -23,7 +23,7 @@ const {
 } = require('./storage');
 const { enableGCSMock, disableGCSMock, generateTestCredentials } = require('./gcs.mock');
 
-const storageTypes = ['file', 's3', 'gs'];
+const storageTypes = ['file', 's3', 'gcs'];
 
 storageTypes.forEach((storageType) => {
   describe(`${storageType} storage`, async () => {

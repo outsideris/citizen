@@ -30,7 +30,7 @@ app_envs:
   # CITIZEN_DB_DIR:
 
   # Storage type to store module files. You can use file or s3 type.
-  CITIZEN_STORAGE: "gs"
+  CITIZEN_STORAGE: "gcs"
 
   # A directory to save module files only if CITIZEN_STORAGE is file (absolute/relative path can be used).
   # CITIZEN_STORAGE_PATH: "/mnt/storage"
