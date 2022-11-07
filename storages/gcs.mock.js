@@ -1,3 +1,5 @@
+const crypto = require('node:crypto');
+const { writeFile } = require('node:fs/promises');
 const nock = require('nock');
 
 module.exports = {
@@ -55,5 +57,22 @@ module.exports = {
   },
   disableGCSMock: () => {
     nock.cleanAll();
+  },
+  generateTestCredentials: async () => {
+    const { privateKey } = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 1024,
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem',
+      },
+    });
+    await writeFile(
+      'test-credentials.json',
+      JSON.stringify({
+        project_id: 'test-project-1234',
+        private_key: privateKey,
+        client_email: '1234-test@developer.gserviceaccount.com',
+      })
+    );
   },
 };

@@ -21,7 +21,7 @@ const {
   hasProvider,
   getProvider,
 } = require('./storage');
-const { enableGCSMock, disableGCSMock } = require('./gcs.mock');
+const { enableGCSMock, disableGCSMock, generateTestCredentials } = require('./gcs.mock');
 
 const storageTypes = ['file', 's3', 'gs'];
 
@@ -29,6 +29,19 @@ storageTypes.forEach((storageType) => {
   describe(`${storageType} storage`, async () => {
     let s3Mock;
     let uid;
+    before(async () => {
+      if (storageType === 'gcs') {
+        await generateTestCredentials();
+        process.env.GOOGLE_APPLICATION_CREDENTIALS = './test-credentials.json';
+      }
+    });
+
+    after(async () => {
+      if (storageType === 'gcs') {
+        await rimraf(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+      }
+    });
+
     beforeEach(async () => {
       uid = new Date().getTime();
       if (storageType === 'file') {
