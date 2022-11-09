@@ -22,9 +22,10 @@
     "migrate:sqlite": "prisma migrate dev --name init --schema stores/sqlite/sqlite.prisma",
     "migrate:mongodb": "prisma db push --schema stores/mongodb/mongodb.prisma",
     "preclient": "rimraf stores/sqlite/client stores/mongodb/client",
-    "client": "npm run client:sqlite && npm run client:mongodb",
+    "client": "npm run client:sqlite && npm run client:mongodb && npm run client:mysql",
     "client:sqlite": "prisma generate --schema stores/sqlite/sqlite.prisma",
-    "client:mongodb": "prisma generate --schema stores/mongodb/mongodb.prisma"
+    "client:mongodb": "prisma generate --schema stores/mongodb/mongodb.prisma",
+    "client:mysql": "prisma generate --schema stores/mysql/mysql.prisma"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.186.0",
