@@ -19,7 +19,7 @@ const {
 } = require('./store');
 const helper = require('../test/helper');
 
-const storeTypes = ['mongodb', 'sqlite'];
+const storeTypes = ['mongodb', 'sqlite', 'mysql'];
 
 storeTypes.forEach((storeType) => {
   describe(`${storeType} store`, async () => {
@@ -28,6 +28,8 @@ storeTypes.forEach((storeType) => {
       originDatabaseUrl = process.env.CITIZEN_DATABASE_URL;
       if (storeType === 'mongodb') {
         process.env.CITIZEN_DATABASE_URL = 'mongodb://root:citizen@127.0.0.1:27018/citizen?authSource=admin';
+      } else if (storeType === 'mysql') {
+        process.env.CITIZEN_DATABASE_URL = 'mysql://root:password@127.0.0.1:3306/citizen';
       } else if (storeType === 'sqlite') {
         process.env.CITIZEN_DATABASE_URL = 'file:./dev.db';
       }
@@ -414,6 +416,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.0.4',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'linux',
@@ -458,6 +461,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.0.4',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'linux',
@@ -472,6 +476,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.1.0',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'linux',
@@ -486,6 +491,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'thirdparty',
             type: 'terraform',
             version: '1.2.0',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'windows',
@@ -500,6 +506,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.3.0',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'linux',
@@ -580,6 +587,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.0.4',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'linux',
@@ -594,6 +602,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.1.0',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'linux',
@@ -608,6 +617,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.2.0',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'linux',
@@ -651,6 +661,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.1.0',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'windows',
@@ -665,6 +676,7 @@ storeTypes.forEach((storeType) => {
             namespace: 'outsider',
             type: 'citizen',
             version: '1.2.0',
+            protocols: ['4.1', '5.0'],
             platforms: [
               {
                 os: 'linux',

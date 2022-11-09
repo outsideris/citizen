@@ -20,8 +20,8 @@ model Module {
   definition   String?
   downloads    Int      @default(0)
   published_at DateTime @default(now())
-  root         String?
-  submodules   String?
+  root         Json?
+  submodules   Json?
 }
 
 model Provider {
@@ -29,8 +29,8 @@ model Provider {
   namespace     String
   type          String
   version       String
-  protocols     String
-  platforms     String
-  gpgPublicKeys String
+  protocols     Json
+  platforms     Json
+  gpgPublicKeys Json
   published_at  DateTime @default(now())
 }

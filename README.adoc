@@ -39,7 +39,7 @@ If you want to test it at local, you need a tool which provides HTTPS like link:
 
 Environment variables:
 
-* `CITIZEN_DATABASE_TYPE`: Backend provider for registry metadata. Set to `mongodb` or `sqlite`.
+* `CITIZEN_DATABASE_TYPE`: Backend provider for registry metadata. Set to `mysql`, `mongodb` or `sqlite`.
 * `CITIZEN_DATABASE_URL`: The URL of the database. `protocol//username:password@hosts:port/database?options`
 * `CITIZEN_STORAGE`: Storage type to store module files. You can use `file`, `s3` or `gcs` type.
 ** `s3` is for link:https://aws.amazon.com/ko/s3/[AWS S3].
