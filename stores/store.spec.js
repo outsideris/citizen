@@ -29,7 +29,7 @@ storeTypes.forEach((storeType) => {
       if (storeType === 'mongodb') {
         process.env.CITIZEN_DATABASE_URL = 'mongodb://root:citizen@127.0.0.1:27018/citizen?authSource=admin';
       } else if (storeType === 'mysql') {
-        process.env.CITIZEN_DATABASE_URL = 'mysql://root:password@127.0.0.1:3306/citizen';
+        process.env.CITIZEN_DATABASE_URL = 'mysql://root:citizen@127.0.0.1:3306/citizen';
       } else if (storeType === 'sqlite') {
         process.env.CITIZEN_DATABASE_URL = 'file:./dev.db';
       }

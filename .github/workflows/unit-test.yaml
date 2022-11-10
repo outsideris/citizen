@@ -13,6 +13,15 @@ jobs:
     name: Unit tests with Node.js v${{ matrix.node }}
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: citizen
+          MYSQL_DATABASE: citizen
+        ports:
+          - 3306:3306
+
     strategy:
       matrix:
         node:
