@@ -18,7 +18,7 @@ The docker image is in link:https://github.com/users/outsideris/packages/contain
 
 [source, sh]
 ....
-$ docker run -d -p "3000:3000" ghcr.io/outsideris/citizen:0.5.0
+$ docker run -d -p "3000:3000" ghcr.io/outsideris/citizen:latest
 ....
 
 == Server Usage
