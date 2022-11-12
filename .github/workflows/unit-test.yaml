@@ -30,8 +30,6 @@ jobs:
           - 19
 
     env:
-      CITIZEN_DATABASE_TYPE: sqlite
-      CITIZEN_DATABASE_URL: file:./dev.db
       CITIZEN_STORAGE: file
       CITIZEN_STORAGE_PATH: /tmp/citizen
       CITIZEN_ADDR: http://127.0.0.1:3000
@@ -78,9 +76,15 @@ jobs:
           npm run client:mysql
       - name: linting
         run: npm run lint
-      - name: DB migration
-        run: |
-          npm run migrate:sqlite
-          npm run migrate:mysql
+      - name: SQLite migration
+        run: npm run migrate:sqlite
+        env:
+          CITIZEN_DATABASE_TYPE: sqlite
+          CITIZEN_DATABASE_URL: file:./dev.db
+      - name: MySQL migration
+        run: npm run migrate:mysql
+        env:
+          CITIZEN_DATABASE_TYPE: mysql
+          CITIZEN_DATABASE_URL: mysql://root:citizen@127.0.0.1:3306/citizen
       - name: unit test
         run: npm run test:unit -- --forbid-only
