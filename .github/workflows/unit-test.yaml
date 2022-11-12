@@ -30,6 +30,8 @@ jobs:
           - 19
 
     env:
+      CITIZEN_DATABASE_TYPE: sqlite
+      CITIZEN_DATABASE_URL: file:./dev.db
       CITIZEN_STORAGE: file
       CITIZEN_STORAGE_PATH: /tmp/citizen
       CITIZEN_ADDR: http://127.0.0.1:3000
