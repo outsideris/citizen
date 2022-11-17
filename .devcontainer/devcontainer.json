@@ -1,0 +1,30 @@
+{
+  "name": "Citizen Dev",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:16-bullseye",
+
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/zsh"
+  },
+
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "asciidoctor.asciidoctor-vscode",
+    "vscodevim.vim"
+  ],
+
+  "forwardPorts": [3000],
+
+  "remoteEnv": {
+    "CITIZEN_DATABASE_TYPE": "sqlite",
+    "CITIZEN_DATABASE_URL": "file:./dev.db",
+    "CITIZEN_STORAGE": "file",
+    "CITIZEN_STORAGE_PATH": "./disk",
+    "CITIZEN_ADDR": "http://127.0.0.1:3000",
+    "CITIZEN_STORAGE_BUCKET": "citizen-test-bucket",
+    "DEBUG": "citizen:*"
+  },
+
+  "postCreateCommand": "npm install",
+
+  "remoteUser": "node"
+}
