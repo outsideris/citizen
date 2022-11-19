@@ -3,7 +3,12 @@
   "image": "mcr.microsoft.com/devcontainers/javascript-node:16-bullseye",
 
   "settings": {
-    "terminal.integrated.shell.linux": "/bin/zsh"
+    "terminal.integrated.profiles.linux": {
+      "zsh": {
+        "path": "zsh"
+      }
+    },
+    "terminal.integrated.defaultProfile.linux": "zsh"
   },
 
   "extensions": [
