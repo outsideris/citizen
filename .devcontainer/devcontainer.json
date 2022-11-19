@@ -31,8 +31,9 @@
   },
 
   "postCreateCommand": [
-    "npm install",
-    "npm run client"
+    "npm install &&",
+    "npm run client &&",
+    "npm run migrate:sqlite"
   ],
 
   "remoteUser": "node"
