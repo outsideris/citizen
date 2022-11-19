@@ -30,7 +30,10 @@
     "DEBUG": "citizen:*"
   },
 
-  "postCreateCommand": "npm install",
+  "postCreateCommand": [
+    "npm install",
+    "npm run client"
+  ],
 
   "remoteUser": "node"
 }
