@@ -14,7 +14,8 @@
   "extensions": [
     "dbaeumer.vscode-eslint",
     "asciidoctor.asciidoctor-vscode",
-    "vscodevim.vim"
+    "vscodevim.vim",
+    "GitHub.copilot"
   ],
 
   "forwardPorts": [3000],
