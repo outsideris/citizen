@@ -1,0 +1,6 @@
+---
+type: docker
+artifact_options:
+  platform:
+    - linux/arm64
+    - linux/amd64

@@ -1,0 +1,58 @@
+# template for lc-39 pyproject.toml file
+
+[project]
+readme = "README.md"
+name = "<Enter project name>"
+version = "x"
+
+[[project.authors]]
+name = "Vectra AI"
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = []
+
+[tool.pylint.'MASTER']
+ignore=["src/test"]
+fail-under=9
+
+[tool.pylint.'FORMAT']
+max-line-length=120
+
+# black
+[tool.black]
+line-length = 120
+
+# isort
+[tool.isort]
+profile = "black"
+line_length = 120
+known_first_party = ["vectra"]
+skip_glob = [".Makefiles/*"]
+
+# Mypy
+[tool.mypy]
+python_version = "3.8"
+exclude = [".Makefiles"]
+show_error_context = true
+show_error_codes = true
+ignore_missing_imports = true
+install_types = true
+non_interactive = true
+html_report=".Makefiles/tmp/reports/lint"
+cache_dir = ".Makefiles/tmp/mypy_cache/"
+
+# Pytest add Coverage
+[tool.pytest.ini_options]
+addopts = ["--cov=.", "--cov-config=pyproject.toml", "--cov-report=html:.Makefiles/tmp/reports/unit-tests/coverage.html", "--cov-report=xml:.Makefiles/tmp/reports/unit-tests/coverage.xml"]
+
+# Coverage
+[tool.coverage]
+fail_under = 30
+omit = ["src/test*"]
+skip_empty = true
+
+# Uncomment this section to auto-publish docs on release
+# [tool.sphinx-pyproject]
+# docs_repo = "dp/jetstream-docs"
+# docs_root_dir_local = "docs"
+# docs_root_dir_repo = "jetstream"

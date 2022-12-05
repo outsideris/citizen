@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build:linux
 
 # final stage
-FROM bitnami/minideb
+FROM bitnami/minideb as prod
 
 LABEL maintainer="outsideris@gmail.com"
 LABEL org.opencontainers.image.source = "https://github.com/outsideris/citizen"
