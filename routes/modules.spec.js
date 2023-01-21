@@ -1,17 +1,13 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const { promisify } = require('util');
 const rimraf = require('rimraf');
-const fs = require('node:fs');
+const { writeFile, readFile } = require('node:fs/promises');
 const path = require('node:path');
 const mkdirp = require('mkdirp');
 
 const app = require('../app');
 const helper = require('../test/helper');
 const { getClient, saveModule, findOneModule } = require('../stores/store');
-
-const writeFile = promisify(fs.writeFile);
-const readFile = promisify(fs.readFile);
 
 describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   let moduleBuf;

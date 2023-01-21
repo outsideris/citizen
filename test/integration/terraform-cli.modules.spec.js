@@ -1,6 +1,5 @@
 const https = require('node:https');
-const fs = require('node:fs');
-const { promisify } = require('node:util');
+const { writeFile, unlink, mkdir, access } = require('node:fs/promises');
 const { expect } = require('chai');
 const { execFile } = require('node:child_process');
 const { join } = require('node:path');
@@ -10,11 +9,6 @@ const { run, terminate } = require('./registry');
 const { getClient } = require('../../stores/store');
 const helper = require('../helper');
 const TERRAFORM_VERSIONS = require('../versions');
-
-const writeFile = promisify(fs.writeFile);
-const unlink = promisify(fs.unlink);
-const mkdir = promisify(fs.mkdir);
-const access = promisify(fs.access);
 
 TERRAFORM_VERSIONS.forEach((terraform) => {
   describe(`terraform CLI v${terraform.version} for module`, () => {

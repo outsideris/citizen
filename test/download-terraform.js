@@ -1,15 +1,12 @@
 const got = require('got');
 const { join } = require('node:path');
 const fs = require('node:fs');
-const { promisify } = require('node:util');
+const { chmod, mkdir, access } = require('node:fs/promises');
 const unzipper = require('unzipper');
 const debug = require('debug');
 
 const TERRAFORM_VERSIONS = require('./versions');
 
-const chmod = promisify(fs.chmod);
-const mkdir = promisify(fs.mkdir);
-const access = promisify(fs.access);
 const PLATFORM = process.platform;
 const TARGET_DIR = join(__dirname, 'terraform-binaries');
 
