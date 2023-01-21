@@ -4,14 +4,13 @@ const { promisify } = require('node:util');
 const { expect } = require('chai');
 const { execFile } = require('node:child_process');
 const { join } = require('node:path');
-const rmrf = require('rimraf');
+const rimraf = require('rimraf');
 
 const { run, terminate } = require('./registry');
 const { getClient } = require('../../stores/store');
 const helper = require('../helper');
 const TERRAFORM_VERSIONS = require('../versions');
 
-const rimraf = promisify(rmrf);
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 const mkdir = promisify(fs.mkdir);

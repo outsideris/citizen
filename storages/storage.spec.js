@@ -1,15 +1,12 @@
 /* eslint-disable no-unused-expressions */
 const { join, parse } = require('node:path');
 const { readFile, writeFile } = require('node:fs/promises');
-const { promisify } = require('node:util');
 const { Readable } = require('node:stream');
 const mkdirp = require('mkdirp');
-const rmrf = require('rimraf');
+const rimraf = require('rimraf');
 const { expect } = require('chai');
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { mockClient } = require('aws-sdk-client-mock');
-
-const rimraf = promisify(rmrf);
 
 const {
   init,

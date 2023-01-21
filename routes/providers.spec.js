@@ -1,15 +1,12 @@
 const request = require('supertest');
 const got = require('got');
 const { expect } = require('chai');
-const { promisify } = require('util');
-const rmrf = require('rimraf');
+const rimraf = require('rimraf');
 const unzipper = require('unzipper');
 
 const app = require('../app');
 const helper = require('../test/helper');
 const { getClient, saveProvider } = require('../stores/store');
-
-const rimraf = promisify(rmrf);
 
 describe('POST /v1/providers/:namespace/:type/:version', () => {
   let providerPath;

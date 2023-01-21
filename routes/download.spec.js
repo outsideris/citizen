@@ -2,14 +2,11 @@ const request = require('supertest');
 const { expect } = require('chai');
 const fs = require('node:fs');
 const path = require('node:path');
-const { promisify } = require('node:util');
-const rmrf = require('rimraf');
+const rimraf = require('rimraf');
 
 const app = require('../app');
 const helper = require('../test/helper');
 const { getClient, saveModule, findOneModule } = require('../stores/store');
-
-const rimraf = promisify(rmrf);
 
 describe('GET /v1/modules/:namespace/:name/:provider/:version/download', () => {
   before(async () => {

@@ -1,7 +1,7 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { promisify } = require('util');
-const rmrf = require('rimraf');
+const rimraf = require('rimraf');
 const fs = require('node:fs');
 const path = require('node:path');
 const mkdirp = require('mkdirp');
@@ -12,7 +12,6 @@ const { getClient, saveModule, findOneModule } = require('../stores/store');
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
-const rimraf = promisify(rmrf);
 
 describe('POST /v1/modules/:namespace/:name/:provider/:version', () => {
   let moduleBuf;
