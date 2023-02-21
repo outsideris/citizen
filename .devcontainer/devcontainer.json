@@ -11,6 +11,12 @@
     "terminal.integrated.defaultProfile.linux": "zsh"
   },
 
+  "features": {
+    "ghcr.io/devcontainers/features/sshd:1": {
+      "version": "latest"
+    }
+  },
+
   "extensions": [
     "dbaeumer.vscode-eslint",
     "asciidoctor.asciidoctor-vscode",
