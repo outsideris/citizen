@@ -115,7 +115,7 @@ VERSIONS.forEach((terraform) => {
               console.log(stdout); // eslint-disable-line no-console
               console.log(stderr); // eslint-disable-line no-console
               return resolve();
-            }
+            },
           );
         });
 

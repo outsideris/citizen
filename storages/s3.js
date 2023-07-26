@@ -6,7 +6,7 @@ const s3client = new S3Client({});
 const S3_BUCKET = process.env.CITIZEN_STORAGE_BUCKET;
 if (process.env.CITIZEN_STORAGE === 's3' && !S3_BUCKET) {
   throw new Error(
-    'S3 storage requires CITIZEN_STORAGE_BUCKET. Additionally, ensure that either AWS_PROFILE or AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set. If running on AWS EC2 or ECS, IAM Roles may be used.'
+    'S3 storage requires CITIZEN_STORAGE_BUCKET. Additionally, ensure that either AWS_PROFILE or AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set. If running on AWS EC2 or ECS, IAM Roles may be used.',
   );
 }
 

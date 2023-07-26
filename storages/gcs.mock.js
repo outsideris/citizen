@@ -48,7 +48,7 @@ module.exports = {
             message: `No such object: ${bucket}/modules/${uid}/module.tar.gz/wrong`,
           },
         },
-        []
+        [],
       )
 
       .get(`/storage/v1/b/${bucket}/o/both-tests%2F${uid}%2Fboth-test.tar.gz`)
@@ -72,7 +72,7 @@ module.exports = {
         project_id: 'test-project-1234',
         private_key: privateKey,
         client_email: '1234-test@developer.gserviceaccount.com',
-      })
+      }),
     );
   },
 };

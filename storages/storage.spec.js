@@ -167,7 +167,7 @@ storageTypes.forEach((storageType) => {
         'test',
         'fixture',
         'provider',
-        'terraform-provider-null_1.0.0_linux_amd64.zip'
+        'terraform-provider-null_1.0.0_linux_amd64.zip',
       );
       let providerBuf;
 

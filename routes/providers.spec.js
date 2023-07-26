@@ -285,7 +285,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
           server
             .get(downloadUrl)
             .expect('x-terraform-protocol-version', '4')
-            .expect('x-terraform-protocol-versions', '4.1, 5.0')
+            .expect('x-terraform-protocol-versions', '4.1, 5.0'),
         );
     });
 
@@ -312,7 +312,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
             .then((res) => {
               expect(res.text).to.include('citizen-null_1.0.0_linux_amd64.zip');
               expect(res.text).to.include('citizen-null_1.0.0_windows_amd64.zip');
-            })
+            }),
         );
     });
 
@@ -327,7 +327,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
           server
             .get(shasumsUrl)
             .expect('x-terraform-protocol-version', '4')
-            .expect('x-terraform-protocol-versions', '4.1, 5.0')
+            .expect('x-terraform-protocol-versions', '4.1, 5.0'),
         );
     });
 
@@ -353,7 +353,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
             .expect(200)
             .then((res) => {
               expect(res).to.have.property('body').to.be.an.instanceof(Buffer);
-            })
+            }),
         );
     });
 
@@ -368,7 +368,7 @@ describe('GET /v1/providers/:namespace/:type/:version/download/:os/:arch', () =>
           server
             .get(shaSumsSignatureUrl)
             .expect('x-terraform-protocol-version', '4')
-            .expect('x-terraform-protocol-versions', '4.1, 5.0')
+            .expect('x-terraform-protocol-versions', '4.1, 5.0'),
         );
     });
 

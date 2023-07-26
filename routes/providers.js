@@ -95,7 +95,7 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
       }
 
       const isFilesMatched = data.platforms.every((p) =>
-        providerFiles.some((f) => f.filename === `${namespace}-${type}_${version}_${p.os}_${p.arch}.zip`)
+        providerFiles.some((f) => f.filename === `${namespace}-${type}_${version}_${p.os}_${p.arch}.zip`),
       );
       if (!isFilesMatched) {
         const error = new Error('Unmatched platform data and files');
@@ -200,7 +200,7 @@ router.get('/:namespace/:type/:version/download/:os/:arch/zip', async (req, res,
     res.header('x-terraform-protocol-versions', provider.protocols.join(', '));
 
     const file = await storage.getProvider(
-      `${options.namespace}/${options.type}/${options.version}/${platform.filename}`
+      `${options.namespace}/${options.type}/${options.version}/${platform.filename}`,
     );
     return res.attachment(platform.filename).send(file);
   } catch (e) {
@@ -247,7 +247,7 @@ router.get('/:namespace/:type/:version/sha256sums.sig', async (req, res, next) =
       .set('Content-Type', 'application/octet-stream')
       .set(
         'Content-disposition',
-        `attachment; filename=${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`
+        `attachment; filename=${options.namespace}-${options.type}_${options.version}_SHA256SUMS.sig`,
       )
       .send(sig);
   } catch (e) {
