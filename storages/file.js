@@ -1,7 +1,7 @@
 const { readFile, writeFile, access } = require('node:fs/promises');
 const { join, parse } = require('node:path');
 const debug = require('debug')('citizen:server');
-const mkdirp = require('mkdirp');
+const { mkdirp } = require('mkdirp');
 
 const normalizePath = (path) => join(process.env.CITIZEN_STORAGE_PATH, path);
 

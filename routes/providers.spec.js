@@ -1,7 +1,7 @@
 const request = require('supertest');
 const got = require('got');
 const { expect } = require('chai');
-const rimraf = require('rimraf');
+const { rimraf } = require('rimraf');
 const unzipper = require('unzipper');
 
 const app = require('../app');

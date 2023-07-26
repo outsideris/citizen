@@ -3,7 +3,7 @@ const { writeFile, unlink, mkdir, access } = require('node:fs/promises');
 const { expect } = require('chai');
 const { execFile } = require('node:child_process');
 const { join } = require('node:path');
-const rimraf = require('rimraf');
+const { rimraf } = require('rimraf');
 
 const { run, terminate } = require('./registry');
 const { getClient } = require('../../stores/store');
