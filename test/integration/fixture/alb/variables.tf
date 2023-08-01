@@ -4,12 +4,12 @@ variable "name" {
 
 variable "subnet_ids" {
   description = "The subnet IDs into which the ALB should be deployed."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "security_groups" {
   description = "The security groups into which the ALB should be applied."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
