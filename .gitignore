@@ -7,7 +7,7 @@ data/
 test/terraform-binaries/
 .env
 stores/**/client/
-citizen/Chart.lock
-citizen/charts
-citizen/secrets/key.json
-citizen/values-internal.yaml
+helm/citizen/Chart.lock
+helm/citizen/charts
+helm/citizen/secrets/key.json
+helm/citizen/values-internal.yaml
