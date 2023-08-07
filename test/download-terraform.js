@@ -1,7 +1,7 @@
-const got = require('got');
 const { join } = require('node:path');
 const fs = require('node:fs');
 const { chmod, mkdir, access } = require('node:fs/promises');
+const got = require('got');
 const unzipper = require('unzipper');
 const debug = require('debug');
 

@@ -1,8 +1,8 @@
 const https = require('node:https');
 const { writeFile, unlink, mkdir, access } = require('node:fs/promises');
-const { expect } = require('chai');
 const { execFile } = require('node:child_process');
 const { join } = require('node:path');
+const { expect } = require('chai');
 const { rimraf } = require('rimraf');
 
 const { run, terminate } = require('./registry');
