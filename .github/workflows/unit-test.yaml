@@ -88,5 +88,10 @@ jobs:
         env:
           CITIZEN_DATABASE_TYPE: mysql
           CITIZEN_DATABASE_URL: mysql://root:citizen@127.0.0.1:3306/citizen
+      - name: Postgres migration
+        run: npm run migrate:postgresql
+        env:
+          CITIZEN_DATABASE_TYPE: postgresql
+          CITIZEN_DATABASE_URL: postgresql://citizen:citizen@127.0.0.1:5432/citizen
       - name: unit test
         run: npm run test:unit -- --forbid-only

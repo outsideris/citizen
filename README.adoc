@@ -39,7 +39,7 @@ If you want to test it at local, you need a tool which provides HTTPS like link:
 
 Environment variables:
 
-* `CITIZEN_DATABASE_TYPE`: Backend provider for registry metadata. Set to `mysql`, `mongodb` or `sqlite`.
+* `CITIZEN_DATABASE_TYPE`: Backend provider for registry metadata. Set to `mysql`, `postgresql`, `mongodb` or `sqlite`.
 * `CITIZEN_DATABASE_URL`: The URL of the database. `protocol//username:password@hosts:port/database?options`
 * `CITIZEN_STORAGE`: Storage type to store module files. You can use `file`, `s3` or `gcs` type.
 ** `s3` is for link:https://aws.amazon.com/ko/s3/[AWS S3].
@@ -178,6 +178,12 @@ Run MySQL with docker
 [source, sh]
 ....
 docker run --rm -p 3306:3306 --name mysql-citizen -e MYSQL_ROOT_PASSWORD=citizen -e MYSQL_DATABASE=citizen mysql
+....
+
+Run Postgresql with docker
+[source, sh]
+....
+$ docker run --rm -p 5432:5432 --name postgres-citizen -e POSTGRES_USER=citizen -e POSTGRES_PASSWORD=citizen -e POSTGRES_DB=citizen postgres
 ....
 
 Run the tests:

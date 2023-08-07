@@ -19,7 +19,7 @@ const {
 } = require('./store');
 const helper = require('../test/helper');
 
-const storeTypes = ['mongodb', 'sqlite', 'mysql'];
+const storeTypes = ['mongodb', 'sqlite', 'mysql', 'postgresql'];
 
 storeTypes.forEach((storeType) => {
   describe(`${storeType} store`, async () => {
@@ -30,6 +30,8 @@ storeTypes.forEach((storeType) => {
         process.env.CITIZEN_DATABASE_URL = 'mongodb://root:citizen@127.0.0.1:27018/citizen?authSource=admin';
       } else if (storeType === 'mysql') {
         process.env.CITIZEN_DATABASE_URL = 'mysql://root:citizen@127.0.0.1:3306/citizen';
+      } else if (storeType === 'postgresql') {
+        process.env.CITIZEN_DATABASE_URL = 'postgresql://citizen:citizen@127.0.0.1:5432/citizen';
       } else if (storeType === 'sqlite') {
         process.env.CITIZEN_DATABASE_URL = 'file:./dev.db';
       }
