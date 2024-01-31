@@ -8,6 +8,8 @@ const init = (dbType) => {
     store = require('./mongodb/mongodb'); // eslint-disable-line global-require
   } else if (t === 'mysql') {
     store = require('./mysql/mysql'); // eslint-disable-line global-require
+  } else if (t === 'postgresql') {
+    store = require('./postgresql/postgresql'); // eslint-disable-line global-require
   } else if (t === 'sqlite') {
     store = require('./sqlite/sqlite'); // eslint-disable-line global-require
   } else {

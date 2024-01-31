@@ -129,6 +129,9 @@ router.post('/:namespace/:type/:version', (req, res, next) => {
       });
       await Promise.all(promises);
 
+      if (!data.protocols) {
+        data.protocols = [];
+      }
       const savedData = await saveProvider(data);
       return res.status(201).render('providers/register', savedData);
     } catch (e) {
