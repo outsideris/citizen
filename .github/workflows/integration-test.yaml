@@ -45,13 +45,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - name: 'Cache node_modules'
-        uses: actions/cache@v3
-        with:
-          path: '~/.npm'
-          key: ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210321-${{ hashFiles('**/package-lock.json') }} }}
-          restore-keys: |
-            ${{ runner.os }}-node-v${{ matrix.node }}-integration-npm-210321-
+          cache: npm
       - name: 'Cache terraform binaries'
         uses: actions/cache@v3
         with:
