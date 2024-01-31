@@ -60,7 +60,7 @@
   "devDependencies": {
     "adm-zip": "^0.5.10",
     "aws-sdk-client-mock": "^3.0.0",
-    "chai": "^4.3.10",
+    "chai": "^4.4.1",
     "eslint": "^8.50.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.0.0",
