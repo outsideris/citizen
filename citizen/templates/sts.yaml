@@ -46,10 +46,10 @@ spec:
             - -c
             - |
                 echo "Waiting Mongo to be up"
-                until nc -z mongo 27017
-                do
-                  sleep 1
-                done
+                #until nc -z mongodb 27017
+                #do
+                #  sleep 1
+                #done
                 echo "Mongo is up, starting App."
           {{ end }}
       containers:

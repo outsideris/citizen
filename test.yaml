@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-provisioner: pd.csi.storage.gke.io
+    volume.kubernetes.io/storage-provisioner: pd.csi.storage.gke.io
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    app.kubernetes.io/component: mongodb
+    app.kubernetes.io/instance: citizen
+    app.kubernetes.io/name: mongodb
+  name: datadir-mongodb-0
+  namespace: citizen
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: ssd
+  volumeMode: Filesystem
+  volumeName: datadir-mongo-0
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: pd.csi.storage.gke.io
+    volume.kubernetes.io/provisioner-deletion-secret-name: ""
+    volume.kubernetes.io/provisioner-deletion-secret-namespace: ""
+  finalizers:
+    - kubernetes.io/pv-protection
+    - external-attacher/pd-csi-storage-gke-io
+  name: datadir-mongo-0
+  namespace: citizen
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 8Gi
+  csi:
+    driver: pd.csi.storage.gke.io
+    fsType: ext4
+    volumeHandle: projects/atypon-devops/zones/us-west4-a/disks/mongo-us-west4-a
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem

@@ -26,5 +26,5 @@ appVersion: "1.16.0"
 dependencies:
   - name: "mongodb"
     version: "10.29.0"
-    repository: "https://charts.bitnami.com/bitnami"
+    repository: "https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami"
     condition: mongodb.enabled

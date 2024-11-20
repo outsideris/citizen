@@ -7,10 +7,10 @@
 replicaCount: 1
 
 image:
-  repository: gcr.io/atypon-devops/citizin
+  repository: us-central1-docker.pkg.dev/atypon-artifact/docker-registry/atypon-devops/citizin
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v0.2.1"
+  tag: "v0.2.2"
 
 # GitHub: start the GitHub container to sync modules/providers with the Citizen
 # DEBUG: Disable the GitHub repo and start citizen with sleep command forever to debug and test
@@ -23,7 +23,7 @@ app_envs:
 
   # MongoDB database URI if using MongoDB backend. URI format is mongodb://username:password@host:port/database?options
   # Default is mongodb://localhost:27017/citizen
-  CITIZEN_MONGO_DB_URI: "mongodb://user:password@mongo:27017/citizen"
+  CITIZEN_MONGO_DB_URI: "mongodb://user:password@mongodb:27017/citizen"
 
   # A directory to save database file if using local backend storage. The default is data directory in a current
   # working directory (absolute/relative path can be used).
@@ -127,13 +127,13 @@ affinity: {}
 mongodb:
   enabled: true
   global:
-    storageClass: "ssd"
-  fullnameOverride: "mongo"
+    storageClass: ""
+  fullnameOverride: "mongodb"
 
   image:
     registry: docker.io
     repository: bitnami/mongodb
-    tag: 4.4.10-debian-10-r20
+    tag: 4.4.15-debian-10-r8
 
   architecture: standalone
   useStatefulSet: true
