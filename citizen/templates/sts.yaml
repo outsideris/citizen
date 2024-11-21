@@ -40,16 +40,17 @@ spec:
       initContainers:
         {{ if .Values.app_envs.CITIZEN_DATABASE }}
         - name: {{ .Chart.Name }}-waitmongo
-          image: subfuzion/netcat
+          image: busybox
           command:
             - sh
             - -c
             - |
                 echo "Waiting Mongo to be up"
-                #until nc -z mongodb 27017
-                #do
-                #  sleep 1
-                #done
+                until nc -z mongodb 27017
+                do
+                  echo "Waiting Mongo to be up, command nc -z mongodb 27017 failed with $?"
+                  sleep 1
+                done
                 echo "Mongo is up, starting App."
           {{ end }}
       containers:
